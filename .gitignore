@@ -1,0 +1,34 @@
+# Repositorios do projeto (cada um tem seu proprio git)
+chatfunnel-api/
+chatfunnel-core/
+chatfunnel-external-api/
+chatfunnel-front/
+chatfunnel-gateway/
+chatfunnel-scheduler/
+chatfunnel-services/
+chatfunnel-websocket/
+chatfunnel-worker-broadcast/
+chatfunnel-database/
+
+# Node
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Skills runtime
+.claude/skills/*/data/
+.claude/skills/*/.venv/
