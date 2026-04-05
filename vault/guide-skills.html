@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatFunnel — Guia de Skills & Workspace</title>
+<style>
+  :root {
+    --brand: #3CA1A1;
+    --brand-light: #CAFFFB;
+    --brand-dark: #2F585E;
+    --bg: #FAFAFA;
+    --card: #FFFFFF;
+    --text: #33303E;
+    --text-muted: #888;
+    --border: #E7E7E7;
+    --red: #C91D1D;
+    --green: #24B26E;
+    --yellow: #F39C19;
+    --purple: #6C5CE7;
+    --shadow: 0px 2px 24px rgba(55,30,145,0.05);
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Figtree', 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+  h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  h1 span { color: var(--brand); }
+  .subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 40px; }
+  h2 { font-size: 1.4rem; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--brand); }
+  h3 { font-size: 1.1rem; font-weight: 600; margin: 24px 0 8px; }
+
+  .card-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 640px) { .card-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 860px) { .card-grid.three { grid-template-columns: 1fr 1fr 1fr; } }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; box-shadow: var(--shadow); transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0px 4px 32px rgba(55,30,145,0.1); }
+  .card .tag {
+    display: inline-block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 999px; margin-bottom: 8px;
+  }
+  .tag-custom { background: var(--brand-light); color: var(--brand-dark); }
+  .tag-official { background: #EDE9FE; color: var(--purple); }
+  .tag-community { background: #FFF3E0; color: #E65100; }
+  .tag-plugin { background: #E8F5E9; color: #2E7D32; }
+  .tag-rule { background: #FCE4EC; color: #C62828; }
+
+  .card h4 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+  .card p { font-size: 0.88rem; color: var(--text-muted); margin-bottom: 8px; }
+  .card code {
+    display: inline-block; background: #F3F4F6; padding: 2px 8px; border-radius: 6px;
+    font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; color: var(--brand-dark);
+  }
+  .card .repo { font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; }
+
+  .scenario {
+    background: var(--card); border-left: 4px solid var(--brand); border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 16px 20px; margin: 12px 0; box-shadow: var(--shadow);
+  }
+  .scenario strong { color: var(--brand-dark); }
+  .scenario code { background: #F3F4F6; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+
+  .workflow {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin: 12px 0; font-size: 0.9rem;
+  }
+  .workflow .step {
+    background: var(--brand-light); color: var(--brand-dark); padding: 4px 12px;
+    border-radius: 999px; font-weight: 500; font-size: 0.8rem;
+  }
+  .workflow .arrow { color: var(--text-muted); font-weight: bold; }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.88rem; }
+  th { text-align: left; padding: 10px 12px; background: #F8F8F8; border-bottom: 2px solid var(--border); font-weight: 600; }
+  td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: #FAFBFF; }
+
+  .tip {
+    background: #F0FFF4; border: 1px solid #C6F6D5; border-radius: var(--radius);
+    padding: 12px 16px; margin: 16px 0; font-size: 0.88rem;
+  }
+  .tip::before { content: "Dica: "; font-weight: 700; color: var(--green); }
+
+  .warning {
+    background: #FFFBEB; border: 1px solid #FED7AA; border-radius: var(--radius);
+    padding: 12px 16px; margin: 16px 0; font-size: 0.88rem;
+  }
+  .warning::before { content: "Importante: "; font-weight: 700; color: var(--yellow); }
+
+  .vault-map {
+    background: #F8F7FF; border: 1px solid #E8E5FF; border-radius: var(--radius);
+    padding: 16px 20px; font-family: monospace; font-size: 0.85rem; line-height: 1.8;
+    white-space: pre; overflow-x: auto;
+  }
+
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>ChatFunnel <span>Skills & Workspace Guide</span></h1>
+<p class="subtitle">Guia pratico de como usar as skills, rules, vault e ferramentas configuradas no workspace.</p>
+
+<!-- ============================================ -->
+<h2>1. Como funciona o sistema de Skills</h2>
+
+<p>Skills sao "superpoderes" que o Claude carrega sob demanda. Algumas ativam automaticamente quando voce trabalha em certos arquivos; outras voce invoca manualmente.</p>
+
+<div class="tip">No Claude Code, digite <code>/</code> para ver as skills disponiveis, ou mencione o nome da skill na conversa.</div>
+
+<h3>Tipos de Skills</h3>
+<table>
+  <tr><th>Tipo</th><th>Onde ficam</th><th>Quando carregam</th></tr>
+  <tr><td><span class="tag tag-custom">Custom</span></td><td><code>.claude/skills/</code> do projeto</td><td>Sob demanda ou por trigger</td></tr>
+  <tr><td><span class="tag tag-official">Official</span></td><td>Anthropic skills repo</td><td>Por trigger automatico</td></tr>
+  <tr><td><span class="tag tag-community">Community</span></td><td><code>.claude/skills/</code> (instaladas do skills.sh)</td><td>Por trigger ou invocacao</td></tr>
+  <tr><td><span class="tag tag-plugin">Plugin</span></td><td>Plugins instalados (ECC, superpowers, etc.)</td><td>Automatico por contexto</td></tr>
+  <tr><td><span class="tag tag-rule">Rules</span></td><td><code>.claude/rules/</code> de cada repo</td><td>Automatico ao abrir arquivos do repo</td></tr>
+</table>
+
+<!-- ============================================ -->
+<h2>2. Skills Instaladas no Projeto</h2>
+
+<div class="card-grid">
+  <div class="card">
+    <span class="tag tag-custom">Custom</span>
+    <h4>obsidian-vault</h4>
+    <p>Gerencia o vault Obsidian — navega indices, cria/edita wikis, processa raw, mantem wikilinks.</p>
+    <code>/obsidian-vault</code>
+    <div class="repo">Quando usar: documentar features, criar gotchas, ADRs, processar raw/</div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-official">Anthropic</span>
+    <h4>claude-api</h4>
+    <p>Referencia completa da API Claude — tool use, streaming, batches, Agent SDK, prompt caching. 27 arquivos de docs.</p>
+    <code>Ativa automaticamente ao importar @anthropic-ai/sdk</code>
+    <div class="repo">Quando usar: trabalhar nos modulos a2a/ ou agents-v2/ do services</div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-community">Community</span>
+    <h4>tailwind-design-system</h4>
+    <p>Design systems com Tailwind CSS v4 — tokens, componentes, responsive patterns, migracao v3 para v4.</p>
+    <code>/tailwind-design-system</code>
+    <div class="repo">Quando usar: criar/modificar componentes no chatfunnel-front</div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-community">Community</span>
+    <h4>typescript-advanced-types</h4>
+    <p>Generics, conditional types, mapped types, template literals, utility types avancados.</p>
+    <code>/typescript-advanced-types</code>
+    <div class="repo">Quando usar: criar tipos complexos em qualquer repo TypeScript</div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-community">Community</span>
+    <h4>postgresql-table-design</h4>
+    <p>Design de tabelas PostgreSQL — tipos, indices, constraints, normalizacao, performance.</p>
+    <code>/postgresql-table-design</code>
+    <div class="repo">Quando usar: alterar schema Prisma no chatfunnel-core</div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-community">Community</span>
+    <h4>prompt-engineering-patterns</h4>
+    <p>Tecnicas avancadas de prompt — chain-of-thought, few-shot, system prompts, otimizacao.</p>
+    <code>/prompt-engineering-patterns</code>
+    <div class="repo">Quando usar: criar/melhorar prompts dos agentes IA em services/modules/a2a/prompts/</div>
+  </div>
+
+  <div class="card">
+    <span class="tag tag-community">Community</span>
+    <h4>security-best-practices</h4>
+    <p>Review de seguranca por framework — Express, Vue, Go. OWASP, auth, XSS, injection.</p>
+    <code>/security-best-practices</code>
+    <div class="repo">Quando usar: antes de deploy, ao criar endpoints com input de usuario</div>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<h2>3. Rules por Repo (carregam automaticamente)</h2>
+
+<p>Rules sao instrucoes modulares em <code>.claude/rules/</code> que carregam automaticamente quando Claude trabalha nos arquivos daquele repo.</p>
+
+<div class="card-grid three">
+  <div class="card">
+    <span class="tag tag-rule">Rule</span>
+    <h4>chatfunnel-front</h4>
+    <p><code>design-system.md</code> — CVA variants, tamanhos, tokens, field system, icones Phosphor</p>
+  </div>
+  <div class="card">
+    <span class="tag tag-rule">Rule</span>
+    <h4>chatfunnel-services</h4>
+    <p><code>nestjs-patterns.md</code> — DTOs, guards, Swagger, error handling<br><code>ai-agents.md</code> — Anthropic SDK, Mastra, sessions, tools</p>
+  </div>
+  <div class="card">
+    <span class="tag tag-rule">Rule</span>
+    <h4>chatfunnel-api</h4>
+    <p><code>command-pattern.md</code> — createRoute(), commands, JS puro<br><code>queue-patterns.md</code> — Bull queues, BaseQueue, workers</p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<h2>4. Cenarios de Uso — Quando usar cada skill</h2>
+
+<h3>Frontend (chatfunnel-front)</h3>
+
+<div class="scenario">
+  <strong>"Criar um novo componente de input"</strong><br>
+  <div class="workflow">
+    <span class="step">design-system.md</span> <span class="arrow">&rarr;</span>
+    <span class="step">/tailwind-design-system</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[frontend-layer]]</span>
+  </div>
+  O rule <code>design-system.md</code> carrega automaticamente com as specs de CVA, tamanhos e tokens. Se precisar de patterns avancados de Tailwind v4, invoque a skill.
+</div>
+
+<div class="scenario">
+  <strong>"Criar formulario com validacao"</strong><br>
+  <div class="workflow">
+    <span class="step">design-system.md</span> <span class="arrow">&rarr;</span>
+    <span class="step">/typescript-advanced-types</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[automations]]</span>
+  </div>
+  VeeValidate + Zod. O rule ja tem o Field System pattern. Para tipos Zod complexos, use a skill de TypeScript.
+</div>
+
+<h3>Backend — Services (chatfunnel-services)</h3>
+
+<div class="scenario">
+  <strong>"Criar um novo modulo NestJS"</strong><br>
+  <div class="workflow">
+    <span class="step">nestjs-patterns.md</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[services-layer]]</span>
+  </div>
+  O rule carrega automaticamente: estrutura Controller &rarr; Service &rarr; Repository, DTOs com class-validator, decorators Swagger.
+</div>
+
+<div class="scenario">
+  <strong>"Trabalhar nos agentes IA"</strong><br>
+  <div class="workflow">
+    <span class="step">ai-agents.md</span> <span class="arrow">&rarr;</span>
+    <span class="step">/claude-api</span> <span class="arrow">&rarr;</span>
+    <span class="step">/prompt-engineering-patterns</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[ai-agents-architecture]]</span>
+  </div>
+  O rule <code>ai-agents.md</code> cobre Anthropic SDK + Mastra. A skill <code>claude-api</code> ativa automaticamente ao tocar no SDK. Para melhorar prompts, use <code>/prompt-engineering-patterns</code>.
+</div>
+
+<div class="scenario">
+  <strong>"Alterar o schema do banco"</strong><br>
+  <div class="workflow">
+    <span class="step">/postgresql-table-design</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[database-architecture]]</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[database-gotchas]]</span>
+  </div>
+  Use a skill para design de tabela, consulte o vault para entender o schema existente e os gotchas de migrations.
+</div>
+
+<h3>Backend — API (chatfunnel-api)</h3>
+
+<div class="scenario">
+  <strong>"Criar nova rota + command"</strong><br>
+  <div class="workflow">
+    <span class="step">command-pattern.md</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[api-layer]]</span>
+  </div>
+  O rule carrega automaticamente: <code>createRoute()</code>, module aliases, estrutura handler/validation/index. Lembre: JavaScript puro, CommonJS.
+</div>
+
+<div class="scenario">
+  <strong>"Adicionar fila Bull"</strong><br>
+  <div class="workflow">
+    <span class="step">queue-patterns.md</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[queue-architecture]]</span>
+  </div>
+  O rule tem o passo-a-passo: criar Queue, registrar no index, criar processor em commands/workers/.
+</div>
+
+<h3>Cross-repo</h3>
+
+<div class="scenario">
+  <strong>"Revisar seguranca antes de deploy"</strong><br>
+  <div class="workflow">
+    <span class="step">/security-best-practices</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[infrastructure-gotchas]]</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault [[auth-flow]]</span>
+  </div>
+  A skill tem references especificos para Express, Vue e Go. Combine com os gotchas do vault.
+</div>
+
+<div class="scenario">
+  <strong>"Documentar decisao arquitetural"</strong><br>
+  <div class="workflow">
+    <span class="step">/obsidian-vault</span> <span class="arrow">&rarr;</span>
+    <span class="step">vault/decisions/</span>
+  </div>
+  Use a skill para criar ADR com template padrao (Contexto, Decisao, Alternativas, Consequencias).
+</div>
+
+<!-- ============================================ -->
+<h2>5. Skills dos Plugins (ativam automaticamente)</h2>
+
+<p>Alem das skills instaladas, voce tem ~100+ skills via plugins que ativam por contexto:</p>
+
+<table>
+  <tr><th>Situacao</th><th>Skill que ativa</th><th>Plugin</th></tr>
+  <tr><td>Planejar uma feature complexa</td><td><code>/plan</code></td><td>everything-claude-code</td></tr>
+  <tr><td>Debugar um bug</td><td><code>/systematic-debugging</code></td><td>superpowers</td></tr>
+  <tr><td>Escrever testes primeiro (TDD)</td><td><code>/tdd</code></td><td>everything-claude-code</td></tr>
+  <tr><td>Rodar testes E2E Playwright</td><td><code>/e2e</code></td><td>everything-claude-code</td></tr>
+  <tr><td>Review de codigo</td><td><code>/code-review</code></td><td>code-review</td></tr>
+  <tr><td>Buscar docs de uma lib</td><td><code>/docs</code></td><td>everything-claude-code</td></tr>
+  <tr><td>Criar interface/dashboard</td><td><code>/interface-design</code></td><td>interface-design</td></tr>
+  <tr><td>Auditar design system</td><td><code>/audit</code></td><td>interface-design</td></tr>
+  <tr><td>Orquestrar agents paralelos</td><td><code>/devfleet</code></td><td>everything-claude-code</td></tr>
+  <tr><td>Pesquisa profunda na web</td><td><code>/deep-research</code></td><td>everything-claude-code</td></tr>
+  <tr><td>Review de seguranca</td><td><code>/security-review</code></td><td>everything-claude-code</td></tr>
+  <tr><td>Audit de context window</td><td><code>/context-budget</code></td><td>everything-claude-code</td></tr>
+  <tr><td>Salvar/retomar sessao</td><td><code>/save-session</code> / <code>/resume-session</code></td><td>everything-claude-code</td></tr>
+  <tr><td>Brainstorm antes de criar</td><td><code>/brainstorming</code></td><td>superpowers</td></tr>
+  <tr><td>Verificar antes de completar</td><td><code>/verification-before-completion</code></td><td>superpowers</td></tr>
+</table>
+
+<!-- ============================================ -->
+<h2>6. Vault Obsidian — Mapa da Knowledge Base</h2>
+
+<div class="vault-map">vault/
+  _index.md                    &larr; Master Index (ponto de entrada)
+  wiki/
+    architecture/              &larr; 10 artigos
+      message-flow, queue-architecture, realtime-communication,
+      multi-tenancy, auth-flow, inter-service-communication,
+      ai-agents-architecture, database-architecture,
+      deployment-architecture, error-handling
+    features/                  &larr; 7 artigos
+      livechat, automations, ai-agents, crm-kanban,
+      contacts, broadcast, channels
+    layers/                    &larr; 4 artigos
+      api-layer, services-layer, frontend-layer, core-layer
+    gotchas/                   &larr; 3 artigos
+      database-gotchas, infrastructure-gotchas, integration-gotchas
+    ai-patterns/               &larr; 7 artigos
+      tool-use-agents, prompt-caching, classification,
+      rag, summarization, text-to-sql, content-moderation
+  decisions/                   &larr; 6 ADRs
+    001-shadcn-vue, 002-nestjs-separado, 003-mastra,
+    004-gateway-go-nats, 005-multi-tenancy, 006-prisma-core</div>
+
+<div class="tip">Diga "consulta o vault sobre X" e a skill <code>obsidian-vault</code> navega automaticamente ate o artigo certo.</div>
+
+<!-- ============================================ -->
+<h2>7. Workflow Recomendado</h2>
+
+<h3>Antes de comecar qualquer tarefa:</h3>
+<div class="workflow">
+  <span class="step">1. Consultar vault</span> <span class="arrow">&rarr;</span>
+  <span class="step">2. Ler CLAUDE.md do repo</span> <span class="arrow">&rarr;</span>
+  <span class="step">3. Rules carregam auto</span> <span class="arrow">&rarr;</span>
+  <span class="step">4. Invocar skill se necessario</span> <span class="arrow">&rarr;</span>
+  <span class="step">5. Implementar</span>
+</div>
+
+<h3>Antes de deploy/merge:</h3>
+<div class="workflow">
+  <span class="step">1. /verification-before-completion</span> <span class="arrow">&rarr;</span>
+  <span class="step">2. /security-best-practices</span> <span class="arrow">&rarr;</span>
+  <span class="step">3. /code-review</span> <span class="arrow">&rarr;</span>
+  <span class="step">4. Atualizar vault</span>
+</div>
+
+<div class="warning">NUNCA faco commit automaticamente. Somente quando voce pedir explicitamente. E nunca incluo Co-Authored-By.</div>
+
+<!-- ============================================ -->
+<h2>8. Regras Globais do Workspace</h2>
+
+<table>
+  <tr><th>Regra</th><th>Escopo</th></tr>
+  <tr><td>NEVER commit automaticamente — somente quando pedido</td><td>Todos os repos</td></tr>
+  <tr><td>NEVER Co-Authored-By nos commits</td><td>Todos os repos</td></tr>
+  <tr><td>NEVER commit na main ou release</td><td>Todos os repos</td></tr>
+  <tr><td>ALWAYS criar branch: feature/, fix/, refactor/</td><td>Todos os repos</td></tr>
+  <tr><td>NEVER alterar schema sem migration --create-only</td><td>chatfunnel-core</td></tr>
+  <tr><td>ALWAYS accountId em toda query</td><td>Todos os backends</td></tr>
+  <tr><td>ALWAYS soft delete (isDeleted: true)</td><td>Todos os backends</td></tr>
+  <tr><td>ALWAYS ler CLAUDE.md do sub-repo antes de trabalhar</td><td>Todos os repos</td></tr>
+  <tr><td>ALWAYS consultar vault antes de implementar features</td><td>Todos os repos</td></tr>
+</table>
+
+<footer>
+  ChatFunnel Workspace Guide &mdash; Gerado em 2026-04-05 &mdash; 41 artigos no vault, 7 skills, 7 rules, 10 CLAUDE.md
+</footer>
+
+</div>
+</body>
+</html>

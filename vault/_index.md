@@ -1,7 +1,7 @@
 ---
 title: Master Index
 description: Ponto de entrada principal da knowledge base do ChatFunnel. Claude deve ler este arquivo PRIMEIRO para navegar o vault.
-last_updated: 2026-04-04
+last_updated: 2026-04-05
 ---
 
 # ChatFunnel Knowledge Base — Master Index
@@ -16,6 +16,7 @@ Este e o indice mestre do vault. Navegue por topico para encontrar informacao.
 | [[wiki/architecture/_index\|Architecture]] | `wiki/architecture/_index.md` | Visao de sistema, fluxos, decisoes arquiteturais |
 | [[wiki/layers/_index\|Layers]] | `wiki/layers/_index.md` | Referencia tecnica por camada (API, Services, Front, DB) |
 | [[wiki/gotchas/_index\|Gotchas]] | `wiki/gotchas/_index.md` | Armadilhas, bugs conhecidos, workarounds |
+| [[wiki/ai-patterns/_index\|AI Patterns]] | `wiki/ai-patterns/_index.md` | Patterns de IA (tool use, RAG, classification, caching) |
 
 ## Outras Secoes
 
