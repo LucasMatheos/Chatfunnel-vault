@@ -1,0 +1,80 @@
+<h2>IntegrationsCard — Estados do Card</h2>
+<p class="subtitle">Abordagem B com os diferentes estados que o componente precisa suportar.</p>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; padding: 8px;">
+
+  <!-- State: Configurável (sem chave) -->
+  <div style="font-family: system-ui, sans-serif;">
+    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 8px; font-weight: 600;">Sem chave configurada</div>
+    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #74aa9c, #10a37f); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 11px; flex-shrink: 0;">OpenAI</div>
+        <div>
+          <div style="font-weight: 600; font-size: 15px; color: #111;">OpenAI</div>
+          <div style="font-size: 12px; color: #888;">Inteligência Artificial</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: #666; line-height: 1.5; margin: 0;">Configure sua chave da OpenAI para utilizar os recursos de IA.</p>
+      <div style="display: flex; gap: 8px; margin-top: 4px;">
+        <button style="flex: 1; padding: 10px 16px; background: transparent; color: #7c3aed; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer;">Configurar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- State: Configurado (com chave) -->
+  <div style="font-family: system-ui, sans-serif;">
+    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 8px; font-weight: 600;">Com chave configurada</div>
+    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #74aa9c, #10a37f); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 11px; flex-shrink: 0;">OpenAI</div>
+        <div style="flex: 1;">
+          <div style="font-weight: 600; font-size: 15px; color: #111;">OpenAI</div>
+          <div style="font-size: 12px; color: #888;">Inteligência Artificial</div>
+        </div>
+        <div style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; flex-shrink: 0;" title="Configurado"></div>
+      </div>
+      <p style="font-size: 13px; color: #666; line-height: 1.5; margin: 0;">Configure sua chave da OpenAI para utilizar os recursos de IA.</p>
+      <div style="display: flex; gap: 8px; margin-top: 4px;">
+        <button style="flex: 1; padding: 10px 16px; background: transparent; color: #ef4444; border: 1px solid #fecaca; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer;">🗑 Remover Chave</button>
+        <button style="flex: 1; padding: 10px 16px; background: transparent; color: #7c3aed; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer;">Configurar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- State: Link externo -->
+  <div style="font-family: system-ui, sans-serif;">
+    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 8px; font-weight: 600;">Link externo (YayForms)</div>
+    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 11px; flex-shrink: 0;">Yay</div>
+        <div>
+          <div style="font-weight: 600; font-size: 15px; color: #111;">YayForms</div>
+          <div style="font-size: 12px; color: #888;">Formulários</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: #666; line-height: 1.5; margin: 0;">Crie formulários personalizados para capturar leads.</p>
+      <div style="display: flex; gap: 8px; margin-top: 4px;">
+        <button style="flex: 1; padding: 10px 16px; background: transparent; color: #7c3aed; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">Abrir ↗</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- State: Sem permissão -->
+  <div style="font-family: system-ui, sans-serif;">
+    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 8px; font-weight: 600;">Sem permissão (canConfigure: false)</div>
+    <div style="background: white; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 12px; opacity: 0.6;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 48px; height: 48px; background: linear-gradient(135deg, #74aa9c, #10a37f); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 11px; flex-shrink: 0;">OpenAI</div>
+        <div>
+          <div style="font-weight: 600; font-size: 15px; color: #111;">OpenAI</div>
+          <div style="font-size: 12px; color: #888;">Inteligência Artificial</div>
+        </div>
+      </div>
+      <p style="font-size: 13px; color: #666; line-height: 1.5; margin: 0;">Configure sua chave da OpenAI para utilizar os recursos de IA.</p>
+      <div style="display: flex; gap: 8px; margin-top: 4px;">
+        <span style="flex: 1; padding: 10px 16px; background: #f3f4f6; color: #9ca3af; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 13px; font-weight: 500; text-align: center;">Sem permissão</span>
+      </div>
+    </div>
+  </div>
+
+</div>

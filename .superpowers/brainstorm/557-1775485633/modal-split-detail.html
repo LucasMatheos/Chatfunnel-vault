@@ -1,0 +1,130 @@
+<h2>ConfigureMcp — Split Panel Detalhado</h2>
+<p class="subtitle">Layout C refinado com todos os estados e elementos do design system.</p>
+
+<div style="display: flex; flex-direction: column; gap: 32px; padding: 8px;">
+
+  <!-- Full mockup -->
+  <div class="mockup">
+    <div class="mockup-header">Modal: Chatfunnel MCP (size: xl — 900px)</div>
+    <div class="mockup-body" style="padding: 0; overflow: hidden; display: flex; min-height: 480px; font-family: system-ui, sans-serif; border-radius: 0 0 12px 12px;">
+
+      <!-- Left Panel -->
+      <div style="width: 38%; background: linear-gradient(180deg, #f5f3ff 0%, #ede9fe 100%); padding: 40px 32px; display: flex; flex-direction: column; gap: 24px; border-right: 1px solid #e5e7eb;">
+
+        <!-- Logo area -->
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 40px; height: 40px; background: #7c3aed; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px;">MCP</div>
+          <div>
+            <div style="font-weight: 600; font-size: 16px; color: #1f2937;">Chatfunnel MCP</div>
+            <div style="font-size: 12px; color: #6b7280;">Model Context Protocol</div>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-size: 13px; font-weight: 600; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.05em;">Como conectar</div>
+
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <div style="width: 22px; height: 22px; background: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 600; flex-shrink: 0;">1</div>
+            <div style="font-size: 13px; color: #4b5563; line-height: 1.5;">Crie um token de integração ao lado</div>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <div style="width: 22px; height: 22px; background: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 600; flex-shrink: 0;">2</div>
+            <div style="font-size: 13px; color: #4b5563; line-height: 1.5;">No ChatGPT ou Claude, acesse <strong>Settings → MCP Servers</strong></div>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <div style="width: 22px; height: 22px; background: #7c3aed; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: 600; flex-shrink: 0;">3</div>
+            <div style="font-size: 13px; color: #4b5563; line-height: 1.5;">Cole o token e a URL do servidor</div>
+          </div>
+        </div>
+
+        <!-- Server URL -->
+        <div style="background: white; border-radius: 10px; padding: 12px 14px; border: 1px solid #e5e7eb;">
+          <div style="font-size: 10px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">URL do servidor</div>
+          <div style="font-size: 12px; font-family: monospace; color: #374151; word-break: break-all;">https://mcp.chatfunnel.com.br</div>
+        </div>
+
+        <!-- Status -->
+        <div style="margin-top: auto; background: white; border-radius: 10px; padding: 14px; border: 1px solid #e5e7eb;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span style="font-size: 12px; font-weight: 600; color: #374151;">Status do servidor</span>
+            <span style="display: flex; align-items: center; gap: 4px; font-size: 11px; color: #22c55e; font-weight: 500;">
+              <span style="width: 7px; height: 7px; background: #22c55e; border-radius: 50; display: inline-block;"></span>
+              Online
+            </span>
+          </div>
+          <div style="display: flex; gap: 16px;">
+            <div>
+              <div style="font-size: 10px; color: #9ca3af;">Sessões ativas</div>
+              <div style="font-size: 14px; font-weight: 600; color: #374151;">0</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; color: #9ca3af;">Uptime</div>
+              <div style="font-size: 14px; font-weight: 600; color: #374151;">65min</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div style="flex: 1; padding: 40px 32px; display: flex; flex-direction: column; gap: 24px; background: white; overflow-y: auto;">
+
+        <!-- Header with close -->
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 18px; font-weight: 700; color: #7c3aed;">Tokens de integração</span>
+          <div style="width: 32px; height: 32px; border: 1px solid #d1d5db; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 14px; cursor: pointer;">✕</div>
+        </div>
+
+        <!-- Create token -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 13px; color: #6b7280;">Crie tokens para conectar clientes externos ao seu ChatFunnel.</div>
+          <div style="display: flex; gap: 8px;">
+            <div style="flex: 1; height: 45px; border: 1px solid #d1d5db; border-radius: 8px; background: #f9fafb; display: flex; align-items: center; padding: 0 14px;">
+              <span style="font-size: 13px; color: #9ca3af;">Nome do token (ex: ChatGPT)</span>
+            </div>
+            <div style="height: 45px; padding: 0 20px; background: #7c3aed; border-radius: 8px; display: flex; align-items: center; color: white; font-size: 13px; font-weight: 500; white-space: nowrap;">Criar token</div>
+          </div>
+        </div>
+
+        <!-- Created token alert -->
+        <div style="border: 1px solid #86efac; background: #f0fdf4; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span style="color: #16a34a; font-size: 16px;">✓</span>
+            <span style="font-size: 13px; font-weight: 600; color: #166534;">Token criado com sucesso!</span>
+          </div>
+          <div style="font-size: 11px; color: #4b5563;">Copie o token abaixo. Ele não será exibido novamente.</div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <div style="flex: 1; background: #e5e7eb; border-radius: 6px; padding: 8px 10px; font-family: monospace; font-size: 11px; color: #374151; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">mcp_live_a3f8c9d1e4b7...</div>
+            <div style="width: 40px; height: 36px; border: 1px solid #d1d5db; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #6b7280; cursor: pointer;">📋</div>
+          </div>
+        </div>
+
+        <!-- Token list -->
+        <div style="display: flex; flex-direction: column; gap: 10px; flex: 1;">
+          <div style="font-size: 15px; font-weight: 700; color: #1f2937;">Tokens ativos</div>
+
+          <!-- Token item 1 -->
+          <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px;">
+            <div>
+              <div style="font-size: 14px; font-weight: 500; color: #1f2937;">ChatGPT</div>
+              <div style="font-size: 11px; color: #9ca3af;">Criado em 05/04/2026 · Último uso: 2h atrás</div>
+            </div>
+            <div style="padding: 6px 14px; border: 1px solid #fca5a5; color: #ef4444; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px;">🗑 Revogar</div>
+          </div>
+
+          <!-- Token item 2 -->
+          <div style="display: flex; align-items: center; justify-content: space-between; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px;">
+            <div>
+              <div style="font-size: 14px; font-weight: 500; color: #1f2937;">Claude Desktop</div>
+              <div style="font-size: 11px; color: #9ca3af;">Criado em 03/04/2026 · Nunca usado</div>
+            </div>
+            <div style="padding: 6px 14px; border: 1px solid #fca5a5; color: #ef4444; border-radius: 6px; font-size: 12px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 4px;">🗑 Revogar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

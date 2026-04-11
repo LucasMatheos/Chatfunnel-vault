@@ -1,0 +1,128 @@
+<h2>ConfigureMcp — Layout do Modal</h2>
+<p class="subtitle">Como organizar: instrução de uso, criação de token, lista de tokens e status do MCP?</p>
+
+<div class="cards">
+  <!-- Layout A: Single scroll -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #f8f8fa; border-radius: 16px; padding: 24px 20px; font-family: system-ui, sans-serif;">
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 16px; max-width: 380px; margin: 0 auto; overflow: hidden;">
+          <!-- Header -->
+          <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 600; font-size: 14px; color: #7c3aed;">Chatfunnel MCP</span>
+            <span style="font-size: 12px; color: #22c55e;">● Online</span>
+          </div>
+          <!-- Sections stacked -->
+          <div style="padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: #f3f0ff; border-radius: 8px; padding: 10px 12px;">
+              <div style="font-size: 10px; font-weight: 600; color: #7c3aed; margin-bottom: 4px;">COMO USAR</div>
+              <div style="font-size: 10px; color: #666; line-height: 1.4;">1. Crie um token abaixo<br>2. Cole no ChatGPT/Claude...</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; font-weight: 600; color: #333; margin-bottom: 6px;">CRIAR TOKEN</div>
+              <div style="display: flex; gap: 4px;">
+                <div style="flex: 1; height: 28px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+                <div style="height: 28px; width: 60px; background: #7c3aed; border-radius: 6px;"></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 10px; font-weight: 600; color: #333; margin-bottom: 6px;">TOKENS ATIVOS</div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="height: 36px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+                <div style="height: 36px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Single Scroll</h3>
+      <p>Tudo em uma coluna só: status no header, instrução, criar token, lista. Scroll vertical se precisar. Simples e direto.</p>
+    </div>
+  </div>
+
+  <!-- Layout B: Tabs -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #f8f8fa; border-radius: 16px; padding: 24px 20px; font-family: system-ui, sans-serif;">
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 16px; max-width: 380px; margin: 0 auto; overflow: hidden;">
+          <!-- Header -->
+          <div style="padding: 16px 20px; border-bottom: 1px solid #e5e7eb;">
+            <span style="font-weight: 600; font-size: 14px; color: #7c3aed;">Chatfunnel MCP</span>
+          </div>
+          <!-- Tabs -->
+          <div style="display: flex; border-bottom: 1px solid #e5e7eb;">
+            <div style="flex: 1; padding: 10px; text-align: center; font-size: 11px; font-weight: 600; color: #7c3aed; border-bottom: 2px solid #7c3aed;">Tokens</div>
+            <div style="flex: 1; padding: 10px; text-align: center; font-size: 11px; color: #999;">Como usar</div>
+            <div style="flex: 1; padding: 10px; text-align: center; font-size: 11px; color: #999;">Status</div>
+          </div>
+          <!-- Tab content -->
+          <div style="padding: 16px 20px; display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <div style="font-size: 10px; font-weight: 600; color: #333; margin-bottom: 6px;">CRIAR TOKEN</div>
+              <div style="display: flex; gap: 4px;">
+                <div style="flex: 1; height: 28px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+                <div style="height: 28px; width: 60px; background: #7c3aed; border-radius: 6px;"></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size: 10px; font-weight: 600; color: #333; margin-bottom: 6px;">TOKENS ATIVOS</div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="height: 36px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+                <div style="height: 36px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+                <div style="height: 36px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Tabs</h3>
+      <p>3 abas: Tokens (criar + listar), Como usar (instrução), Status (health + sessões). Cada aba focada. Bom se o conteúdo crescer.</p>
+    </div>
+  </div>
+
+  <!-- Layout C: Split -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background: #f8f8fa; border-radius: 16px; padding: 24px 20px; font-family: system-ui, sans-serif;">
+        <div style="background: white; border: 1px solid #e5e7eb; border-radius: 16px; max-width: 380px; margin: 0 auto; overflow: hidden; display: flex; min-height: 200px;">
+          <!-- Left panel -->
+          <div style="width: 40%; background: #f9f7ff; padding: 16px; border-right: 1px solid #e5e7eb; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 10px; font-weight: 600; color: #7c3aed;">COMO CONECTAR</div>
+            <div style="font-size: 9px; color: #666; line-height: 1.5;">1. Crie um token<br>2. Abra o ChatGPT<br>3. Settings → MCP<br>4. Cole o token</div>
+            <div style="margin-top: auto; padding: 8px; background: white; border-radius: 6px; border: 1px solid #e5e7eb;">
+              <div style="font-size: 9px; color: #999;">Status</div>
+              <div style="font-size: 10px; color: #22c55e; font-weight: 600;">● Online</div>
+              <div style="font-size: 9px; color: #666;">0 sessões</div>
+            </div>
+          </div>
+          <!-- Right panel -->
+          <div style="flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="font-size: 12px; font-weight: 600; color: #7c3aed;">Chatfunnel MCP</div>
+            <div>
+              <div style="font-size: 10px; font-weight: 600; color: #333; margin-bottom: 4px;">CRIAR TOKEN</div>
+              <div style="display: flex; gap: 4px;">
+                <div style="flex: 1; height: 26px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+                <div style="height: 26px; width: 50px; background: #7c3aed; border-radius: 6px;"></div>
+              </div>
+            </div>
+            <div style="flex: 1;">
+              <div style="font-size: 10px; font-weight: 600; color: #333; margin-bottom: 4px;">TOKENS</div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="height: 32px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+                <div style="height: 32px; border: 1px solid #e5e7eb; border-radius: 6px; background: #fafafa;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Split Panel</h3>
+      <p>Painel esquerdo (instrução + status) fixo, painel direito (tokens). Parecido com o ConfigureOpenai. Mais imersivo, contexto sempre visível.</p>
+    </div>
+  </div>
+</div>

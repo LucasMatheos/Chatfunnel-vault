@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InputDateTime — Side by Side Layout</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Figtree', system-ui, sans-serif;
+    background: #f4f4f5;
+    color: #18181b;
+    padding: 40px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; color: #18181b; }
+  .subtitle { color: #71717a; font-size: 14px; margin-bottom: 40px; }
+
+  .options { display: flex; flex-direction: column; gap: 40px; max-width: 560px; width: 100%; }
+  .option-card {
+    background: #fff;
+    border: 1px solid #e4e4e7;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .option-card:hover { border-color: #a1a1aa; box-shadow: 0 4px 16px rgba(55,30,145,0.06); }
+  .option-card.selected { border-color: #8b5cf6; box-shadow: 0 0 0 2px rgba(139,92,246,0.2); }
+  .option-label {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 1px; color: #8b5cf6;
+    margin-bottom: 12px;
+  }
+  .option-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .option-desc { font-size: 12px; color: #71717a; margin-bottom: 16px; }
+
+  /* === TRIGGER (shared) === */
+  .trigger {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; margin-bottom: 8px;
+    border: 1px solid #e4e4e7; border-radius: 8px;
+    font-size: 13px; color: #18181b; background: #fafafa;
+  }
+  .trigger svg { width: 18px; height: 18px; color: #71717a; }
+
+  /* === POPOVER (shared base) === */
+  .popover {
+    border: 1px solid #e4e4e7; border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 4px 20px rgba(55,30,145,0.06);
+    overflow: hidden;
+  }
+
+  /* === CALENDAR (shared) === */
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 12px 6px; font-size: 12px; font-weight: 600; color: #18181b;
+  }
+  .arrows { display: flex; gap: 2px; }
+  .arrow {
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #71717a; background: transparent;
+    border: none; cursor: pointer;
+  }
+  .arrow:hover { background: #f4f4f5; }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 1px; padding: 0 8px 8px;
+    font-size: 11px; text-align: center;
+  }
+  .day-name { color: #a1a1aa; font-size: 10px; padding: 3px 0; font-weight: 500; }
+  .day { padding: 5px 0; border-radius: 6px; cursor: pointer; color: #52525b; }
+  .day:hover { background: #f4f4f5; }
+  .day.today { background: #18181b; color: #fff; font-weight: 600; }
+  .day.dim { color: #d4d4d8; }
+
+  /* === OPTION A: scroll list right === */
+  .layout-a .popover-inner {
+    display: flex;
+  }
+  .layout-a .cal-side { flex: 1; min-width: 0; }
+  .layout-a .time-side {
+    width: 72px;
+    border-left: 1px solid #e4e4e7;
+    display: flex; flex-direction: column;
+  }
+  .layout-a .time-label {
+    font-size: 10px; font-weight: 600; color: #71717a;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 10px 0 6px; text-align: center;
+    border-bottom: 1px solid #f4f4f5;
+  }
+  .layout-a .time-scroll {
+    flex: 1; overflow-y: auto; max-height: 220px;
+    scrollbar-width: thin; scrollbar-color: #d4d4d8 transparent;
+  }
+  .layout-a .time-scroll::-webkit-scrollbar { width: 3px; }
+  .layout-a .time-scroll::-webkit-scrollbar-track { background: transparent; }
+  .layout-a .time-scroll::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
+  .layout-a .time-item {
+    padding: 5px 0; text-align: center;
+    font-size: 12px; color: #52525b; cursor: pointer;
+    border-radius: 0;
+    transition: all 0.1s;
+  }
+  .layout-a .time-item:hover { background: #f4f4f5; }
+  .layout-a .time-item.active { background: #18181b; color: #fff; font-weight: 600; }
+
+  /* === OPTION B: H + M columns right === */
+  .layout-b .popover-inner {
+    display: flex;
+  }
+  .layout-b .cal-side { flex: 1; min-width: 0; }
+  .layout-b .time-side {
+    width: 100px;
+    border-left: 1px solid #e4e4e7;
+    display: flex; flex-direction: column;
+  }
+  .layout-b .time-header {
+    display: flex; font-size: 10px; font-weight: 600; color: #71717a;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid #f4f4f5;
+  }
+  .layout-b .time-header span {
+    flex: 1; text-align: center; padding: 10px 0 6px;
+  }
+  .layout-b .time-columns {
+    display: flex; flex: 1; max-height: 220px;
+  }
+  .layout-b .time-col {
+    flex: 1; overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: #d4d4d8 transparent;
+  }
+  .layout-b .time-col::-webkit-scrollbar { width: 3px; }
+  .layout-b .time-col::-webkit-scrollbar-track { background: transparent; }
+  .layout-b .time-col::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
+  .layout-b .time-col:first-child { border-right: 1px solid #f4f4f5; }
+  .layout-b .time-item {
+    padding: 5px 0; text-align: center;
+    font-size: 12px; color: #52525b; cursor: pointer;
+    transition: all 0.1s;
+  }
+  .layout-b .time-item:hover { background: #f4f4f5; }
+  .layout-b .time-item.active { background: #18181b; color: #fff; font-weight: 600; }
+
+  /* === OPTION C: H + M columns + separator colon === */
+  .layout-c .popover-inner {
+    display: flex;
+  }
+  .layout-c .cal-side { flex: 1; min-width: 0; }
+  .layout-c .time-side {
+    width: 110px;
+    border-left: 1px solid #e4e4e7;
+    display: flex; flex-direction: column;
+  }
+  .layout-c .time-header {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    font-size: 10px; font-weight: 600; color: #71717a;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid #f4f4f5;
+    align-items: end;
+  }
+  .layout-c .time-header span { text-align: center; padding: 10px 0 6px; }
+  .layout-c .time-header .sep { color: #d4d4d8; padding: 10px 2px 6px; }
+  .layout-c .time-body {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    flex: 1; max-height: 220px;
+  }
+  .layout-c .time-col {
+    overflow-y: auto;
+    scrollbar-width: thin; scrollbar-color: #d4d4d8 transparent;
+  }
+  .layout-c .time-col::-webkit-scrollbar { width: 3px; }
+  .layout-c .time-col::-webkit-scrollbar-track { background: transparent; }
+  .layout-c .time-col::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 4px; }
+  .layout-c .time-divider {
+    width: 1px; background: #f4f4f5;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .layout-c .time-divider .colon {
+    font-size: 14px; font-weight: 700; color: #a1a1aa;
+    background: #fff; padding: 4px 3px; position: relative;
+  }
+  .layout-c .time-item {
+    padding: 5px 0; text-align: center;
+    font-size: 12px; color: #52525b; cursor: pointer;
+    transition: all 0.1s;
+  }
+  .layout-c .time-item:hover { background: #f4f4f5; }
+  .layout-c .time-item.active { background: #18181b; color: #fff; font-weight: 600; }
+</style>
+</head>
+<body>
+  <h1>Layout: Hora ao lado do calendario</h1>
+  <p class="subtitle">Qual variacao do painel de horario prefere?</p>
+
+  <div class="options">
+
+    <!-- A: Single time list -->
+    <div class="option-card layout-a" onclick="select(this)">
+      <span class="option-label">A</span>
+      <div class="option-title">Lista unica de horarios</div>
+      <div class="option-desc">Uma coluna com slots HH:MM pre-definidos (30min). Simples, rapido para escolher.</div>
+      <div class="trigger">
+        <span>09/04/2026 14:30</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="popover">
+        <div class="popover-inner">
+          <div class="cal-side">
+            <div class="cal-header">
+              <span>Abr 2026</span>
+              <div class="arrows"><button class="arrow">&lt;</button><button class="arrow">&gt;</button></div>
+            </div>
+            <div class="cal-grid">
+              <span class="day-name">Se</span><span class="day-name">Te</span><span class="day-name">Qu</span><span class="day-name">Qu</span><span class="day-name">Se</span><span class="day-name">Sa</span><span class="day-name">Do</span>
+              <span class="day dim">30</span><span class="day dim">31</span><span class="day">1</span><span class="day">2</span><span class="day">3</span><span class="day">4</span><span class="day">5</span>
+              <span class="day">6</span><span class="day">7</span><span class="day">8</span><span class="day today">9</span><span class="day">10</span><span class="day">11</span><span class="day">12</span>
+              <span class="day">13</span><span class="day">14</span><span class="day">15</span><span class="day">16</span><span class="day">17</span><span class="day">18</span><span class="day">19</span>
+              <span class="day">20</span><span class="day">21</span><span class="day">22</span><span class="day">23</span><span class="day">24</span><span class="day">25</span><span class="day">26</span>
+            </div>
+          </div>
+          <div class="time-side">
+            <div class="time-label">Horario</div>
+            <div class="time-scroll">
+              <div class="time-item">08:00</div>
+              <div class="time-item">08:30</div>
+              <div class="time-item">09:00</div>
+              <div class="time-item">09:30</div>
+              <div class="time-item">10:00</div>
+              <div class="time-item">10:30</div>
+              <div class="time-item">11:00</div>
+              <div class="time-item">11:30</div>
+              <div class="time-item">12:00</div>
+              <div class="time-item">12:30</div>
+              <div class="time-item">13:00</div>
+              <div class="time-item">13:30</div>
+              <div class="time-item active">14:00</div>
+              <div class="time-item">14:30</div>
+              <div class="time-item">15:00</div>
+              <div class="time-item">15:30</div>
+              <div class="time-item">16:00</div>
+              <div class="time-item">16:30</div>
+              <div class="time-item">17:00</div>
+              <div class="time-item">17:30</div>
+              <div class="time-item">18:00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- B: Two columns H | M -->
+    <div class="option-card layout-b" onclick="select(this)">
+      <span class="option-label">B</span>
+      <div class="option-title">Duas colunas: Hora | Minuto</div>
+      <div class="option-desc">Colunas independentes para hora (0-23) e minuto (0-55). Mais preciso, flexivel.</div>
+      <div class="trigger">
+        <span>09/04/2026 14:30</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="popover">
+        <div class="popover-inner">
+          <div class="cal-side">
+            <div class="cal-header">
+              <span>Abr 2026</span>
+              <div class="arrows"><button class="arrow">&lt;</button><button class="arrow">&gt;</button></div>
+            </div>
+            <div class="cal-grid">
+              <span class="day-name">Se</span><span class="day-name">Te</span><span class="day-name">Qu</span><span class="day-name">Qu</span><span class="day-name">Se</span><span class="day-name">Sa</span><span class="day-name">Do</span>
+              <span class="day dim">30</span><span class="day dim">31</span><span class="day">1</span><span class="day">2</span><span class="day">3</span><span class="day">4</span><span class="day">5</span>
+              <span class="day">6</span><span class="day">7</span><span class="day">8</span><span class="day today">9</span><span class="day">10</span><span class="day">11</span><span class="day">12</span>
+              <span class="day">13</span><span class="day">14</span><span class="day">15</span><span class="day">16</span><span class="day">17</span><span class="day">18</span><span class="day">19</span>
+              <span class="day">20</span><span class="day">21</span><span class="day">22</span><span class="day">23</span><span class="day">24</span><span class="day">25</span><span class="day">26</span>
+            </div>
+          </div>
+          <div class="time-side">
+            <div class="time-header">
+              <span>Hora</span>
+              <span>Min</span>
+            </div>
+            <div class="time-columns">
+              <div class="time-col">
+                <div class="time-item">08</div>
+                <div class="time-item">09</div>
+                <div class="time-item">10</div>
+                <div class="time-item">11</div>
+                <div class="time-item">12</div>
+                <div class="time-item">13</div>
+                <div class="time-item active">14</div>
+                <div class="time-item">15</div>
+                <div class="time-item">16</div>
+                <div class="time-item">17</div>
+                <div class="time-item">18</div>
+                <div class="time-item">19</div>
+                <div class="time-item">20</div>
+                <div class="time-item">21</div>
+                <div class="time-item">22</div>
+                <div class="time-item">23</div>
+              </div>
+              <div class="time-col">
+                <div class="time-item">00</div>
+                <div class="time-item">05</div>
+                <div class="time-item">10</div>
+                <div class="time-item">15</div>
+                <div class="time-item">20</div>
+                <div class="time-item">25</div>
+                <div class="time-item active">30</div>
+                <div class="time-item">35</div>
+                <div class="time-item">40</div>
+                <div class="time-item">45</div>
+                <div class="time-item">50</div>
+                <div class="time-item">55</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- C: Two columns with visual separator -->
+    <div class="option-card layout-c" onclick="select(this)">
+      <span class="option-label">C</span>
+      <div class="option-title">Duas colunas com separador visual</div>
+      <div class="option-desc">Mesmo que B, mas com separador ":" visual entre hora e minuto. Mais legivel.</div>
+      <div class="trigger">
+        <span>09/04/2026 14:30</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="popover">
+        <div class="popover-inner">
+          <div class="cal-side">
+            <div class="cal-header">
+              <span>Abr 2026</span>
+              <div class="arrows"><button class="arrow">&lt;</button><button class="arrow">&gt;</button></div>
+            </div>
+            <div class="cal-grid">
+              <span class="day-name">Se</span><span class="day-name">Te</span><span class="day-name">Qu</span><span class="day-name">Qu</span><span class="day-name">Se</span><span class="day-name">Sa</span><span class="day-name">Do</span>
+              <span class="day dim">30</span><span class="day dim">31</span><span class="day">1</span><span class="day">2</span><span class="day">3</span><span class="day">4</span><span class="day">5</span>
+              <span class="day">6</span><span class="day">7</span><span class="day">8</span><span class="day today">9</span><span class="day">10</span><span class="day">11</span><span class="day">12</span>
+              <span class="day">13</span><span class="day">14</span><span class="day">15</span><span class="day">16</span><span class="day">17</span><span class="day">18</span><span class="day">19</span>
+              <span class="day">20</span><span class="day">21</span><span class="day">22</span><span class="day">23</span><span class="day">24</span><span class="day">25</span><span class="day">26</span>
+            </div>
+          </div>
+          <div class="time-side">
+            <div class="time-header">
+              <span>Hora</span>
+              <span class="sep">:</span>
+              <span>Min</span>
+            </div>
+            <div class="time-body">
+              <div class="time-col">
+                <div class="time-item">08</div>
+                <div class="time-item">09</div>
+                <div class="time-item">10</div>
+                <div class="time-item">11</div>
+                <div class="time-item">12</div>
+                <div class="time-item">13</div>
+                <div class="time-item active">14</div>
+                <div class="time-item">15</div>
+                <div class="time-item">16</div>
+                <div class="time-item">17</div>
+                <div class="time-item">18</div>
+                <div class="time-item">19</div>
+                <div class="time-item">20</div>
+              </div>
+              <div class="time-divider">
+                <span class="colon">:</span>
+              </div>
+              <div class="time-col">
+                <div class="time-item">00</div>
+                <div class="time-item">05</div>
+                <div class="time-item">10</div>
+                <div class="time-item">15</div>
+                <div class="time-item">20</div>
+                <div class="time-item">25</div>
+                <div class="time-item active">30</div>
+                <div class="time-item">35</div>
+                <div class="time-item">40</div>
+                <div class="time-item">45</div>
+                <div class="time-item">50</div>
+                <div class="time-item">55</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function select(el) {
+      document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+  </script>
+</body>
+</html>

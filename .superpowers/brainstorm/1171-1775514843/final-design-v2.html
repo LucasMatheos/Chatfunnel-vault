@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OrganizationForm — Design v2 (XL)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Figtree', system-ui, sans-serif;
+    background: #f3f4f6;
+    min-height: 100vh;
+    padding: 32px;
+  }
+
+  .page-title {
+    text-align: center;
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: #6b7280;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #9ca3af;
+  }
+
+  .research-summary {
+    max-width: 800px;
+    margin: 0 auto 32px;
+    padding: 16px 20px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #1e40af;
+    line-height: 1.7;
+  }
+  .research-summary strong { font-weight: 700; }
+
+  /* Layout */
+  .steps-row {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 32px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .step-wrapper { display: flex; flex-direction: column; gap: 12px; }
+
+  .step-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: #6b7280; text-align: center;
+  }
+
+  /* Dialog */
+  .dialog {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(55, 30, 145, 0.10);
+    overflow: hidden;
+  }
+
+  /* Stepper */
+  .stepper-bar {
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px 32px 16px; gap: 4px; border-bottom: 1px solid #f3f4f6;
+  }
+  .step-item { display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 16px; cursor: pointer; transition: background 0.15s; }
+  .step-item:hover { background: rgba(60, 161, 161, 0.06); }
+  .step-circle {
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; flex-shrink: 0;
+  }
+  .step-circle.pending { border: 2px solid #9ca3af; background: white; color: #9ca3af; }
+  .step-circle.active { background: #f3f4f6; border: 2px solid #3ca1a1; color: #3ca1a1; box-shadow: 0 0 0 3px rgba(60, 161, 161, 0.15); }
+  .step-circle.completed { background: #3ca1a1; color: white; }
+  .step-name { font-size: 13px; font-weight: 600; }
+  .step-name.pending { color: #9ca3af; }
+  .step-name.active { color: #3ca1a1; }
+  .step-name.completed { color: #111827; }
+  .step-sep { width: 12px; height: 2px; border-radius: 1px; flex-shrink: 0; }
+  .step-sep.pending { background: #d1d5db; }
+  .step-sep.completed { background: #3ca1a1; }
+
+  /* Dialog parts */
+  .dialog-header { padding: 24px 32px 0; }
+  .dialog-title { font-size: 20px; font-weight: 700; color: #111827; }
+  .dialog-subtitle { font-size: 14px; color: #9ca3af; margin-top: 4px; }
+  .dialog-body { padding: 24px 32px 28px; display: flex; flex-direction: column; gap: 20px; }
+  .dialog-actions { display: flex; align-items: center; gap: 16px; padding: 0 32px 28px; }
+
+  /* Buttons */
+  .btn {
+    height: 45px; min-width: 120px; border-radius: 8px;
+    font-size: 14px; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: all 0.15s; border: none; padding: 0 24px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-outline { background: white; border: 1px solid #d1d5db; color: #374151; }
+  .btn-primary { background: #3ca1a1; color: white; }
+  .btn-ghost { background: transparent; border: none; color: #6b7280; min-width: auto; }
+
+  /* Avatar */
+  .avatar-row { display: flex; align-items: center; gap: 16px; }
+  .avatar-upload {
+    width: 72px; height: 72px; border-radius: 12px;
+    border: 2px dashed #9ca3af; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+    flex-shrink: 0; background: #f9fafb;
+  }
+  .avatar-upload svg { color: #9ca3af; width: 24px; height: 24px; }
+  .avatar-upload span { font-size: 9px; font-weight: 600; text-transform: uppercase; color: #9ca3af; }
+  .avatar-info { display: flex; flex-direction: column; }
+  .avatar-label { font-size: 14px; font-weight: 600; color: #374151; }
+  .avatar-hint { font-size: 12px; color: #9ca3af; }
+
+  /* Fields */
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-label { font-size: 14px; font-weight: 600; color: #374151; }
+  .field-label .req { color: #ef4444; }
+  .field-label .opt { font-weight: 400; font-size: 12px; color: #9ca3af; }
+  .field-input {
+    height: 45px; border: 1px solid #9ca3af; border-radius: 8px;
+    padding: 0 16px; font-size: 14px; color: #9ca3af;
+    background: #f9fafb; display: flex; align-items: center;
+    box-shadow: 0 1px 2px rgba(55, 30, 145, 0.05);
+  }
+
+  /* ===================== */
+  /* STEP 2: PLAN CARDS    */
+  /* ===================== */
+
+  .header-row {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .period-toggle {
+    display: flex; gap: 4px; background: #f3f4f6; border-radius: 8px; padding: 3px;
+  }
+  .period-btn {
+    padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+    color: #6b7280; cursor: pointer; border: none; background: transparent;
+    transition: all 0.15s;
+  }
+  .period-btn.active { background: white; color: #111827; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  .plans-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  .plan-card {
+    border: 2px solid #e5e7eb; border-radius: 16px; padding: 20px;
+    display: flex; flex-direction: column; transition: all 0.15s; cursor: pointer;
+    position: relative;
+  }
+  .plan-card:hover { border-color: #3ca1a1; }
+  .plan-card.recommended { border-color: #3ca1a1; box-shadow: 0 0 0 1px #3ca1a1; }
+  .plan-card.recommended::before {
+    content: 'Recomendado';
+    position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+    background: #3ca1a1; color: white; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding: 2px 10px; border-radius: 4px;
+  }
+
+  .plan-name { font-size: 16px; font-weight: 700; color: #111827; }
+  .plan-price-block { margin-top: 8px; }
+  .plan-price-amount { font-size: 28px; font-weight: 700; color: #111827; line-height: 1; }
+  .plan-price-period { font-size: 12px; color: #9ca3af; margin-top: 2px; }
+  .plan-desc { font-size: 12px; color: #6b7280; margin-top: 10px; padding-top: 10px; border-top: 1px solid #f3f4f6; }
+
+  .plan-features { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .plan-includes {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.05em; color: #3ca1a1; margin-bottom: 2px;
+  }
+  .feature-item {
+    font-size: 12px; color: #374151; display: flex; align-items: flex-start; gap: 6px; line-height: 1.4;
+  }
+  .feature-check { color: #3ca1a1; flex-shrink: 0; margin-top: 1px; font-weight: 700; font-size: 13px; }
+
+  .plan-cta {
+    margin-top: 16px; width: 100%; height: 40px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; font-family: inherit;
+    cursor: pointer; border: none; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cta-outline { background: white; border: 1.5px solid #d1d5db; color: #374151; }
+  .cta-outline:hover { border-color: #3ca1a1; color: #3ca1a1; }
+  .cta-primary { background: #3ca1a1; color: white; }
+  .cta-primary:hover { background: #2d8a8a; }
+
+  /* Compare link */
+  .compare-link {
+    font-size: 13px; color: #3ca1a1; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 4px;
+    padding: 8px 0; border: none; background: none;
+  }
+  .compare-link:hover { text-decoration: underline; }
+
+  /* Comparison table (collapsed by default) */
+  .compare-table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+    margin-top: 8px;
+  }
+  .compare-table th {
+    text-align: left; padding: 8px 10px; font-weight: 700;
+    color: #111827; border-bottom: 2px solid #e5e7eb; font-size: 12px;
+  }
+  .compare-table td {
+    padding: 7px 10px; border-bottom: 1px solid #f3f4f6; color: #374151;
+  }
+  .compare-table .cat-row td {
+    font-weight: 700; color: #6b7280; font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+    padding-top: 14px; background: #fafafa;
+  }
+  .compare-table .check { color: #3ca1a1; font-weight: 700; }
+  .compare-table .dash { color: #d1d5db; }
+
+  /* Leads selector */
+  .leads-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; background: #f9fafb; border-radius: 10px;
+    border: 1px solid #e5e7eb;
+  }
+  .leads-label { font-size: 13px; font-weight: 600; color: #374151; }
+  .leads-track { flex: 1; height: 4px; background: #e5e7eb; border-radius: 2px; position: relative; }
+  .leads-fill { height: 100%; background: #3ca1a1; border-radius: 2px; width: 33%; }
+  .leads-thumb {
+    width: 14px; height: 14px; border-radius: 50%; background: #3ca1a1;
+    border: 2px solid white; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    position: absolute; top: -5px; left: 30%;
+  }
+  .leads-value { font-size: 13px; font-weight: 700; color: #3ca1a1; }
+
+  /* Annotation */
+  .annotation {
+    margin-top: 12px; padding: 12px 16px;
+    background: #fefce8; border: 1px solid #fde68a; border-radius: 8px;
+    font-size: 12px; color: #92400e; line-height: 1.6;
+  }
+  .annotation strong { font-weight: 700; }
+  .annotation code { background: #fef3c7; padding: 1px 4px; border-radius: 3px; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<p class="page-title">Design v2 — OrganizationForm (Dialog XL)</p>
+<p class="page-subtitle">StepperControl horizontal · 2 steps · Plan cards estilo SaaS</p>
+
+<div class="research-summary">
+  <strong>Pesquisa:</strong> Stripe, Slack, Notion, Linear, Vercel, GitHub usam <strong>cards lado-a-lado</strong> com
+  feature bullets. Pattern mais aceito: <strong>"Tudo do X, mais..."</strong> (Notion-style) evita checkmarks redundantes.
+  Plano recomendado com <strong>borda destacada + badge</strong>. Toggle mensal/anual no topo.
+  <strong>"Comparar todos os recursos"</strong> como secao expansivel para quem quer detalhe.
+</div>
+
+<div class="steps-row">
+
+  <!-- ===== STEP 1: DADOS ===== -->
+  <div class="step-wrapper">
+    <div class="step-label">Step 1 — Dados</div>
+    <div class="dialog">
+      <div class="stepper-bar">
+        <div class="step-item">
+          <div class="step-circle active">1</div>
+          <span class="step-name active">Dados</span>
+        </div>
+        <div class="step-sep pending"></div>
+        <div class="step-item">
+          <div class="step-circle pending">2</div>
+          <span class="step-name pending">Plano</span>
+        </div>
+      </div>
+      <div class="dialog-header">
+        <div class="dialog-title">Nova organizacao</div>
+        <div class="dialog-subtitle">Preencha os dados basicos da sua organizacao.</div>
+      </div>
+      <div class="dialog-body">
+        <div class="avatar-row">
+          <div class="avatar-upload">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z"/></svg>
+            <span>Logo</span>
+          </div>
+          <div class="avatar-info">
+            <span class="avatar-label">Logo da organizacao</span>
+            <span class="avatar-hint">PNG ou JPG, max 2MB</span>
+          </div>
+        </div>
+        <div class="field">
+          <label class="field-label">Nome <span class="req">*</span></label>
+          <div class="field-input">Ex: Minha Empresa</div>
+        </div>
+        <div class="field">
+          <label class="field-label">Descricao <span class="opt">(opcional)</span></label>
+          <div class="field-input" style="height:72px;align-items:flex-start;padding-top:12px;">Ex: Transforma conversas em vendas</div>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button class="btn btn-outline">Cancelar</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-primary">Proximo →</button>
+      </div>
+    </div>
+    <div class="annotation">
+      <strong>Dialog XL</strong> — mesma estrutura do <code>EditOrgDialog</code>. Step 1 usa so metade do espaco, conteudo centralizado.
+    </div>
+  </div>
+
+  <!-- ===== STEP 2: PLANO ===== -->
+  <div class="step-wrapper">
+    <div class="step-label">Step 2 — Plano (padrao SaaS: cards + "tudo do X, mais...")</div>
+    <div class="dialog">
+      <div class="stepper-bar">
+        <div class="step-item">
+          <div class="step-circle completed">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span class="step-name completed">Dados</span>
+        </div>
+        <div class="step-sep completed"></div>
+        <div class="step-item">
+          <div class="step-circle active">2</div>
+          <span class="step-name active">Plano</span>
+        </div>
+      </div>
+
+      <div class="dialog-header">
+        <div class="header-row">
+          <div>
+            <div class="dialog-title">Escolha seu plano</div>
+            <div class="dialog-subtitle">Selecione o plano ideal para sua organizacao.</div>
+          </div>
+          <div class="period-toggle">
+            <button class="period-btn active">Mensal</button>
+            <button class="period-btn">Trimestral</button>
+            <button class="period-btn">Anual</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialog-body">
+        <!-- Plan cards -->
+        <div class="plans-row">
+          <!-- Starter -->
+          <div class="plan-card">
+            <div class="plan-name">Starter</div>
+            <div class="plan-price-block">
+              <div class="plan-price-amount">R$ 97</div>
+              <div class="plan-price-period">/mes por usuario</div>
+            </div>
+            <div class="plan-desc">Para comecar com automacoes basicas</div>
+            <div class="plan-features">
+              <div class="feature-item"><span class="feature-check">✓</span> 1.000 contatos</div>
+              <div class="feature-item"><span class="feature-check">✓</span> 2 usuarios</div>
+              <div class="feature-item"><span class="feature-check">✓</span> 1 canal (WhatsApp)</div>
+              <div class="feature-item"><span class="feature-check">✓</span> Funis basicos</div>
+              <div class="feature-item"><span class="feature-check">✓</span> CRM simplificado</div>
+            </div>
+            <button class="plan-cta cta-outline">Selecionar</button>
+          </div>
+
+          <!-- Lite -->
+          <div class="plan-card">
+            <div class="plan-name">Lite</div>
+            <div class="plan-price-block">
+              <div class="plan-price-amount">R$ 197</div>
+              <div class="plan-price-period">/mes por usuario</div>
+            </div>
+            <div class="plan-desc">Automacoes avancadas + CRM completo</div>
+            <div class="plan-features">
+              <div class="plan-includes">Tudo do Starter, mais:</div>
+              <div class="feature-item"><span class="feature-check">✓</span> 5.000 contatos</div>
+              <div class="feature-item"><span class="feature-check">✓</span> 5 usuarios</div>
+              <div class="feature-item"><span class="feature-check">✓</span> 3 canais</div>
+              <div class="feature-item"><span class="feature-check">✓</span> Automacoes avancadas</div>
+              <div class="feature-item"><span class="feature-check">✓</span> Kanban CRM</div>
+            </div>
+            <button class="plan-cta cta-outline">Selecionar</button>
+          </div>
+
+          <!-- Advanced (recommended) -->
+          <div class="plan-card recommended">
+            <div class="plan-name">Advanced</div>
+            <div class="plan-price-block">
+              <div class="plan-price-amount">R$ 397</div>
+              <div class="plan-price-period">/mes por usuario</div>
+            </div>
+            <div class="plan-desc">IA + multi-canal + equipe completa</div>
+            <div class="plan-features">
+              <div class="plan-includes">Tudo do Lite, mais:</div>
+              <div class="feature-item"><span class="feature-check">✓</span> 20.000 contatos</div>
+              <div class="feature-item"><span class="feature-check">✓</span> 15 usuarios</div>
+              <div class="feature-item"><span class="feature-check">✓</span> Canais ilimitados</div>
+              <div class="feature-item"><span class="feature-check">✓</span> Agentes IA</div>
+              <div class="feature-item"><span class="feature-check">✓</span> Broadcast</div>
+            </div>
+            <button class="plan-cta cta-primary">Selecionar</button>
+          </div>
+
+          <!-- Enterprise -->
+          <div class="plan-card">
+            <div class="plan-name">Enterprise</div>
+            <div class="plan-price-block">
+              <div class="plan-price-amount" style="font-size:20px;">Sob consulta</div>
+              <div class="plan-price-period">personalizado</div>
+            </div>
+            <div class="plan-desc">Volume alto, suporte dedicado</div>
+            <div class="plan-features">
+              <div class="plan-includes">Tudo do Advanced, mais:</div>
+              <div class="feature-item"><span class="feature-check">✓</span> Contatos ilimitados</div>
+              <div class="feature-item"><span class="feature-check">✓</span> Usuarios ilimitados</div>
+              <div class="feature-item"><span class="feature-check">✓</span> SLA dedicado</div>
+              <div class="feature-item"><span class="feature-check">✓</span> Onboarding guiado</div>
+              <div class="feature-item"><span class="feature-check">✓</span> API personalizada</div>
+            </div>
+            <button class="plan-cta cta-outline">Falar com vendas</button>
+          </div>
+        </div>
+
+        <!-- Leads slider -->
+        <div class="leads-bar">
+          <span class="leads-label">Contatos:</span>
+          <div class="leads-track">
+            <div class="leads-fill"></div>
+            <div class="leads-thumb"></div>
+          </div>
+          <span class="leads-value">1.000</span>
+        </div>
+
+        <!-- Compare all features -->
+        <button class="compare-link">▸ Comparar todos os recursos</button>
+
+        <!-- Comparison table preview (would be collapsible) -->
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width:35%">Recurso</th>
+              <th>Starter</th>
+              <th>Lite</th>
+              <th>Advanced</th>
+              <th>Enterprise</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="cat-row"><td colspan="5">Canais</td></tr>
+            <tr><td>WhatsApp</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Instagram</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Messenger</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr class="cat-row"><td colspan="5">Automacao</td></tr>
+            <tr><td>Funis basicos</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Funis avancados</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Agentes IA</td><td class="dash">—</td><td class="dash">—</td><td class="check">✓</td><td class="check">✓</td></tr>
+            <tr class="cat-row"><td colspan="5">Equipe</td></tr>
+            <tr><td>Usuarios</td><td>2</td><td>5</td><td>15</td><td>Ilimitado</td></tr>
+            <tr><td>Livechat</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td><td class="check">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="btn btn-ghost">← Voltar</button>
+        <div style="flex:1"></div>
+        <button class="btn btn-outline">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

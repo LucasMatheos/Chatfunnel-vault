@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Card Styles — Comparacao</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Figtree', system-ui, sans-serif; background: #f3f4f6; padding: 32px; }
+
+  .page-title { text-align: center; font-size: 14px; color: #6b7280; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+  .page-subtitle { text-align: center; font-size: 13px; color: #9ca3af; margin-bottom: 32px; }
+
+  /* Section */
+  .style-section {
+    max-width: 1200px; margin: 0 auto 48px; padding: 28px;
+    background: white; border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(55, 30, 145, 0.08);
+    border: 3px solid transparent; cursor: pointer; transition: all 0.2s;
+  }
+  .style-section:hover { border-color: #3ca1a1; }
+  .style-section.selected { border-color: #3ca1a1; box-shadow: 0 0 0 3px rgba(60,161,161,0.2), 0 8px 32px rgba(55,30,145,0.12); }
+
+  .style-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .style-letter {
+    width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px; color: white; flex-shrink: 0;
+  }
+  .style-name { font-size: 18px; font-weight: 700; color: #111827; }
+  .style-ref { font-size: 12px; color: #9ca3af; font-weight: 500; }
+  .style-tag { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 10px; border-radius: 6px; margin-left: auto; }
+
+  .style-desc { font-size: 13px; color: #6b7280; margin-bottom: 20px; line-height: 1.6; padding-left: 44px; }
+
+  /* Shared card styles */
+  .plans-container { display: flex; gap: 14px; }
+  .plan-card-base {
+    flex: 1; border: 2px solid #e5e7eb; border-radius: 16px; padding: 22px;
+    display: flex; flex-direction: column; transition: all 0.15s;
+  }
+  .plan-card-base:hover { border-color: #c7d2d2; }
+
+  /* =========================== */
+  /* STYLE A: LINEAR             */
+  /* =========================== */
+  .linear .plan-card-base { border-radius: 12px; padding: 20px; }
+  .linear .pname { font-size: 15px; font-weight: 700; color: #111827; }
+  .linear .pprice { font-size: 32px; font-weight: 800; color: #111827; margin-top: 6px; line-height: 1; }
+  .linear .pprice-sub { font-size: 12px; color: #9ca3af; margin-top: 4px; font-weight: 500; }
+  .linear .pdivider { height: 1px; background: #f3f4f6; margin: 14px 0; }
+  .linear .pfeatures { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .linear .pf { font-size: 13px; color: #374151; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .linear .pf-check { color: #3ca1a1; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+  .linear .pf-inherit { font-size: 12px; color: #3ca1a1; font-weight: 600; margin-bottom: 2px; }
+  .linear .pcta {
+    margin-top: 16px; width: 100%; height: 38px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; border: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .linear .cta-default { background: #f3f4f6; color: #374151; }
+  .linear .cta-default:hover { background: #e5e7eb; }
+
+  /* Compare table linear style */
+  .linear-table { margin-top: 20px; border-top: 2px solid #e5e7eb; padding-top: 16px; }
+  .linear-table-title { font-size: 13px; font-weight: 700; color: #6b7280; margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  .ltable { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .ltable th { text-align: left; padding: 8px 10px; font-weight: 700; color: #111827; border-bottom: 2px solid #e5e7eb; font-size: 12px; }
+  .ltable td { padding: 7px 10px; border-bottom: 1px solid #f3f4f6; color: #374151; }
+  .ltable .cat td { font-weight: 700; color: #6b7280; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; padding-top: 14px; background: #fafafa; }
+  .ltable .ck { color: #3ca1a1; font-weight: 700; }
+  .ltable .no { color: #d1d5db; }
+
+  /* =========================== */
+  /* STYLE B: NOTION             */
+  /* =========================== */
+  .notion .plans-container { align-items: stretch; }
+  .notion .plan-card-base { border-radius: 16px; padding: 24px; }
+  .notion .plan-recommended {
+    border-color: #3ca1a1; background: linear-gradient(180deg, rgba(60,161,161,0.03) 0%, white 100%);
+    box-shadow: 0 4px 20px rgba(60,161,161,0.12); position: relative; transform: scale(1.03);
+  }
+  .notion .plan-recommended .rec-badge {
+    position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+    background: #3ca1a1; color: white; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 14px; border-radius: 6px;
+  }
+  .notion .pname { font-size: 14px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.03em; }
+  .notion .pprice { font-size: 36px; font-weight: 800; color: #111827; margin-top: 4px; line-height: 1; }
+  .notion .pprice span { font-size: 14px; font-weight: 500; color: #9ca3af; }
+  .notion .pdesc { font-size: 13px; color: #6b7280; margin-top: 8px; line-height: 1.5; }
+  .notion .pdivider { height: 1px; background: #e5e7eb; margin: 16px 0; }
+  .notion .pinherit { font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 10px; }
+  .notion .pfeatures { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .notion .pf { font-size: 13px; color: #374151; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .notion .pf-check { color: #3ca1a1; flex-shrink: 0; font-size: 14px; }
+  .notion .pcta {
+    margin-top: 18px; width: 100%; height: 42px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; border: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .notion .cta-primary { background: #3ca1a1; color: white; }
+  .notion .cta-outline { background: white; border: 1.5px solid #d1d5db; color: #374151; }
+
+  /* =========================== */
+  /* STYLE C: VERCEL             */
+  /* =========================== */
+  .vercel .plan-card-base { border-radius: 12px; padding: 24px; border-width: 1px; }
+  .vercel .plan-popular { border-color: #111827; border-width: 2px; position: relative; }
+  .vercel .pop-badge {
+    position: absolute; top: -10px; left: 20px;
+    background: #111827; color: white; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 4px;
+  }
+  .vercel .pname { font-size: 16px; font-weight: 700; color: #111827; }
+  .vercel .pdesc-top { font-size: 12px; color: #6b7280; margin-top: 4px; line-height: 1.4; min-height: 34px; }
+  .vercel .pprice { font-size: 28px; font-weight: 800; color: #111827; margin-top: 12px; line-height: 1; }
+  .vercel .pprice-sub { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+  .vercel .pdivider { height: 1px; background: #e5e7eb; margin: 16px 0; }
+  .vercel .pinherit { font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 10px; }
+  .vercel .pfeatures { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .vercel .pf { font-size: 13px; color: #374151; display: flex; align-items: center; gap: 10px; line-height: 1.4; }
+  .vercel .pf-icon {
+    width: 28px; height: 28px; border-radius: 6px; background: #f3f4f6;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    font-size: 14px;
+  }
+  .vercel .pcta {
+    margin-top: 18px; width: 100%; height: 42px; border-radius: 8px;
+    font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; border: none;
+  }
+  .vercel .cta-dark { background: #111827; color: white; }
+  .vercel .cta-outline { background: white; border: 1.5px solid #e5e7eb; color: #374151; }
+
+  /* =========================== */
+  /* STYLE D: FIGMA              */
+  /* =========================== */
+  .figma .plan-card-base { border-radius: 16px; padding: 24px; }
+  .figma .pname { font-size: 16px; font-weight: 700; color: #111827; }
+  .figma .pprice { font-size: 28px; font-weight: 800; color: #111827; margin-top: 6px; line-height: 1; }
+  .figma .pprice span { font-size: 13px; font-weight: 500; color: #9ca3af; }
+  .figma .pdivider { height: 1px; background: #e5e7eb; margin: 16px 0; }
+  .figma .pwhy-title { font-size: 12px; font-weight: 700; color: #3ca1a1; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .figma .pwhy-text { font-size: 13px; color: #6b7280; line-height: 1.6; margin-bottom: 14px; }
+  .figma .pkey-title { font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+  .figma .pfeatures { display: flex; flex-direction: column; gap: 7px; flex: 1; }
+  .figma .pf { font-size: 13px; color: #374151; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .figma .pf-check { color: #3ca1a1; flex-shrink: 0; font-weight: 700; }
+  .figma .pcta {
+    margin-top: 18px; width: 100%; height: 42px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; border: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .figma .cta-brand { background: #3ca1a1; color: white; }
+  .figma .cta-outline { background: white; border: 1.5px solid #d1d5db; color: #374151; }
+
+  /* Selection indicator */
+  .selected-label {
+    display: none; text-align: center; margin-top: 12px;
+    font-size: 12px; font-weight: 700; color: #3ca1a1;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .style-section.selected .selected-label { display: block; }
+</style>
+</head>
+<body>
+
+<p class="page-title">Qual estilo de plan cards voce prefere?</p>
+<p class="page-subtitle">Clique no mockup que mais te agradou. Todos mostram os mesmos 4 planos do ChatFunnel.</p>
+
+<!-- ========================================= -->
+<!-- STYLE A: LINEAR                           -->
+<!-- ========================================= -->
+<div class="style-section linear" onclick="selectStyle(this, 'linear')">
+  <div class="style-header">
+    <div class="style-letter" style="background:#5c6bc0;">A</div>
+    <div>
+      <div class="style-name">Linear Style</div>
+      <div class="style-ref">Ref: linear.app/pricing</div>
+    </div>
+    <span class="style-tag" style="background:#ede9fe;color:#5b21b6;">Minimalista</span>
+  </div>
+  <div class="style-desc">
+    Cards limpos sem destaque visual forte. Todos os cards sao iguais, sem badge "recomendado". Features incrementais com "All X features +". Tabela de comparacao detalhada com categorias abaixo dos cards.
+  </div>
+
+  <div class="plans-container">
+    <div class="plan-card-base">
+      <div class="pname">Starter</div>
+      <div class="pprice">R$ 97</div>
+      <div class="pprice-sub">/mes por usuario</div>
+      <div class="pdivider"></div>
+      <div class="pfeatures">
+        <div class="pf"><span class="pf-check">✓</span> 1.000 contatos</div>
+        <div class="pf"><span class="pf-check">✓</span> 2 usuarios</div>
+        <div class="pf"><span class="pf-check">✓</span> 1 canal (WhatsApp)</div>
+        <div class="pf"><span class="pf-check">✓</span> Funis basicos</div>
+        <div class="pf"><span class="pf-check">✓</span> CRM simplificado</div>
+      </div>
+      <button class="pcta cta-default">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base">
+      <div class="pname">Lite</div>
+      <div class="pprice">R$ 197</div>
+      <div class="pprice-sub">/mes por usuario</div>
+      <div class="pdivider"></div>
+      <div class="pfeatures">
+        <div class="pf-inherit">All Starter features +</div>
+        <div class="pf"><span class="pf-check">✓</span> 5.000 contatos</div>
+        <div class="pf"><span class="pf-check">✓</span> 5 usuarios</div>
+        <div class="pf"><span class="pf-check">✓</span> 3 canais</div>
+        <div class="pf"><span class="pf-check">✓</span> Automacoes avancadas</div>
+        <div class="pf"><span class="pf-check">✓</span> Kanban CRM</div>
+      </div>
+      <button class="pcta cta-default">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base">
+      <div class="pname">Advanced</div>
+      <div class="pprice">R$ 397</div>
+      <div class="pprice-sub">/mes por usuario</div>
+      <div class="pdivider"></div>
+      <div class="pfeatures">
+        <div class="pf-inherit">All Lite features +</div>
+        <div class="pf"><span class="pf-check">✓</span> 20.000 contatos</div>
+        <div class="pf"><span class="pf-check">✓</span> 15 usuarios</div>
+        <div class="pf"><span class="pf-check">✓</span> Canais ilimitados</div>
+        <div class="pf"><span class="pf-check">✓</span> Agentes IA</div>
+        <div class="pf"><span class="pf-check">✓</span> Broadcast</div>
+      </div>
+      <button class="pcta cta-default">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base">
+      <div class="pname">Enterprise</div>
+      <div class="pprice" style="font-size:22px;">Sob consulta</div>
+      <div class="pprice-sub">personalizado</div>
+      <div class="pdivider"></div>
+      <div class="pfeatures">
+        <div class="pf-inherit">All Advanced features +</div>
+        <div class="pf"><span class="pf-check">✓</span> Contatos ilimitados</div>
+        <div class="pf"><span class="pf-check">✓</span> Usuarios ilimitados</div>
+        <div class="pf"><span class="pf-check">✓</span> SLA dedicado</div>
+        <div class="pf"><span class="pf-check">✓</span> Onboarding guiado</div>
+        <div class="pf"><span class="pf-check">✓</span> API personalizada</div>
+      </div>
+      <button class="pcta cta-default">Falar com vendas</button>
+    </div>
+  </div>
+
+  <!-- Linear-style comparison table -->
+  <div class="linear-table">
+    <div class="linear-table-title">▸ Comparar todos os recursos</div>
+    <table class="ltable">
+      <thead><tr><th style="width:30%">Recurso</th><th>Starter</th><th>Lite</th><th>Advanced</th><th>Enterprise</th></tr></thead>
+      <tbody>
+        <tr class="cat"><td colspan="5">Canais</td></tr>
+        <tr><td>WhatsApp</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+        <tr><td>Instagram</td><td class="no">—</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+        <tr><td>Messenger</td><td class="no">—</td><td class="no">—</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+        <tr class="cat"><td colspan="5">Automacao</td></tr>
+        <tr><td>Funis basicos</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+        <tr><td>Agentes IA</td><td class="no">—</td><td class="no">—</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+        <tr class="cat"><td colspan="5">Equipe</td></tr>
+        <tr><td>Usuarios</td><td>2</td><td>5</td><td>15</td><td>Ilimitado</td></tr>
+        <tr><td>Livechat</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td><td class="ck">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="selected-label">✓ Selecionado</div>
+</div>
+
+<!-- ========================================= -->
+<!-- STYLE B: NOTION                           -->
+<!-- ========================================= -->
+<div class="style-section notion" onclick="selectStyle(this, 'notion')">
+  <div class="style-header">
+    <div class="style-letter" style="background:#111827;">B</div>
+    <div>
+      <div class="style-name">Notion Style</div>
+      <div class="style-ref">Ref: notion.com/pricing</div>
+    </div>
+    <span class="style-tag" style="background:#d1fae5;color:#065f46;">Destaque visual</span>
+  </div>
+  <div class="style-desc">
+    Plano recomendado com card visualmente maior (scale + borda + badge + gradient). Descricao contextual por plano ("Para quem..."). "Everything in X, and:" para features incrementais. Sem tabela — foco na narrativa.
+  </div>
+
+  <div class="plans-container" style="align-items: center;">
+    <div class="plan-card-base">
+      <div class="pname">STARTER</div>
+      <div class="pprice">R$ 97 <span>/mes</span></div>
+      <div class="pdesc">Para quem esta comecando com automacao de conversas.</div>
+      <div class="pdivider"></div>
+      <div class="pinherit">Inclui:</div>
+      <div class="pfeatures">
+        <div class="pf"><span class="pf-check">✓</span> 1.000 contatos</div>
+        <div class="pf"><span class="pf-check">✓</span> 2 usuarios</div>
+        <div class="pf"><span class="pf-check">✓</span> 1 canal WhatsApp</div>
+        <div class="pf"><span class="pf-check">✓</span> Funis basicos</div>
+        <div class="pf"><span class="pf-check">✓</span> CRM simplificado</div>
+      </div>
+      <button class="pcta cta-outline">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base">
+      <div class="pname">LITE</div>
+      <div class="pprice">R$ 197 <span>/mes</span></div>
+      <div class="pdesc">Para pequenas equipes que precisam de CRM completo.</div>
+      <div class="pdivider"></div>
+      <div class="pinherit">Everything in Starter, and:</div>
+      <div class="pfeatures">
+        <div class="pf"><span class="pf-check">✓</span> 5.000 contatos</div>
+        <div class="pf"><span class="pf-check">✓</span> 5 usuarios</div>
+        <div class="pf"><span class="pf-check">✓</span> 3 canais</div>
+        <div class="pf"><span class="pf-check">✓</span> Automacoes avancadas</div>
+        <div class="pf"><span class="pf-check">✓</span> Kanban CRM completo</div>
+      </div>
+      <button class="pcta cta-outline">Selecionar</button>
+    </div>
+
+    <!-- RECOMMENDED - visually larger -->
+    <div class="plan-card-base plan-recommended">
+      <div class="rec-badge">Recomendado</div>
+      <div class="pname">ADVANCED</div>
+      <div class="pprice">R$ 397 <span>/mes</span></div>
+      <div class="pdesc">Para equipes que querem IA, multi-canal e escala.</div>
+      <div class="pdivider"></div>
+      <div class="pinherit">Everything in Lite, and:</div>
+      <div class="pfeatures">
+        <div class="pf"><span class="pf-check">✓</span> 20.000 contatos</div>
+        <div class="pf"><span class="pf-check">✓</span> 15 usuarios</div>
+        <div class="pf"><span class="pf-check">✓</span> Canais ilimitados</div>
+        <div class="pf"><span class="pf-check">✓</span> Agentes IA</div>
+        <div class="pf"><span class="pf-check">✓</span> Broadcast em massa</div>
+        <div class="pf"><span class="pf-check">✓</span> Relatorios avancados</div>
+      </div>
+      <button class="pcta cta-primary">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base">
+      <div class="pname">ENTERPRISE</div>
+      <div class="pprice" style="font-size:22px;">Sob consulta</div>
+      <div class="pdesc">Para operacoes de alto volume com suporte dedicado.</div>
+      <div class="pdivider"></div>
+      <div class="pinherit">Everything in Advanced, and:</div>
+      <div class="pfeatures">
+        <div class="pf"><span class="pf-check">✓</span> Contatos ilimitados</div>
+        <div class="pf"><span class="pf-check">✓</span> Usuarios ilimitados</div>
+        <div class="pf"><span class="pf-check">✓</span> SLA dedicado</div>
+        <div class="pf"><span class="pf-check">✓</span> Onboarding guiado</div>
+        <div class="pf"><span class="pf-check">✓</span> API personalizada</div>
+      </div>
+      <button class="pcta cta-outline">Falar com vendas</button>
+    </div>
+  </div>
+  <div class="selected-label">✓ Selecionado</div>
+</div>
+
+<!-- ========================================= -->
+<!-- STYLE C: VERCEL                           -->
+<!-- ========================================= -->
+<div class="style-section vercel" onclick="selectStyle(this, 'vercel')">
+  <div class="style-header">
+    <div class="style-letter" style="background:#111827;">C</div>
+    <div>
+      <div class="style-name">Vercel Style</div>
+      <div class="style-ref">Ref: vercel.com/pricing</div>
+    </div>
+    <span class="style-tag" style="background:#f3f4f6;color:#374151;">Icones + Escuro</span>
+  </div>
+  <div class="style-desc">
+    Descricao curta do plano no topo. Features com icones individuais em vez de checkmarks. Plano popular com borda escura (nao brand). CTA escuro no plano destacado. "All X features, plus:" para incrementais.
+  </div>
+
+  <div class="plans-container">
+    <div class="plan-card-base">
+      <div class="pname">Starter</div>
+      <div class="pdesc-top">Para comecar com automacoes basicas de WhatsApp.</div>
+      <div class="pprice">R$ 97</div>
+      <div class="pprice-sub">/mes por usuario</div>
+      <div class="pdivider"></div>
+      <div class="pfeatures">
+        <div class="pf"><div class="pf-icon">💬</div> 1.000 contatos</div>
+        <div class="pf"><div class="pf-icon">👤</div> 2 usuarios</div>
+        <div class="pf"><div class="pf-icon">📱</div> 1 canal WhatsApp</div>
+        <div class="pf"><div class="pf-icon">⚡</div> Funis basicos</div>
+        <div class="pf"><div class="pf-icon">📋</div> CRM simplificado</div>
+      </div>
+      <button class="pcta cta-outline">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base">
+      <div class="pname">Lite</div>
+      <div class="pdesc-top">Automacoes avancadas e CRM completo para equipes.</div>
+      <div class="pprice">R$ 197</div>
+      <div class="pprice-sub">/mes por usuario</div>
+      <div class="pdivider"></div>
+      <div class="pinherit">All Starter features, plus:</div>
+      <div class="pfeatures">
+        <div class="pf"><div class="pf-icon">📊</div> 5.000 contatos</div>
+        <div class="pf"><div class="pf-icon">👥</div> 5 usuarios</div>
+        <div class="pf"><div class="pf-icon">🔗</div> 3 canais</div>
+        <div class="pf"><div class="pf-icon">🤖</div> Automacoes avancadas</div>
+        <div class="pf"><div class="pf-icon">📈</div> Kanban CRM</div>
+      </div>
+      <button class="pcta cta-outline">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base plan-popular">
+      <div class="pop-badge">Popular</div>
+      <div class="pname">Advanced</div>
+      <div class="pdesc-top">IA, multi-canal e equipe completa para escalar.</div>
+      <div class="pprice">R$ 397</div>
+      <div class="pprice-sub">/mes por usuario</div>
+      <div class="pdivider"></div>
+      <div class="pinherit">All Lite features, plus:</div>
+      <div class="pfeatures">
+        <div class="pf"><div class="pf-icon">🧠</div> Agentes IA</div>
+        <div class="pf"><div class="pf-icon">📡</div> Canais ilimitados</div>
+        <div class="pf"><div class="pf-icon">👥</div> 15 usuarios</div>
+        <div class="pf"><div class="pf-icon">📢</div> Broadcast em massa</div>
+        <div class="pf"><div class="pf-icon">📊</div> Relatorios avancados</div>
+      </div>
+      <button class="pcta cta-dark">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base">
+      <div class="pname">Enterprise</div>
+      <div class="pdesc-top">Volume alto com suporte dedicado e SLA.</div>
+      <div class="pprice" style="font-size:20px;">Sob consulta</div>
+      <div class="pprice-sub">personalizado</div>
+      <div class="pdivider"></div>
+      <div class="pinherit">All Advanced features, plus:</div>
+      <div class="pfeatures">
+        <div class="pf"><div class="pf-icon">♾️</div> Contatos ilimitados</div>
+        <div class="pf"><div class="pf-icon">🛡️</div> SLA dedicado</div>
+        <div class="pf"><div class="pf-icon">🎓</div> Onboarding guiado</div>
+        <div class="pf"><div class="pf-icon">🔌</div> API personalizada</div>
+        <div class="pf"><div class="pf-icon">👑</div> Suporte prioritario</div>
+      </div>
+      <button class="pcta cta-outline">Falar com vendas</button>
+    </div>
+  </div>
+  <div class="selected-label">✓ Selecionado</div>
+</div>
+
+<!-- ========================================= -->
+<!-- STYLE D: FIGMA                            -->
+<!-- ========================================= -->
+<div class="style-section figma" onclick="selectStyle(this, 'figma')">
+  <div class="style-header">
+    <div class="style-letter" style="background:#a855f7;">D</div>
+    <div>
+      <div class="style-name">Figma Style</div>
+      <div class="style-ref">Ref: figma.com/pricing</div>
+    </div>
+    <span class="style-tag" style="background:#fae8ff;color:#7e22ce;">Cenario de uso</span>
+  </div>
+  <div class="style-desc">
+    Em vez de listar so features, explica o cenario de uso: "Escolha X se voce..." + "Key features:". Ajuda o usuario a se identificar com o plano certo pelo contexto, nao pela lista de recursos.
+  </div>
+
+  <div class="plans-container">
+    <div class="plan-card-base">
+      <div class="pname">Starter</div>
+      <div class="pprice">R$ 97 <span>/mes</span></div>
+      <div class="pdivider"></div>
+      <div class="pwhy-title">Escolha Starter se voce:</div>
+      <div class="pwhy-text">Esta comecando com automacao, tem equipe pequena e precisa apenas do WhatsApp como canal.</div>
+      <div class="pkey-title">Recursos principais:</div>
+      <div class="pfeatures">
+        <div class="pf"><span class="pf-check">✓</span> 1.000 contatos</div>
+        <div class="pf"><span class="pf-check">✓</span> 2 usuarios</div>
+        <div class="pf"><span class="pf-check">✓</span> 1 canal WhatsApp</div>
+        <div class="pf"><span class="pf-check">✓</span> Funis basicos</div>
+      </div>
+      <button class="pcta cta-outline">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base">
+      <div class="pname">Lite</div>
+      <div class="pprice">R$ 197 <span>/mes</span></div>
+      <div class="pdivider"></div>
+      <div class="pwhy-title">Escolha Lite se voce:</div>
+      <div class="pwhy-text">Tem uma equipe pequena que precisa de CRM completo e automacoes mais avancadas com multiplos canais.</div>
+      <div class="pkey-title">Recursos principais:</div>
+      <div class="pfeatures">
+        <div class="pf"><span class="pf-check">✓</span> 5.000 contatos</div>
+        <div class="pf"><span class="pf-check">✓</span> 5 usuarios, 3 canais</div>
+        <div class="pf"><span class="pf-check">✓</span> Automacoes avancadas</div>
+        <div class="pf"><span class="pf-check">✓</span> Kanban CRM</div>
+      </div>
+      <button class="pcta cta-outline">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base" style="border-color:#3ca1a1;">
+      <div class="pname">Advanced</div>
+      <div class="pprice">R$ 397 <span>/mes</span></div>
+      <div class="pdivider"></div>
+      <div class="pwhy-title">Escolha Advanced se voce:</div>
+      <div class="pwhy-text">Quer escalar com IA, atender em todos os canais e ter uma equipe completa com relatorios avancados.</div>
+      <div class="pkey-title">Recursos principais:</div>
+      <div class="pfeatures">
+        <div class="pf"><span class="pf-check">✓</span> 20.000 contatos</div>
+        <div class="pf"><span class="pf-check">✓</span> 15 usuarios, canais ilimitados</div>
+        <div class="pf"><span class="pf-check">✓</span> Agentes IA + Broadcast</div>
+        <div class="pf"><span class="pf-check">✓</span> Relatorios avancados</div>
+      </div>
+      <button class="pcta cta-brand">Selecionar</button>
+    </div>
+
+    <div class="plan-card-base">
+      <div class="pname">Enterprise</div>
+      <div class="pprice" style="font-size:20px;">Sob consulta</div>
+      <div class="pdivider"></div>
+      <div class="pwhy-title">Escolha Enterprise se voce:</div>
+      <div class="pwhy-text">Processa alto volume de conversas, precisa de SLA, onboarding dedicado e integracao personalizada.</div>
+      <div class="pkey-title">Recursos principais:</div>
+      <div class="pfeatures">
+        <div class="pf"><span class="pf-check">✓</span> Tudo ilimitado</div>
+        <div class="pf"><span class="pf-check">✓</span> SLA dedicado</div>
+        <div class="pf"><span class="pf-check">✓</span> Onboarding guiado</div>
+        <div class="pf"><span class="pf-check">✓</span> API personalizada</div>
+      </div>
+      <button class="pcta cta-outline">Falar com vendas</button>
+    </div>
+  </div>
+  <div class="selected-label">✓ Selecionado</div>
+</div>
+
+<script>
+  function selectStyle(el, choice) {
+    document.querySelectorAll('.style-section').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    if (window.__recordEvent) window.__recordEvent({ type: 'click', choice, text: `Style ${choice}`, timestamp: Math.floor(Date.now()/1000) });
+  }
+</script>
+
+</body>
+</html>

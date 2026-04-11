@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stepper Options — OrganizationForm</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Figtree', system-ui, sans-serif;
+    background: #f3f4f6;
+    min-height: 100vh;
+    padding: 32px;
+  }
+
+  .page-title {
+    text-align: center;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #6b7280;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 13px;
+    color: #9ca3af;
+  }
+
+  /* Grid of 3 options */
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  .option-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .option-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: white;
+    flex-shrink: 0;
+  }
+
+  .option-letter.a { background: #3ca1a1; }
+  .option-letter.b { background: #7c3aed; }
+  .option-letter.c { background: #f59e0b; }
+
+  .option-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .option-tag {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+
+  .tag-existing { background: #d1fae5; color: #065f46; }
+  .tag-custom { background: #e0e7ff; color: #3730a3; }
+
+  .option-desc {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin-bottom: 4px;
+  }
+
+  /* Dialog mock */
+  .dialog-mock {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 4px 24px rgba(55, 30, 145, 0.10);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 3px solid transparent;
+  }
+
+  .dialog-mock:hover {
+    border-color: #3ca1a1;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(55, 30, 145, 0.15);
+  }
+
+  .dialog-mock.selected {
+    border-color: #3ca1a1;
+    box-shadow: 0 0 0 3px rgba(60, 161, 161, 0.2), 0 8px 32px rgba(55, 30, 145, 0.15);
+  }
+
+  .dialog-mock.selected::after {
+    content: '✓ Selecionado';
+    display: block;
+    text-align: center;
+    padding: 8px;
+    background: #3ca1a1;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* --- OPTION A: StepperControl (ui/stepper) --- */
+  .stepper-horizontal {
+    display: flex;
+    align-items: center;
+    padding: 20px 24px;
+    gap: 6px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .step-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .step-item:hover {
+    background: rgba(60, 161, 161, 0.06);
+  }
+
+  .step-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .step-circle.pending {
+    border: 2px solid #9ca3af;
+    background: white;
+    color: #9ca3af;
+  }
+
+  .step-circle.active {
+    background: #f3f4f6;
+    border: 2px solid #3ca1a1;
+    color: #3ca1a1;
+    box-shadow: 0 0 0 3px rgba(60, 161, 161, 0.15);
+  }
+
+  .step-circle.completed {
+    background: #3ca1a1;
+    color: white;
+  }
+
+  .step-text {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .step-text.pending { color: #9ca3af; }
+  .step-text.active { color: #3ca1a1; }
+  .step-text.completed { color: #111827; }
+
+  .step-separator {
+    width: 12px;
+    height: 2px;
+    border-radius: 1px;
+    flex-shrink: 0;
+  }
+
+  .step-separator.pending { background: #d1d5db; }
+  .step-separator.completed { background: #3ca1a1; }
+
+  /* --- OPTION B: TabUnderline --- */
+  .tab-underline-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid #d1d5db;
+    padding: 0 24px;
+  }
+
+  .tab-underline-item {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tab-underline-item.active {
+    color: #3ca1a1;
+    border-bottom-color: #3ca1a1;
+  }
+
+  .tab-underline-item.completed {
+    color: #374151;
+  }
+
+  .tab-underline-item.pending {
+    color: #9ca3af;
+  }
+
+  .tab-underline-item:hover {
+    color: #111827;
+  }
+
+  .tab-check {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #3ca1a1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tab-check svg {
+    width: 10px;
+    height: 10px;
+    color: white;
+  }
+
+  .tab-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .tab-num.active {
+    background: rgba(60, 161, 161, 0.15);
+    color: #3ca1a1;
+  }
+
+  .tab-num.pending {
+    background: #f3f4f6;
+    color: #9ca3af;
+  }
+
+  /* --- OPTION C: Minimal dots + label --- */
+  .dots-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 20px 24px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+
+  .dot.pending { background: #e5e7eb; }
+  .dot.active {
+    background: #3ca1a1;
+    width: 24px;
+    border-radius: 4px;
+  }
+  .dot.completed { background: #3ca1a1; }
+
+  .dots-label {
+    font-size: 12px;
+    color: #9ca3af;
+    margin-left: auto;
+    font-weight: 500;
+  }
+
+  .dots-step-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #3ca1a1;
+  }
+
+  /* --- Shared dialog body --- */
+  .dialog-header-section {
+    padding: 24px 24px 0;
+  }
+
+  .dialog-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  .dialog-subtitle {
+    font-size: 13px;
+    color: #9ca3af;
+    margin-top: 2px;
+  }
+
+  .dialog-body-mock {
+    padding: 20px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .mock-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .mock-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .mock-label .req { color: #ef4444; }
+
+  .mock-input {
+    height: 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #f9fafb;
+    padding: 0 12px;
+    font-size: 13px;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+  }
+
+  .mock-textarea {
+    height: 60px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #f9fafb;
+    padding: 10px 12px;
+    font-size: 13px;
+    color: #9ca3af;
+  }
+
+  .mock-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mock-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 10px;
+    border: 2px dashed #d1d5db;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #f9fafb;
+  }
+
+  .mock-avatar-icon {
+    width: 18px;
+    height: 18px;
+    color: #9ca3af;
+  }
+
+  .mock-avatar span {
+    font-size: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #9ca3af;
+  }
+
+  .mock-avatar-info {
+    font-size: 12px;
+    color: #9ca3af;
+  }
+
+  .mock-avatar-info strong {
+    display: block;
+    font-size: 13px;
+    color: #374151;
+  }
+
+  .dialog-actions-mock {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 0 24px 20px;
+  }
+
+  .mock-btn {
+    height: 38px;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    cursor: default;
+  }
+
+  .mock-btn-outline {
+    background: white;
+    border: 1px solid #d1d5db;
+    color: #374151;
+  }
+
+  .mock-btn-primary {
+    background: #3ca1a1;
+    color: white;
+  }
+
+  /* Pros cons */
+  .pros-list {
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #6b7280;
+  }
+
+  .pros-list .pro::before { content: '✓ '; color: #10b981; font-weight: 700; }
+  .pros-list .con::before { content: '✗ '; color: #ef4444; font-weight: 700; }
+
+  /* SVG check */
+  .check-svg {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+  }
+</style>
+</head>
+<body>
+
+<p class="page-title">Qual estilo de stepper para o dialog?</p>
+<p class="page-subtitle">Clique no mockup que preferir. Todos usam o mesmo form body (dados da org).</p>
+
+<div class="options-grid">
+
+  <!-- ======= OPTION A: StepperControl (ui/stepper) ======= -->
+  <div class="option-wrapper">
+    <div class="option-header">
+      <div class="option-letter a">A</div>
+      <div class="option-name">StepperControl</div>
+      <span class="option-tag tag-existing">ui/stepper</span>
+    </div>
+    <p class="option-desc">
+      Componente proprio do design system. Circulos numerados com separadores, titulos e estados (active/completed/pending/error).
+    </p>
+    <div class="pros-list">
+      <div class="pro">Ja existe, testado, acessivel (reka-ui)</div>
+      <div class="pro">Suporta click navigation, vertical/horizontal</div>
+      <div class="pro">Estados ricos (error, disabled, completed)</div>
+      <div class="con">Mais pesado visualmente no dialog</div>
+    </div>
+
+    <div class="dialog-mock" onclick="selectOption(this, 'a')">
+      <!-- Stepper -->
+      <div class="stepper-horizontal">
+        <div class="step-item">
+          <div class="step-circle completed">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <span class="step-text completed">Dados</span>
+        </div>
+        <div class="step-separator completed"></div>
+        <div class="step-item">
+          <div class="step-circle active">2</div>
+          <span class="step-text active">Plano</span>
+        </div>
+        <div class="step-separator pending"></div>
+        <div class="step-item">
+          <div class="step-circle pending">3</div>
+          <span class="step-text pending">Pagamento</span>
+        </div>
+      </div>
+
+      <div class="dialog-header-section">
+        <div class="dialog-title">Nova organizacao</div>
+        <div class="dialog-subtitle">Preencha os dados basicos da sua organizacao.</div>
+      </div>
+
+      <div class="dialog-body-mock">
+        <div class="mock-avatar-row">
+          <div class="mock-avatar">
+            <svg class="mock-avatar-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z" /></svg>
+            <span>Logo</span>
+          </div>
+          <div class="mock-avatar-info">
+            <strong>Logo da organizacao</strong>
+            PNG ou JPG, max 2MB
+          </div>
+        </div>
+        <div class="mock-field">
+          <div class="mock-label">Nome <span class="req">*</span></div>
+          <div class="mock-input">Ex: Minha Empresa</div>
+        </div>
+        <div class="mock-field">
+          <div class="mock-label">Descricao <span style="font-weight:400;color:#9ca3af;font-size:12px">(opcional)</span></div>
+          <div class="mock-textarea">Ex: Transforma conversas em vendas</div>
+        </div>
+      </div>
+
+      <div class="dialog-actions-mock">
+        <div class="mock-btn mock-btn-outline">Cancelar</div>
+        <div class="mock-btn mock-btn-primary">Proximo →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= OPTION B: TabUnderline ======= -->
+  <div class="option-wrapper">
+    <div class="option-header">
+      <div class="option-letter b">B</div>
+      <div class="option-name">TabUnderline</div>
+      <span class="option-tag tag-existing">shadcn-custom</span>
+    </div>
+    <p class="option-desc">
+      Usa o componente TabUnderline existente como stepper. Barra com underline na tab ativa, visual mais limpo e compacto.
+    </p>
+    <div class="pros-list">
+      <div class="pro">Ja existe, visual mais limpo</div>
+      <div class="pro">Familiar — mesmo padrao de navegacao do app</div>
+      <div class="pro">Compacto, nao compete com o conteudo</div>
+      <div class="con">Nao tem estado "completed" nativo (precisaria adaptar)</div>
+      <div class="con">Semantica e de tabs, nao de steps</div>
+    </div>
+
+    <div class="dialog-mock" onclick="selectOption(this, 'b')">
+      <!-- TabUnderline stepper -->
+      <div class="tab-underline-bar">
+        <div class="tab-underline-item completed">
+          <div class="tab-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          Dados
+        </div>
+        <div class="tab-underline-item active">
+          <div class="tab-num active">2</div>
+          Plano
+        </div>
+        <div class="tab-underline-item pending">
+          <div class="tab-num pending">3</div>
+          Pagamento
+        </div>
+      </div>
+
+      <div class="dialog-header-section">
+        <div class="dialog-title">Nova organizacao</div>
+        <div class="dialog-subtitle">Preencha os dados basicos da sua organizacao.</div>
+      </div>
+
+      <div class="dialog-body-mock">
+        <div class="mock-avatar-row">
+          <div class="mock-avatar">
+            <svg class="mock-avatar-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z" /></svg>
+            <span>Logo</span>
+          </div>
+          <div class="mock-avatar-info">
+            <strong>Logo da organizacao</strong>
+            PNG ou JPG, max 2MB
+          </div>
+        </div>
+        <div class="mock-field">
+          <div class="mock-label">Nome <span class="req">*</span></div>
+          <div class="mock-input">Ex: Minha Empresa</div>
+        </div>
+        <div class="mock-field">
+          <div class="mock-label">Descricao <span style="font-weight:400;color:#9ca3af;font-size:12px">(opcional)</span></div>
+          <div class="mock-textarea">Ex: Transforma conversas em vendas</div>
+        </div>
+      </div>
+
+      <div class="dialog-actions-mock">
+        <div class="mock-btn mock-btn-outline">Cancelar</div>
+        <div class="mock-btn mock-btn-primary">Proximo →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= OPTION C: Minimal dots ======= -->
+  <div class="option-wrapper">
+    <div class="option-header">
+      <div class="option-letter c">C</div>
+      <div class="option-name">Dots minimalista</div>
+      <span class="option-tag tag-custom">Novo</span>
+    </div>
+    <p class="option-desc">
+      Indicador minimo com dots + label do passo atual. Menos clutter visual, foco total no conteudo do form.
+    </p>
+    <div class="pros-list">
+      <div class="pro">Super limpo, nao distrai</div>
+      <div class="pro">Ocupa minimo espaco vertical</div>
+      <div class="con">Nao mostra nomes dos steps</div>
+      <div class="con">Nao e clicavel (linear only)</div>
+      <div class="con">Precisa criar do zero</div>
+    </div>
+
+    <div class="dialog-mock" onclick="selectOption(this, 'c')">
+      <!-- Dots stepper -->
+      <div class="dots-bar">
+        <div class="dot completed"></div>
+        <div class="dot active"></div>
+        <div class="dot pending"></div>
+        <span class="dots-step-name">Plano</span>
+        <span class="dots-label">2 de 3</span>
+      </div>
+
+      <div class="dialog-header-section">
+        <div class="dialog-title">Nova organizacao</div>
+        <div class="dialog-subtitle">Preencha os dados basicos da sua organizacao.</div>
+      </div>
+
+      <div class="dialog-body-mock">
+        <div class="mock-avatar-row">
+          <div class="mock-avatar">
+            <svg class="mock-avatar-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v13.5A1.5 1.5 0 003.75 21z" /></svg>
+            <span>Logo</span>
+          </div>
+          <div class="mock-avatar-info">
+            <strong>Logo da organizacao</strong>
+            PNG ou JPG, max 2MB
+          </div>
+        </div>
+        <div class="mock-field">
+          <div class="mock-label">Nome <span class="req">*</span></div>
+          <div class="mock-input">Ex: Minha Empresa</div>
+        </div>
+        <div class="mock-field">
+          <div class="mock-label">Descricao <span style="font-weight:400;color:#9ca3af;font-size:12px">(opcional)</span></div>
+          <div class="mock-textarea">Ex: Transforma conversas em vendas</div>
+        </div>
+      </div>
+
+      <div class="dialog-actions-mock">
+        <div class="mock-btn mock-btn-outline">Cancelar</div>
+        <div class="mock-btn mock-btn-primary">Proximo →</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let selected = null;
+  function selectOption(el, choice) {
+    document.querySelectorAll('.dialog-mock').forEach(d => d.classList.remove('selected'));
+    el.classList.add('selected');
+    selected = choice;
+
+    // Write event for the companion system
+    const event = { type: 'click', choice, text: `Option ${choice.toUpperCase()}`, timestamp: Math.floor(Date.now() / 1000) };
+    if (window.__recordEvent) window.__recordEvent(event);
+  }
+</script>
+
+</body>
+</html>

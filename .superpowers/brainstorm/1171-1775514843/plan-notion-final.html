@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plan Selection — Notion Style Final</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Figtree', system-ui, sans-serif; background: #f3f4f6; min-height: 100vh; padding: 32px; }
+
+  .page-title { text-align: center; font-size: 14px; color: #6b7280; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+  .page-subtitle { text-align: center; font-size: 13px; color: #9ca3af; margin-bottom: 32px; }
+
+  /* ============ OVERLAY SYSTEM ============ */
+  .overlay-backdrop {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 100; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px); animation: fadeIn 0.2s ease;
+  }
+  .overlay-backdrop.visible { display: flex; }
+
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .compare-modal {
+    background: white; border-radius: 24px; width: 90%; max-width: 900px; max-height: 85vh;
+    overflow: hidden; display: flex; flex-direction: column;
+    box-shadow: 0 24px 80px rgba(55, 30, 145, 0.2);
+    animation: slideUp 0.25s ease;
+  }
+
+  .compare-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 32px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0;
+  }
+  .compare-modal-title { font-size: 18px; font-weight: 700; color: #111827; }
+  .compare-modal-close {
+    width: 36px; height: 36px; border-radius: 10px; border: 1px solid #e5e7eb;
+    background: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #6b7280; transition: all 0.15s;
+  }
+  .compare-modal-close:hover { background: #f3f4f6; color: #111827; }
+
+  .compare-modal-body { overflow-y: auto; padding: 24px 32px 32px; }
+
+  /* Compare table */
+  .ctable { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .ctable th {
+    text-align: left; padding: 10px 14px; font-weight: 700; color: #111827;
+    border-bottom: 2px solid #e5e7eb; font-size: 13px; position: sticky; top: 0; background: white;
+  }
+  .ctable th:first-child { width: 30%; }
+  .ctable th:not(:first-child) { text-align: center; }
+  .ctable td { padding: 10px 14px; border-bottom: 1px solid #f3f4f6; color: #374151; }
+  .ctable td:not(:first-child) { text-align: center; }
+  .ctable .cat-row td {
+    font-weight: 700; color: #6b7280; font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.05em; padding-top: 20px; padding-bottom: 8px; background: #fafafa;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .ctable .ck { color: #3ca1a1; font-weight: 700; font-size: 15px; }
+  .ctable .no { color: #d1d5db; font-size: 14px; }
+  .ctable .highlight-col { background: rgba(60,161,161,0.03); }
+
+  /* ============ MAIN DIALOG ============ */
+  .dialog-xl {
+    background: white; border-radius: 24px; max-width: 1000px; margin: 0 auto;
+    box-shadow: 0 4px 24px rgba(55, 30, 145, 0.10); overflow: hidden;
+  }
+
+  /* Stepper */
+  .stepper-bar {
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px 32px 16px; gap: 4px; border-bottom: 1px solid #f3f4f6;
+  }
+  .step-item { display: flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 16px; cursor: pointer; transition: background 0.15s; }
+  .step-item:hover { background: rgba(60,161,161,0.06); }
+  .step-circle {
+    width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; flex-shrink: 0;
+  }
+  .step-circle.completed { background: #3ca1a1; color: white; }
+  .step-circle.active { background: #f3f4f6; border: 2px solid #3ca1a1; color: #3ca1a1; box-shadow: 0 0 0 3px rgba(60,161,161,0.15); }
+  .step-name { font-size: 13px; font-weight: 600; }
+  .step-name.completed { color: #111827; }
+  .step-name.active { color: #3ca1a1; }
+  .step-sep { width: 12px; height: 2px; border-radius: 1px; flex-shrink: 0; background: #3ca1a1; }
+
+  /* Header */
+  .dialog-header { padding: 24px 32px 0; display: flex; align-items: center; justify-content: space-between; }
+  .dialog-title { font-size: 20px; font-weight: 700; color: #111827; }
+  .dialog-subtitle { font-size: 14px; color: #9ca3af; margin-top: 4px; }
+
+  .period-toggle { display: flex; gap: 4px; background: #f3f4f6; border-radius: 8px; padding: 3px; }
+  .period-btn {
+    padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
+    color: #6b7280; cursor: pointer; border: none; background: transparent; transition: all 0.15s;
+    font-family: inherit;
+  }
+  .period-btn.active { background: white; color: #111827; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  /* Body */
+  .dialog-body { padding: 24px 32px 8px; }
+
+  /* Plan cards */
+  .plans-row { display: flex; gap: 14px; align-items: center; }
+
+  .plan-card {
+    flex: 1; border: 2px solid #e5e7eb; border-radius: 16px; padding: 22px;
+    display: flex; flex-direction: column; transition: all 0.15s; cursor: pointer;
+    position: relative; min-height: 340px;
+  }
+  .plan-card:hover { border-color: #c7d2d2; }
+
+  .plan-card.featured {
+    border-color: #3ca1a1;
+    background: linear-gradient(180deg, rgba(60,161,161,0.04) 0%, white 100%);
+    box-shadow: 0 4px 20px rgba(60,161,161,0.12);
+    transform: scale(1.03); z-index: 1;
+    min-height: 370px;
+  }
+
+  .featured-badge {
+    position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+    background: #3ca1a1; color: white; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.05em; padding: 3px 14px; border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  .pname { font-size: 14px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.03em; }
+  .pprice { font-size: 34px; font-weight: 800; color: #111827; margin-top: 4px; line-height: 1; }
+  .pprice span { font-size: 14px; font-weight: 500; color: #9ca3af; }
+  .pdesc { font-size: 13px; color: #6b7280; margin-top: 8px; line-height: 1.5; }
+  .pdivider { height: 1px; background: #e5e7eb; margin: 14px 0; }
+  .pinherit { font-size: 12px; font-weight: 700; color: #111827; margin-bottom: 8px; }
+
+  .pfeatures { display: flex; flex-direction: column; gap: 7px; flex: 1; }
+  .pf { font-size: 13px; color: #374151; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+  .pf-check { color: #3ca1a1; flex-shrink: 0; font-size: 14px; font-weight: 700; }
+
+  .pcta {
+    margin-top: 16px; width: 100%; height: 42px; border-radius: 10px;
+    font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; border: none;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+  }
+  .cta-primary { background: #3ca1a1; color: white; }
+  .cta-primary:hover { background: #2d8a8a; }
+  .cta-outline { background: white; border: 1.5px solid #d1d5db; color: #374151; }
+  .cta-outline:hover { border-color: #3ca1a1; color: #3ca1a1; }
+
+  /* Compare link */
+  .compare-section { padding: 12px 32px 24px; text-align: center; }
+  .compare-btn {
+    font-size: 14px; color: #3ca1a1; font-weight: 600; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: none; background: none; font-family: inherit; transition: all 0.15s;
+    padding: 8px 16px; border-radius: 8px;
+  }
+  .compare-btn:hover { background: rgba(60,161,161,0.06); text-decoration: underline; }
+  .compare-btn svg { width: 16px; height: 16px; }
+
+  /* Footer actions */
+  .dialog-actions { display: flex; align-items: center; gap: 16px; padding: 8px 32px 24px; }
+  .btn {
+    height: 45px; min-width: 120px; border-radius: 8px; font-size: 14px; font-weight: 600;
+    font-family: inherit; cursor: pointer; transition: all 0.15s; border: none; padding: 0 24px;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-ghost { background: transparent; border: none; color: #6b7280; min-width: auto; }
+  .btn-ghost:hover { color: #374151; }
+  .btn-outline { background: white; border: 1px solid #d1d5db; color: #374151; }
+
+  /* Annotation */
+  .annotation {
+    max-width: 1000px; margin: 16px auto 0; padding: 14px 18px;
+    background: #fefce8; border: 1px solid #fde68a; border-radius: 10px;
+    font-size: 12px; color: #92400e; line-height: 1.7;
+  }
+  .annotation strong { font-weight: 700; }
+  .annotation code { background: #fef3c7; padding: 1px 5px; border-radius: 3px; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<p class="page-title">Design Final — Step 2: Selecao de Plano</p>
+<p class="page-subtitle">Notion style · Badge "Mais escolhido" · Link "Comparacao" abre modal por cima</p>
+
+<!-- ========== MAIN DIALOG ========== -->
+<div class="dialog-xl">
+  <div class="stepper-bar">
+    <div class="step-item">
+      <div class="step-circle completed">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <span class="step-name completed">Dados</span>
+    </div>
+    <div class="step-sep"></div>
+    <div class="step-item">
+      <div class="step-circle active">2</div>
+      <span class="step-name active">Plano</span>
+    </div>
+  </div>
+
+  <div class="dialog-header">
+    <div>
+      <div class="dialog-title">Escolha seu plano</div>
+      <div class="dialog-subtitle">Selecione o plano ideal para sua organizacao.</div>
+    </div>
+    <div class="period-toggle">
+      <button class="period-btn active">Mensal</button>
+      <button class="period-btn">Trimestral</button>
+      <button class="period-btn">Anual</button>
+    </div>
+  </div>
+
+  <div class="dialog-body">
+    <div class="plans-row">
+
+      <!-- Starter -->
+      <div class="plan-card">
+        <div class="pname">Starter</div>
+        <div class="pprice">R$ 97 <span>/mes</span></div>
+        <div class="pdesc">Para quem esta comecando com automacao de conversas.</div>
+        <div class="pdivider"></div>
+        <div class="pinherit">Inclui:</div>
+        <div class="pfeatures">
+          <div class="pf"><span class="pf-check">✓</span> 1.000 contatos</div>
+          <div class="pf"><span class="pf-check">✓</span> 2 usuarios</div>
+          <div class="pf"><span class="pf-check">✓</span> 1 canal WhatsApp</div>
+          <div class="pf"><span class="pf-check">✓</span> Funis basicos</div>
+          <div class="pf"><span class="pf-check">✓</span> CRM simplificado</div>
+        </div>
+        <button class="pcta cta-outline">Selecionar</button>
+      </div>
+
+      <!-- Lite -->
+      <div class="plan-card">
+        <div class="pname">Lite</div>
+        <div class="pprice">R$ 197 <span>/mes</span></div>
+        <div class="pdesc">Para equipes que precisam de CRM completo e multi-canal.</div>
+        <div class="pdivider"></div>
+        <div class="pinherit">Tudo do Starter, mais:</div>
+        <div class="pfeatures">
+          <div class="pf"><span class="pf-check">✓</span> 5.000 contatos</div>
+          <div class="pf"><span class="pf-check">✓</span> 5 usuarios</div>
+          <div class="pf"><span class="pf-check">✓</span> 3 canais</div>
+          <div class="pf"><span class="pf-check">✓</span> Automacoes avancadas</div>
+          <div class="pf"><span class="pf-check">✓</span> Kanban CRM completo</div>
+        </div>
+        <button class="pcta cta-outline">Selecionar</button>
+      </div>
+
+      <!-- Advanced (featured) -->
+      <div class="plan-card featured">
+        <div class="featured-badge">Mais escolhido</div>
+        <div class="pname">Advanced</div>
+        <div class="pprice">R$ 397 <span>/mes</span></div>
+        <div class="pdesc">Para equipes que querem IA, multi-canal e escala total.</div>
+        <div class="pdivider"></div>
+        <div class="pinherit">Tudo do Lite, mais:</div>
+        <div class="pfeatures">
+          <div class="pf"><span class="pf-check">✓</span> 20.000 contatos</div>
+          <div class="pf"><span class="pf-check">✓</span> 15 usuarios</div>
+          <div class="pf"><span class="pf-check">✓</span> Canais ilimitados</div>
+          <div class="pf"><span class="pf-check">✓</span> Agentes IA</div>
+          <div class="pf"><span class="pf-check">✓</span> Broadcast em massa</div>
+          <div class="pf"><span class="pf-check">✓</span> Relatorios avancados</div>
+        </div>
+        <button class="pcta cta-primary">Selecionar</button>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="plan-card">
+        <div class="pname">Enterprise</div>
+        <div class="pprice" style="font-size:22px;">Sob consulta</div>
+        <div class="pdesc">Para operacoes de alto volume com suporte dedicado.</div>
+        <div class="pdivider"></div>
+        <div class="pinherit">Tudo do Advanced, mais:</div>
+        <div class="pfeatures">
+          <div class="pf"><span class="pf-check">✓</span> Contatos ilimitados</div>
+          <div class="pf"><span class="pf-check">✓</span> Usuarios ilimitados</div>
+          <div class="pf"><span class="pf-check">✓</span> SLA dedicado</div>
+          <div class="pf"><span class="pf-check">✓</span> Onboarding guiado</div>
+          <div class="pf"><span class="pf-check">✓</span> API personalizada</div>
+        </div>
+        <button class="pcta cta-outline">Falar com vendas</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Compare link -->
+  <div class="compare-section">
+    <button class="compare-btn" onclick="openCompare()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        <circle cx="8" cy="6" r="2" fill="currentColor"/><circle cx="16" cy="12" r="2" fill="currentColor"/><circle cx="10" cy="18" r="2" fill="currentColor"/>
+      </svg>
+      Comparar todos os planos
+    </button>
+  </div>
+
+  <div class="dialog-actions">
+    <button class="btn btn-ghost">← Voltar</button>
+    <div style="flex:1"></div>
+    <button class="btn btn-outline">Cancelar</button>
+  </div>
+</div>
+
+<!-- ========== COMPARE MODAL (on top) ========== -->
+<div class="overlay-backdrop" id="compareOverlay" onclick="closeCompare(event)">
+  <div class="compare-modal" onclick="event.stopPropagation()">
+    <div class="compare-modal-header">
+      <div class="compare-modal-title">Comparacao de planos</div>
+      <button class="compare-modal-close" onclick="closeCompare()">&times;</button>
+    </div>
+    <div class="compare-modal-body">
+      <table class="ctable">
+        <thead>
+          <tr>
+            <th>Recurso</th>
+            <th>Starter</th>
+            <th>Lite</th>
+            <th class="highlight-col">Advanced</th>
+            <th>Enterprise</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Limites -->
+          <tr class="cat-row"><td colspan="5">Limites</td></tr>
+          <tr><td>Contatos</td><td>1.000</td><td>5.000</td><td class="highlight-col">20.000</td><td>Ilimitado</td></tr>
+          <tr><td>Usuarios</td><td>2</td><td>5</td><td class="highlight-col">15</td><td>Ilimitado</td></tr>
+          <tr><td>Canais</td><td>1</td><td>3</td><td class="highlight-col">Ilimitado</td><td>Ilimitado</td></tr>
+
+          <!-- Canais -->
+          <tr class="cat-row"><td colspan="5">Canais suportados</td></tr>
+          <tr><td>WhatsApp</td><td class="ck">✓</td><td class="ck">✓</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Instagram</td><td class="no">—</td><td class="ck">✓</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Messenger</td><td class="no">—</td><td class="ck">✓</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Webchat</td><td class="no">—</td><td class="no">—</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+
+          <!-- Automacao -->
+          <tr class="cat-row"><td colspan="5">Automacao</td></tr>
+          <tr><td>Funis basicos</td><td class="ck">✓</td><td class="ck">✓</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Funis avancados</td><td class="no">—</td><td class="ck">✓</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Agentes IA</td><td class="no">—</td><td class="no">—</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Broadcast em massa</td><td class="no">—</td><td class="no">—</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+
+          <!-- CRM -->
+          <tr class="cat-row"><td colspan="5">CRM & Atendimento</td></tr>
+          <tr><td>CRM basico</td><td class="ck">✓</td><td class="ck">✓</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Kanban CRM</td><td class="no">—</td><td class="ck">✓</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Livechat</td><td class="ck">✓</td><td class="ck">✓</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Relatorios avancados</td><td class="no">—</td><td class="no">—</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+
+          <!-- Suporte -->
+          <tr class="cat-row"><td colspan="5">Suporte & Seguranca</td></tr>
+          <tr><td>Suporte por chat</td><td class="ck">✓</td><td class="ck">✓</td><td class="highlight-col ck">✓</td><td class="ck">✓</td></tr>
+          <tr><td>Suporte prioritario</td><td class="no">—</td><td class="no">—</td><td class="highlight-col no">—</td><td class="ck">✓</td></tr>
+          <tr><td>SLA dedicado</td><td class="no">—</td><td class="no">—</td><td class="highlight-col no">—</td><td class="ck">✓</td></tr>
+          <tr><td>Onboarding guiado</td><td class="no">—</td><td class="no">—</td><td class="highlight-col no">—</td><td class="ck">✓</td></tr>
+          <tr><td>API personalizada</td><td class="no">—</td><td class="no">—</td><td class="highlight-col no">—</td><td class="ck">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="annotation">
+  <strong>Interacao:</strong> Clique em <strong>"Comparar todos os planos"</strong> para ver o modal de comparacao abrindo por cima do dialog principal.
+  A coluna Advanced fica com highlight sutil (fundo brand). Modal fecha clicando no X ou fora dele.
+  <br><br>
+  <strong>Implementacao:</strong> Modal de comparacao sera um segundo <code>DialogControl</code> (nested). Tabela de comparacao com dados do <code>PlansEnum</code>.
+  Coluna do plano "Mais escolhido" com <code>highlight-col</code> via classe condicional.
+</div>
+
+<script>
+  function openCompare() {
+    document.getElementById('compareOverlay').classList.add('visible');
+  }
+  function closeCompare(e) {
+    if (!e || e.target === document.getElementById('compareOverlay')) {
+      document.getElementById('compareOverlay').classList.remove('visible');
+    }
+  }
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCompare(); });
+</script>
+
+</body>
+</html>

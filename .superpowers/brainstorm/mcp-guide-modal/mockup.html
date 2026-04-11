@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mockup — Guia de Conexão MCP</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Figtree', sans-serif;
+    background: #1a1a2e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  /* ── Overlay ── */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.55);
+    z-index: 10;
+  }
+
+  /* ── Dialog ── */
+  .dialog {
+    position: relative; z-index: 20;
+    background: #f5f5f7;
+    border-radius: 24px;
+    width: 900px;
+    max-height: 85vh;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(55,30,145,.15);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 38%;
+    background: linear-gradient(180deg, #ede9fe 0%, #d1fae5 100%);
+    border-right: 1px solid #d4d4d8;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .sidebar-logo { display: flex; align-items: center; gap: 12px; }
+  .sidebar-logo-icon {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: #7c3aed;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+  }
+  .sidebar-logo-text .name { font-size: 16px; font-weight: 700; color: #18181b; }
+  .sidebar-logo-text .sub { font-size: 12px; color: #71717a; }
+  .sidebar-section-title {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: #7c3aed;
+  }
+  .sidebar-steps { display: flex; flex-direction: column; gap: 12px; }
+  .step { display: flex; align-items: flex-start; gap: 12px; }
+  .step-number {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #7c3aed; color: white;
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-text { font-size: 14px; color: #52525b; line-height: 1.4; }
+  .step-text strong { color: #18181b; }
+
+  /* Status card */
+  .status-card {
+    margin-top: auto;
+    background: #f5f5f7; border: 1px solid #d4d4d8;
+    border-radius: 8px; padding: 16px;
+  }
+  .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .status-label { font-size: 12px; font-weight: 700; color: #18181b; }
+  .status-badge { display: flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; color: #22c55e; }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+  .status-metrics { display: flex; gap: 16px; }
+  .status-metric-label { font-size: 10px; color: #71717a; }
+  .status-metric-value { font-size: 14px; font-weight: 700; color: #18181b; }
+
+  /* ── Main content ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 40px;
+    overflow-y: auto;
+    background: #f5f5f7;
+  }
+  .main-header {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .main-title { font-size: 18px; font-weight: 700; color: #7c3aed; }
+  .close-btn {
+    width: 28px; height: 28px; border-radius: 6px; border: none;
+    background: transparent; cursor: pointer; font-size: 18px; color: #71717a;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .close-btn:hover { background: #e4e4e7; }
+
+  /* ── Token creator (context) ── */
+  .token-creator { display: flex; flex-direction: column; gap: 8px; }
+  .token-creator label { font-size: 14px; color: #71717a; }
+  .token-row { display: flex; gap: 8px; }
+  .token-input {
+    flex: 1; height: 45px; border-radius: 8px;
+    border: 1px solid #d4d4d8; background: white;
+    padding: 0 16px; font-family: inherit; font-size: 14px; color: #18181b;
+    outline: none;
+  }
+  .token-input:focus { border-color: #7c3aed; box-shadow: 0 0 0 2px rgba(124,58,237,.15); }
+  .btn-primary {
+    height: 45px; border-radius: 8px; border: none;
+    background: #7c3aed; color: white;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    padding: 0 20px; cursor: pointer; white-space: nowrap;
+  }
+  .btn-primary:hover { background: #6d28d9; }
+
+  /* ── Created token ── */
+  .token-created {
+    display: flex; flex-direction: column; gap: 8px;
+    background: #dcfce7; border: 1px solid #bbf7d0;
+    border-radius: 8px; padding: 16px;
+  }
+  .token-created-header { display: flex; align-items: center; gap: 8px; }
+  .token-created-header svg { color: #15803d; }
+  .token-created-header span { font-size: 14px; font-weight: 700; color: #15803d; }
+  .token-created p { font-size: 12px; color: #52525b; }
+  .token-code-row { display: flex; align-items: center; gap: 8px; }
+  .token-code {
+    flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px;
+    background: #e4e4e7; border: 1px solid #d4d4d8;
+    border-radius: 6px; padding: 8px 12px; color: #18181b;
+  }
+  .btn-icon {
+    width: 36px; height: 36px; border-radius: 8px; border: 1px solid #d4d4d8;
+    background: white; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; color: #52525b; flex-shrink: 0;
+  }
+  .btn-icon:hover { background: #f4f4f5; }
+
+  /* ── Separator ── */
+  .separator { border: none; border-top: 1px solid #e4e4e7; }
+
+  /* ── Guide section (NEW) ── */
+  .guide-section {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .guide-header {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .guide-title { font-size: 16px; font-weight: 700; color: #18181b; }
+
+  /* Tabs */
+  .tabs {
+    display: flex; gap: 0; border-bottom: 2px solid #e4e4e7;
+  }
+  .tab {
+    padding: 10px 20px; font-size: 13px; font-weight: 600;
+    color: #71717a; background: none; border: none; cursor: pointer;
+    border-bottom: 2px solid transparent; margin-bottom: -2px;
+    display: flex; align-items: center; gap: 8px;
+    font-family: inherit;
+  }
+  .tab:hover { color: #18181b; }
+  .tab.active {
+    color: #7c3aed; border-bottom-color: #7c3aed;
+  }
+  .tab-icon {
+    width: 18px; height: 18px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+  }
+  .tab-icon.claude { background: #f4e8d1; color: #c77b2f; }
+  .tab-icon.cursor { background: #18181b; color: white; }
+  .tab-icon.other { background: #e4e4e7; color: #52525b; }
+
+  /* Guide content */
+  .guide-content {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .guide-step {
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .guide-step-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #ede9fe; color: #7c3aed;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .guide-step-content {
+    display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0;
+  }
+  .guide-step-label {
+    font-size: 14px; font-weight: 600; color: #18181b;
+  }
+  .guide-step-desc {
+    font-size: 13px; color: #71717a; line-height: 1.5;
+  }
+
+  /* Command block */
+  .command-block {
+    position: relative;
+    background: #1e1e2e; border-radius: 8px;
+    padding: 16px; padding-right: 50px;
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 12.5px; line-height: 1.6;
+    color: #cdd6f4; overflow-x: auto;
+    white-space: pre;
+  }
+  .command-block .prompt { color: #a6e3a1; }
+  .command-block .flag { color: #89b4fa; }
+  .command-block .string { color: #f9e2af; }
+  .command-block .token-placeholder {
+    background: rgba(243,139,168,.15); color: #f38ba8;
+    padding: 1px 6px; border-radius: 4px;
+    border: 1px dashed rgba(243,139,168,.3);
+  }
+  .copy-command {
+    position: absolute; top: 10px; right: 10px;
+    width: 32px; height: 32px; border-radius: 6px;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1);
+    color: #a6adc8; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .copy-command:hover { background: rgba(255,255,255,.15); color: white; }
+
+  /* Info box */
+  .info-box {
+    display: flex; gap: 10px; align-items: flex-start;
+    background: #ede9fe; border: 1px solid #ddd6fe;
+    border-radius: 8px; padding: 12px 16px;
+  }
+  .info-box svg { color: #7c3aed; flex-shrink: 0; margin-top: 1px; }
+  .info-box p { font-size: 13px; color: #52525b; line-height: 1.5; }
+  .info-box strong { color: #18181b; }
+
+  /* ── Annotations ── */
+  .annotation {
+    position: absolute;
+    background: #fbbf24;
+    color: #18181b;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    z-index: 30;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+  .annotation::after {
+    content: '';
+    position: absolute;
+    width: 0; height: 0;
+    border: 6px solid transparent;
+  }
+  .annotation.arrow-left::after {
+    left: -10px; top: 50%; transform: translateY(-50%);
+    border-right-color: #fbbf24;
+  }
+  .annotation.arrow-down::after {
+    bottom: -10px; left: 50%; transform: translateX(-50%);
+    border-top-color: #fbbf24;
+  }
+
+  /* ── Page title ── */
+  .page-label {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    background: rgba(255,255,255,.08); backdrop-filter: blur(8px);
+    color: white; font-size: 13px; font-weight: 500;
+    padding: 8px 20px; border-radius: 99px; z-index: 50;
+    border: 1px solid rgba(255,255,255,.1);
+  }
+</style>
+</head>
+<body>
+  <div class="page-label">Mockup — Guia "Como Conectar" dentro do ConfigureMcp</div>
+
+  <div class="overlay"></div>
+
+  <div class="dialog" style="position: relative;">
+    <!-- Sidebar (existing) -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">CF</div>
+        <div class="sidebar-logo-text">
+          <div class="name">Chatfunnel MCP</div>
+          <div class="sub">Model Context Protocol</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="sidebar-section-title">Como conectar</div>
+        <div class="sidebar-steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <span class="step-text">Crie um token de integração ao lado</span>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <span class="step-text">Clique em <strong>"Ver instruções"</strong> para copiar o comando</span>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <span class="step-text">Cole no terminal e pronto — seu ChatFunnel está conectado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-header">
+          <span class="status-label">Status do servidor</span>
+          <span class="status-badge">
+            <span class="status-dot"></span> Online
+          </span>
+        </div>
+        <div class="status-metrics">
+          <div>
+            <div class="status-metric-label">Sessões ativas</div>
+            <div class="status-metric-value">3</div>
+          </div>
+          <div>
+            <div class="status-metric-label">Uptime</div>
+            <div class="status-metric-value">12h 34min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="main">
+      <div class="main-header">
+        <h2 class="main-title">Tokens de integração</h2>
+        <button class="close-btn">✕</button>
+      </div>
+
+      <!-- Token creator (existing context) -->
+      <div class="token-creator">
+        <label>Crie tokens para conectar clientes externos ao seu ChatFunnel.</label>
+        <div class="token-row">
+          <input class="token-input" placeholder='Nome do token (ex: ChatGPT)' value="Meu Claude Code" />
+          <button class="btn-primary">Criar token</button>
+        </div>
+      </div>
+
+      <!-- Created token (existing) -->
+      <div class="token-created">
+        <div class="token-created-header">
+          <svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg>
+          <span>Token criado com sucesso!</span>
+        </div>
+        <p>Copie o token abaixo. Ele não será exibido novamente.</p>
+        <div class="token-code-row">
+          <code class="token-code">mcp_live_a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0</code>
+          <button class="btn-icon">
+            <svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <hr class="separator" />
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- NEW: Guide section                     -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="guide-section">
+        <div class="guide-header">
+          <h3 class="guide-title">Instruções de conexão</h3>
+        </div>
+
+        <!-- Client tabs -->
+        <div class="tabs">
+          <button class="tab active">
+            <span class="tab-icon claude">C</span>
+            Claude Code
+          </button>
+          <button class="tab">
+            <span class="tab-icon cursor">▶</span>
+            Cursor
+          </button>
+          <button class="tab">
+            <span class="tab-icon other">⚙</span>
+            Outro cliente
+          </button>
+        </div>
+
+        <!-- Claude Code tab content -->
+        <div class="guide-content">
+          <div class="guide-step">
+            <div class="guide-step-num">1</div>
+            <div class="guide-step-content">
+              <div class="guide-step-label">Abra o terminal</div>
+              <div class="guide-step-desc">No VS Code, terminal do sistema, ou qualquer shell com o Claude Code CLI instalado.</div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="guide-step-num">2</div>
+            <div class="guide-step-content">
+              <div class="guide-step-label">Execute o comando abaixo</div>
+              <div class="guide-step-desc">Ele registra o servidor MCP automaticamente com o token de autenticação.</div>
+              <div class="command-block"><button class="copy-command" title="Copiar comando"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M216,32H88a8,8,0,0,0-8,8V80H40a8,8,0,0,0-8,8V216a8,8,0,0,0,8,8H168a8,8,0,0,0,8-8V176h40a8,8,0,0,0,8-8V40A8,8,0,0,0,216,32ZM160,208H48V96H160Zm48-48H176V88a8,8,0,0,0-8-8H96V48H208Z"/></svg></button><span class="prompt">$</span> claude mcp add <span class="flag">--transport</span> http chatfunnel \
+  <span class="string">https://mcp-insider.chatfunnel.com.br/mcp</span> \
+  <span class="flag">--header</span> <span class="string">"Authorization: Bearer <span class="token-placeholder">mcp_live_a1b2...s9t0</span>"</span> \
+  <span class="flag">--header</span> <span class="string">"Content-Type: application/json"</span> \
+  <span class="flag">--header</span> <span class="string">"Accept: application/json, text/event-stream"</span></div>
+            </div>
+          </div>
+
+          <div class="guide-step">
+            <div class="guide-step-num">3</div>
+            <div class="guide-step-content">
+              <div class="guide-step-label">Pronto!</div>
+              <div class="guide-step-desc">O Claude Code agora tem acesso às tools do seu ChatFunnel. Experimente perguntar sobre seus contatos, automações ou funis.</div>
+            </div>
+          </div>
+
+          <div class="info-box">
+            <svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm-4,48a12,12,0,1,1-12,12A12,12,0,0,1,124,72Zm12,112a16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40a8,8,0,0,1,0,16Z"/></svg>
+            <p>O token <strong>não expira</strong> por padrão. Você pode revogá-lo a qualquer momento na lista acima. O header <code style="background:#ddd6fe;padding:1px 5px;border-radius:3px;font-size:12px;">Account-Selected</code> não é necessário — a conta é detectada automaticamente.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Annotation callouts -->
+    <div class="annotation arrow-down" style="top: -36px; right: 40px;">NOVO — seção inline, sem modal extra</div>
+    <div class="annotation arrow-left" style="top: 485px; left: calc(38% + 8px);">Tabs por cliente (extensível)</div>
+  </div>
+</body>
+</html>
