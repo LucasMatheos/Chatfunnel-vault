@@ -21,10 +21,11 @@ Sempre seguir: **Master Index → Topic Index → Artigo** (max 3 leituras).
 
 ```
 vault/_index.md                    → Ponto de entrada
-vault/wiki/features/_index.md      → Indice de features
-vault/wiki/architecture/_index.md  → Indice de arquitetura
-vault/wiki/layers/_index.md        → Indice de camadas tecnicas
-vault/wiki/gotchas/_index.md       → Indice de gotchas
+vault/wiki/repos/_index.md         → Indice de repositorios (referencia tecnica por repo)
+vault/wiki/features/_index.md      → Indice de features (cross-repo)
+vault/wiki/architecture/_index.md  → Indice de arquitetura (cross-repo)
+vault/wiki/gotchas/_index.md       → Indice de gotchas (cross-repo)
+vault/wiki/ai-patterns/_index.md   → Indice de patterns de IA
 vault/decisions/                   → ADRs
 vault/diary/                       → Daily notes
 vault/raw/                         → Staging area
@@ -102,7 +103,7 @@ Positivas e negativas.
 Quando houver arquivos em `vault/raw/` (exceto `.tracking-*.tmp` e `diary/`):
 
 1. Ler o conteudo bruto
-2. Identificar temas e secao do wiki (features, architecture, layers, gotchas)
+2. Identificar temas e secao do wiki (repos, features, architecture, gotchas)
 3. Criar artigos estruturados com wikilinks
 4. Atualizar indices
 5. Perguntar ao usuario se pode remover o raw original

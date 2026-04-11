@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pre-edit-main-guard.sh",
+            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec \"$r/.claude/hooks/pre-edit-main-guard.sh\"'",
             "timeout": 5
           }
         ]
@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/pre-bash-firewall.sh",
+            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec \"$r/.claude/hooks/pre-bash-firewall.sh\"'",
             "timeout": 5
           }
         ]
@@ -28,7 +28,16 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/track-edit.js"
+            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec node \"$r/.claude/hooks/track-edit.js\"'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec node \"$r/.claude/hooks/track-bash.js\"'"
           }
         ]
       }
@@ -38,7 +47,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/track-prompt.js"
+            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec node \"$r/.claude/hooks/track-prompt.js\"'"
           }
         ]
       }
@@ -48,7 +57,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node .claude/hooks/diary-stop.js"
+            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec node \"$r/.claude/hooks/diary-stop.js\"'"
           }
         ]
       }

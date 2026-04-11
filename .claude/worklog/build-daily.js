@@ -2,6 +2,10 @@
 
 'use strict'
 
+// DEPRECATED: This script is no longer used.
+// Daily consolidation is now handled by the /dailyvault skill.
+// Kept for reference only — safe to delete.
+
 const fs = require('fs')
 const path = require('path')
 

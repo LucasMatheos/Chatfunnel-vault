@@ -1,20 +1,4 @@
-[USER|15:13] agora me explica no workspace como e quando voce acessa o vault
+[USER|14:18] eu tenho png de 2x 3x 4x 512w 512h
 ===
-[ASSISTANT|15:13] Boa pergunta. Vou ser direto sobre como funciona:
-===
-[USER|15:17] Voce precisa me dizer qual seria melhor para a forma que voce trabalha
-===
-[ASSISTANT|15:17] Vou ser pragmático.
-===
-[USER|15:19] não, acho que fica sem sentido ate pq voce pode decidir para ler depois
-===
-[ASSISTANT|15:19] Concordo. É melhor eu ler o vault **quando precisar** do que carregar tudo preventivamente. O vault funciona como referência sob demanda — eu consulto quando a tarefa exige contexto que não está no CLAUDE.md.
-===
-[USER|15:25] como tu atualiza o vault
-===
-[ASSISTANT|15:25] Na prática, eu atualizo o vault em 3 situações:
-===
-[USER|15:27] ta bom assim
-===
-[ASSISTANT|15:27] Perfeito. O workspace está pronto. Quando quiser trabalhar no código, é só pedir.
+[ASSISTANT|14:18] 2x** e suficiente. Acima disso so gasta espaco sem ganho — o Claude ja consegue ler todos os detalhes em 2x.
 ===

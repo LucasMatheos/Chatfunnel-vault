@@ -78,9 +78,18 @@ function formatEntry(data) {
     lines.push('')
   }
 
-  if (data.userRequest) {
-    lines.push(`**Pedido:** ${data.userRequest}`)
+  if (data.type) {
+    lines.push(`**Tipo:** ${data.type}`)
     lines.push('')
+  }
+
+  if (data.userRequest) {
+    // Strip buffer artifacts (===, |||) that may leak from conversation tracking
+    const cleanRequest = data.userRequest.replace(/\s*={3,}\s*/g, '').replace(/\s*\|{3,}\s*/g, '').trim()
+    if (cleanRequest) {
+      lines.push(`**Pedido:** ${cleanRequest}`)
+      lines.push('')
+    }
   }
 
   if (data.summary) {
@@ -99,11 +108,40 @@ function formatEntry(data) {
     files.forEach((f) => lines.push(`- \`${f}\``))
   }
 
+  if (data.commands) {
+    const cmds = Array.isArray(data.commands) ? data.commands : [data.commands]
+    lines.push('')
+    lines.push('**Comandos:**')
+    cmds.forEach((c) => lines.push(`- \`${c}\``))
+  }
+
+  // Resolve wiki links to real vault notes; anything without a match becomes a tag
   if (data.relatedNotes) {
     const notes = Array.isArray(data.relatedNotes) ? data.relatedNotes : [data.relatedNotes]
-    lines.push('')
-    lines.push('**Relacionado:**')
-    notes.forEach((n) => lines.push(`- [[${n}]]`))
+    const wikiLinks = []
+    const tags = []
+
+    for (const n of notes) {
+      const resolved = resolveWikiLink(n)
+      if (resolved) {
+        wikiLinks.push(resolved)
+      } else {
+        // Convert to tag: PascalCase → kebab-case
+        const tag = n.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+        tags.push(tag)
+      }
+    }
+
+    if (wikiLinks.length > 0) {
+      lines.push('')
+      lines.push('**Relacionado:**')
+      wikiLinks.forEach((l) => lines.push(`- ${l}`))
+    }
+
+    if (tags.length > 0) {
+      lines.push('')
+      lines.push(`**Tags:** ${tags.map(t => '#' + t).join(' ')}`)
+    }
   }
 
   lines.push('')
@@ -111,6 +149,47 @@ function formatEntry(data) {
   lines.push('')
 
   return lines.join('\n')
+}
+
+// --- Wiki link resolution ---
+
+// Map of known keyword → vault wiki path (relative to vault/)
+// Built from the actual vault structure so links always point to real notes
+const WIKI_MAP = {
+  // Repos
+  'chatfunnelfront':     '[[wiki/repos/chatfunnel-front|chatfunnel-front]]',
+  'chatfunnelapi':       '[[wiki/repos/chatfunnel-api|chatfunnel-api]]',
+  'chatfunnelservices':  '[[wiki/repos/chatfunnel-services|chatfunnel-services]]',
+  'chatfunnelcore':      '[[wiki/repos/chatfunnel-core|chatfunnel-core]]',
+  'chatfunnelwebsocket': '[[wiki/repos/chatfunnel-websocket|chatfunnel-websocket]]',
+  'chatfunnelgateway':   '[[wiki/repos/chatfunnel-gateway|chatfunnel-gateway]]',
+  'chatfunnelmcp':       '[[wiki/repos/chatfunnel-mcp|chatfunnel-mcp]]',
+  'chatfunnelexternalapi': '[[wiki/repos/chatfunnel-external-api|chatfunnel-external-api]]',
+  'chatfunnelworkerbroadcast': '[[wiki/repos/chatfunnel-worker-broadcast|chatfunnel-worker-broadcast]]',
+  'chatfunnelscheduler': '[[wiki/repos/chatfunnel-scheduler|chatfunnel-scheduler]]',
+
+  // Features
+  'contacts':    '[[wiki/features/contacts|Contacts]]',
+  'broadcast':   '[[wiki/features/broadcast|Broadcast]]',
+  'aiagents':    '[[wiki/features/ai-agents|AI Agents]]',
+  'crmkanban':   '[[wiki/features/crm-kanban|CRM Kanban]]',
+  'channels':    '[[wiki/features/channels|Channels]]',
+  'livechat':    '[[wiki/features/livechat|Livechat]]',
+  'automations': '[[wiki/features/automations|Automations]]',
+  'mcpintegration': '[[wiki/features/mcp-integration|MCP Integration]]',
+  'organizationform': '[[wiki/features/organization-form|Organization Form]]',
+
+  // Architecture
+  'multitentancy': '[[wiki/architecture/multi-tenancy|Multi-Tenancy]]',
+  'authflow':      '[[wiki/architecture/auth-flow|Auth Flow]]',
+  'messageflow':   '[[wiki/architecture/message-flow|Message Flow]]',
+  'queuearchitecture': '[[wiki/architecture/queue-architecture|Queue Architecture]]',
+}
+
+function resolveWikiLink(keyword) {
+  // Normalize: remove hyphens, spaces, lowercase
+  const key = keyword.replace(/[-_\s]/g, '').toLowerCase()
+  return WIKI_MAP[key] || null
 }
 
 // --- Dedup check ---
@@ -144,7 +223,19 @@ async function main() {
   if (fs.existsSync(filepath)) {
     existing = fs.readFileSync(filepath, 'utf8')
   } else {
-    const header = `# Raw Notes — ${todayFilename().replace('.md', '')}\n\n`
+    const dateStr = todayFilename().replace('.md', '')
+    const isoDate = dateStr.split('-').reverse().join('-') // DD-MM-YYYY → YYYY-MM-DD
+    const header = [
+      '---',
+      `date: ${isoDate}`,
+      'type: raw',
+      'tags: [diary, raw]',
+      '---',
+      '',
+      `# Raw Notes — ${dateStr}`,
+      '',
+      '',
+    ].join('\n')
     fs.writeFileSync(filepath, header, 'utf8')
     existing = header
   }

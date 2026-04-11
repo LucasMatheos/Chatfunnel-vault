@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "0b8311ef4321db90",
+        "id": "7a161e63ba60dd62",
         "type": "tabs",
         "children": [
           {
-            "id": "07dd6898327f1ce3",
+            "id": "cdc3c3a1d365bcd2",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "guide-skills.md",
+                "file": "wiki/guides/pencil-dev-guide.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "guide-skills"
+              "title": "pencil-dev-guide"
             }
           }
         ]
@@ -78,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 301.5
   },
   "right": {
     "id": "44cdea73a952d3f5",
@@ -189,32 +189,45 @@
       "command-palette:Abrir paleta de comandos": false,
       "bases:Criar nova base": false,
       "workspaces:Gerenciar leiautes da área de trabalho": false,
-      "markdown-importer:Abrir importador Markdown": false
+      "markdown-importer:Abrir importador Markdown": false,
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "omnisearch:Omnisearch": false
     }
   },
-  "active": "07dd6898327f1ce3",
+  "active": "cdc3c3a1d365bcd2",
   "lastOpenFiles": [
-    "raw.md",
-    "diary/raw/05-04-2026.md",
-    "wiki/architecture/auth-flow.md",
-    "wiki/architecture/multi-tenancy.md",
-    "wiki/architecture/realtime-communication.md",
-    "wiki/architecture/queue-architecture.md",
-    "wiki/architecture/message-flow.md",
-    "wiki/ai-patterns/summarization.md",
+    "prototipos",
+    "Base List Links.base",
+    "wiki/diagrams/chatfunnel-architecture.excalidraw.md",
+    "wiki/diagrams/chatfunnel-architecture-mermaid.md",
+    "diary/09-04-2026-daily.md",
+    "wiki/guides/components-catalog.md",
+    "diary/08-04-2026-daily.md",
+    "wiki/features/calendar-permissions.md",
+    "wiki/guides/onboarding-flow-guide.md",
+    "wiki/guides/calendar-permissions-test-guide.md",
+    "diary/05-04-2026-daily.md",
+    "wiki/guides/skills-workspace-guide.md",
+    "onboarding-flow-canvas.md",
+    "wiki/guides/onboarding-flow-canvas.canvas",
+    "wiki/guides/onboarding-flow.excalidraw",
+    "Excalidraw/Drawing 2026-04-08 08.10.04.excalidraw.md",
+    "wiki/features/Drawing 2026-04-08 08.08.55.excalidraw.md",
+    "Excalidraw/Drawing 2026-04-08 08.07.39.excalidraw.md",
+    "Excalidraw",
+    "wiki/features/onboarding-flow.md",
     "wiki/ai-patterns/rag.md",
-    "wiki/ai-patterns/classification.md",
-    "wiki/ai-patterns/_index.md",
-    "wiki/architecture/_index.md",
-    "Clippings/Aprender Inglês Rápido a verdade que ninguém te conta.md",
-    "wiki/ai-patterns/content-moderation.md",
-    "wiki/ai-patterns/text-to-sql.md",
-    "wiki/ai-patterns/prompt-caching.md",
-    "wiki/ai-patterns/tool-use-agents.md",
+    "wiki/guides/_index.md",
+    "wiki/guides",
+    "wiki/features/organization-form.md",
+    "Features.md",
+    "Brainstorm.md",
+    "raw.md",
+    "guide-skills.md",
+    "diary/07-04-2026-daily.md",
+    "diary/raw/08-04-2026.md",
+    "diary/raw/07-04-2026.md",
     "wiki/ai-patterns",
-    "diary.md",
-    "Clippings",
-    "_index.md",
-    "Sem título.base"
+    "Clippings"
   ]
 }

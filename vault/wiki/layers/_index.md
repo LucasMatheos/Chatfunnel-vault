@@ -1,16 +1,18 @@
 ---
-title: Layers Index
-description: Indice de referencia tecnica por camada — API Express, Services NestJS, Frontend Vue, Database Prisma.
+title: Layers Index (DEPRECATED)
+description: DEPRECATED — substituido por wiki/repos/. Mantido por compatibilidade de links.
 last_updated: 2026-04-05
 ---
 
-# Layers
+# Layers (DEPRECATED)
 
-Referencia tecnica por camada do sistema. Cada artigo cobre uma camada especifica com padroes, convencoes e pontos de atencao.
+> **Esta secao foi substituida por [[wiki/repos/_index|Repos]].**
+> Os artigos abaixo sao mantidos por compatibilidade mas nao serao mais atualizados.
+> Para referencia tecnica por repositorio, use a nova secao Repos.
 
-| Camada | Artigo | Descricao |
-|--------|--------|-----------|
-| API (Express) | [[api-layer]] | Command pattern, createRoute, Bull queues, module aliases |
-| Services (NestJS) | [[services-layer]] | Modulos NestJS, guards, BullMQ, Swagger, SWC |
-| Frontend (Vue 3) | [[frontend-layer]] | Componentes shadcn, Pinia, services, VeeValidate+Zod |
-| Core (Shared Lib) | [[core-layer]] | createCoreServices, repositories, queues HTTP, Meta APIs |
+| Camada | Artigo antigo | Novo artigo |
+|--------|---------------|-------------|
+| API (Express) | [[api-layer]] | [[chatfunnel-api]] |
+| Services (NestJS) | [[services-layer]] | [[chatfunnel-services]] |
+| Frontend (Vue 3) | [[frontend-layer]] | [[chatfunnel-front]] |
+| Core (Shared Lib) | [[core-layer]] | [[chatfunnel-core]] |

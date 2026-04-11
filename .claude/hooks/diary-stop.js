@@ -19,7 +19,8 @@ const DIARY_ROOT = findVaultDiary()
 const TRACKING_FILE = path.join(DIARY_ROOT, 'raw', '.tracking-session.tmp')
 const CONV_FILE = path.join(DIARY_ROOT, 'raw', '.tracking-conversation.tmp')
 
-const MAX_CONTEXT_ENTRIES = 10
+const MAX_CONTEXT_CHARS = 4000
+const MIN_CONVERSATION_LENGTH = 500 // minimum assistant msg length to log a conversation-only turn
 
 function timestamp() {
   const now = new Date()
@@ -42,8 +43,40 @@ process.stdin.on('end', () => {
     const assistantMsg = event.last_assistant_message || ''
     const hasEdits = fs.existsSync(TRACKING_FILE)
 
+    const APPEND_SCRIPT = findAppendScript(DIARY_ROOT)
+
     if (!hasEdits) {
-      saveAssistantToBuffer(assistantMsg)
+      // #1: Log significant conversations even without edits
+      if (APPEND_SCRIPT && isSignificantConversation(assistantMsg)) {
+        const conversation = readConversationBuffer()
+        const { context, lastUserPrompt } = parseConversation(conversation)
+        const summary = extractSummary(assistantMsg, [])
+
+        if (lastUserPrompt || summary) {
+          const note = {
+            summary: summary,
+            userRequest: lastUserPrompt,
+            context: context,
+            type: 'conversa',
+            source: 'claude-hook'
+          }
+
+          try {
+            execFileSync('node', [APPEND_SCRIPT], {
+              input: JSON.stringify(note),
+              cwd: path.dirname(path.dirname(DIARY_ROOT)),
+              stdio: ['pipe', 'pipe', 'pipe'],
+              timeout: 5000
+            })
+          } catch (_) {}
+
+          cleanupConversationBuffer()
+        } else {
+          saveAssistantToBuffer(assistantMsg)
+        }
+      } else {
+        saveAssistantToBuffer(assistantMsg)
+      }
       process.exit(0)
     }
 
@@ -54,14 +87,16 @@ process.stdin.on('end', () => {
       process.exit(0)
     }
 
-    const files = [...new Set(tracked.split('\n').filter(Boolean))]
-    if (files.length === 0) {
+    const trackLines = tracked.split('\n').filter(Boolean)
+    const files = [...new Set(trackLines.filter(l => !l.startsWith('[bash]')))]
+    const bashCmds = trackLines.filter(l => l.startsWith('[bash]')).map(l => l.replace('[bash] ', ''))
+
+    if (files.length === 0 && bashCmds.length === 0) {
       saveAssistantToBuffer(assistantMsg)
       cleanup()
       process.exit(0)
     }
 
-    const APPEND_SCRIPT = findAppendScript(DIARY_ROOT)
     if (!APPEND_SCRIPT) {
       cleanup()
       process.exit(0)
@@ -75,9 +110,10 @@ process.stdin.on('end', () => {
 
     const note = {
       summary: summary,
-      userRequest: lastUserPrompt,
+      userRequest: stripBufferArtifacts(lastUserPrompt),
       context: context,
-      filesChanged: files,
+      filesChanged: files.length > 0 ? files : undefined,
+      commands: bashCmds.length > 0 ? bashCmds : undefined,
       project: project,
       relatedNotes: relatedNotes.length > 0 ? relatedNotes : undefined,
       source: 'claude-hook'
@@ -136,30 +172,41 @@ function toPascalCase(name) {
 }
 
 function extractKeywords(files) {
-  const primary = new Set()
-  const secondary = new Set()
+  const keywords = new Set()
 
   for (const file of files) {
     const parts = file.replace(/\\/g, '/').split('/')
 
+    // Add repo name directly (e.g., chatfunnel-front → ChatfunnelFront)
+    if (parts[0] && parts[0].startsWith('chatfunnel-')) {
+      keywords.add(toPascalCase(parts[0]))
+    }
+
+    // Add wiki article names if editing vault wiki files
+    if (parts[0] === 'vault' && parts[1] === 'wiki' && parts.length >= 4) {
+      const filename = parts[parts.length - 1].replace(/\.md$/, '')
+      if (filename !== '_index') {
+        keywords.add(toPascalCase(filename))
+      }
+    }
+
+    // Extract significant directory/component names
     for (const part of parts) {
       if (part.includes('.')) continue
       if (SKIP_DIRS.has(part) || SKIP_DIRS.has(part.toLowerCase())) continue
 
+      // PascalCase component names (e.g., ConfigureMcp, OrganizationCardV2)
       if (/^[A-Z][a-zA-Z0-9]*[A-Z]/.test(part)) {
-        primary.add(part)
-      } else if (part.length >= 4 && /^[a-z]/.test(part)) {
-        secondary.add(toPascalCase(part))
+        keywords.add(part)
+      }
+      // Feature/domain directories (e.g., integrations, livechat, configuration)
+      else if (part.length >= 6 && /^[a-z]/.test(part) && !parts[0]?.startsWith('chatfunnel-')) {
+        keywords.add(toPascalCase(part))
       }
     }
   }
 
-  const result = [...primary]
-  if (result.length === 0) {
-    result.push(...secondary)
-  }
-
-  return [...new Set(result)].slice(0, 5)
+  return [...keywords].slice(0, 7)
 }
 
 // ─── Conversation buffer ────────────────────────────────────────────
@@ -182,11 +229,21 @@ function readConversationBuffer() {
     const raw = fs.readFileSync(CONV_FILE, 'utf8').trim()
     if (!raw) return []
 
-    return raw
-      .split('===\n')
+    const entries = raw
+      .split(/===\r?\n/)
       .map(e => e.trim())
       .filter(Boolean)
-      .slice(-MAX_CONTEXT_ENTRIES)
+
+    // #5: Use character limit instead of entry count
+    let totalChars = 0
+    const result = []
+    for (let i = entries.length - 1; i >= 0; i--) {
+      totalChars += entries[i].length
+      if (totalChars > MAX_CONTEXT_CHARS) break
+      result.unshift(entries[i])
+    }
+
+    return result
   } catch (_) {
     return []
   }
@@ -224,6 +281,35 @@ function parseConversation(entries) {
   const context = requestIdx > 0 ? parsed.slice(0, requestIdx) : []
 
   return { context, lastUserPrompt }
+}
+
+// ─── Significant conversation detection (#1) ───────────────────────
+
+function isSignificantConversation(assistantMsg) {
+  if (!assistantMsg) return false
+  const len = assistantMsg.trim().length
+  if (len < MIN_CONVERSATION_LENGTH) return false
+
+  // Check for decision/analysis indicators
+  const signals = [
+    /recomendo|sugiro|melhor\s+(opcao|abordagem|usar)/i,
+    /decidimos|optamos|vamos\s+com|escolhemos/i,
+    /pesquisa|analise|comparacao|referencia/i,
+    /arquitetura|design|pattern|padrao/i,
+    /brainstorm|mockup|prototipo/i,
+    /aprovado|aprovei|aprovamos/i,
+  ]
+  return signals.some(p => p.test(assistantMsg))
+}
+
+// ─── Buffer artifact cleanup (#2) ───────────────────────────────────
+
+function stripBufferArtifacts(text) {
+  if (!text) return ''
+  return text
+    .replace(/\s*={3,}\s*/g, '')  // remove === artifacts
+    .replace(/\s*\|{3,}\s*/g, '') // remove ||| artifacts
+    .trim()
 }
 
 // ─── Message quality filters ────────────────────────────────────────
@@ -321,7 +407,12 @@ function extractSummary(assistantMessage, files) {
     if (clean.startsWith('```') || clean.startsWith('|')) continue
     if (clean.length < 15) continue
     if (/^[`\/\.]/.test(clean) && clean.length < 60) continue
-    if (/^(Let me|I'll|I will|Vou |Deixa eu|Vamos )/i.test(clean)) continue
+    if (/^(Let me|I'll|I will|Vou |Deixa eu|Vamos |Looking at|Reading )/i.test(clean)) continue
+    // #3: Skip code-like lines
+    if (/^(import\s|const\s|export\s|function\s|class\s|interface\s|type\s|from\s['"])/.test(clean)) continue
+    if (/^[A-Z]:\\|^\/(?:home|usr|mnt|tmp)\//.test(clean)) continue // file paths
+    if (/^\d+\s*[|│]/.test(clean)) continue // table/line-number output
+    if (/^[-+]{3}\s/.test(clean)) continue // diff headers
 
     return truncate(clean, 200)
   }
@@ -355,5 +446,10 @@ function truncate(text, max) {
 
 function cleanup() {
   try { if (fs.existsSync(TRACKING_FILE)) fs.unlinkSync(TRACKING_FILE) } catch (_) {}
+  cleanupConversationBuffer()
+}
+
+// #4: Only clean conversation buffer, preserve session tracking independently
+function cleanupConversationBuffer() {
   try { if (fs.existsSync(CONV_FILE)) fs.unlinkSync(CONV_FILE) } catch (_) {}
 }
