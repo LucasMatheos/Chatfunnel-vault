@@ -1,7 +1,7 @@
 ---
 title: Guides Index
 description: Guias tecnicos detalhados — passo a passo de implementacao, arquivos envolvidos, APIs, composables e fluxos internos.
-last_updated: 2026-04-08
+last_updated: 2026-04-12
 ---
 
 # Guides
@@ -15,3 +15,6 @@ Documentacao tecnica detalhada de como cada feature foi implementada. Cada guia 
 | [[calendar-permissions-test-guide]] | [[calendar-permissions]] | Passo a passo para testar manualmente cada permissao do calendario |
 | [[components-catalog]] | — | Catalogo completo dos componentes ui/ e shadcn-custom/ — imports, props, slots, guia rapido |
 | [[pencil-dev-guide]] | — | Tutorial Pencil.dev + Claude Code — design-to-code, ferramentas MCP, workflows e exemplos ChatFunnel |
+| [[code-review-graph]] | — | Knowledge graph para code review — blast radius, analise de impacto, MCP tools, multi-repo registry |
+| [[cognee-knowledge-engine]] | — | Motor de memoria IA (referencia futura) — analise, decisao de nao instalar agora, criterios de reavaliacao |
+| [[archon-workflow-engine]] | — | Tutorial Archon — setup, workflows YAML, codebases registrados, uso pratico, integracao com plataformas |

@@ -1,0 +1,75 @@
+<h2>Qual abordagem de checkout funciona melhor pro ChatFunnel?</h2>
+<p class="subtitle">Baseado em referencias de Linear, Vercel, Stripe, Notion, Zapier e Motion. Clique pra selecionar.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Single-Page Checkout (estilo Linear/Vercel)</h3>
+      <p>Uma unica pagina com tudo visivel: plano selecionado no topo, form de pagamento embaixo, resumo lateral sticky. Sem steps, sem navegacao. O usuario ve tudo de uma vez e decide rapido.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Menor fricao — tudo numa tela</li>
+          <li>Mais moderno (Linear, Vercel, Stripe fazem assim)</li>
+          <li>Menos abandono — sem multi-step</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Perde o "momento motivacional" do Step 1 atual (metricas do trial)</li>
+          <li>Pode parecer denso em mobile</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>2-Step Flow (estilo Motion/Zapier)</h3>
+      <p>Step 1: Tela motivacional + selecao de plano (metricas do trial, social proof, cards de plano). Step 2: Pagamento + confirmacao. Reduz de 4 pra 2 steps, mantendo o momento de "valor" antes do pagamento.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Mantém momento motivacional (metricas + social proof)</li>
+          <li>Menos steps que o atual (2 vs 4)</li>
+          <li>Motion dobrou conversao (8% → 15%) com essa abordagem</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Ainda tem navegacao entre steps</li>
+          <li>Mais complexo que single-page</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>In-App Modal (estilo Notion/Slack)</h3>
+      <p>Sem sair do dashboard. Um modal/drawer abre sobre a tela atual com: selecao de plano + pagamento Stripe embeddado. Leve, rapido, sem perder contexto. Confirmacao inline.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Zero perda de contexto — usuario fica no app</li>
+          <li>Mais rapido possivel</li>
+          <li>Notion e Slack usam esse pattern com sucesso</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Menos espaco pra social proof e metricas</li>
+          <li>Pode parecer "pequeno" demais pra uma decisao de compra</li>
+          <li>Precisa de Stripe Elements embeddado (mais trabalho tecnico)</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top: 32px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+  <h3>Contexto atual do ChatFunnel</h3>
+  <p style="font-size: 14px; color: #666;">
+    Hoje: 4 steps (Ativacao → Plano → Pagamento → Confirmacao) com Vuetify, padding 55px, cards centralizados de 580px.
+    Usa Stripe Elements pro form de cartao. Grid 5fr/2fr nos steps 2/3 com ResumeOrder sticky.
+    Tem social proof (CustumerSayCard) e metricas do trial (ResultCard).
+  </p>
+  <p style="font-size: 14px; color: #666; margin-top: 8px;">
+    <strong>Minha recomendacao: B (2-Step)</strong> — mantem o diferencial motivacional que o ChatFunnel ja tem (metricas do trial sao poderosas),
+    mas moderniza cortando 2 steps desnecessarios. Melhor balance entre conversao e experiencia.
+  </p>
+</div>

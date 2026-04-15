@@ -1,4 +1,10 @@
-[USER|14:18] eu tenho png de 2x 3x 4x 512w 512h
+[USER|18:05] o code-review-graph esta sendo atualizado automaticamenteb ?
 ===
-[ASSISTANT|14:18] 2x** e suficiente. Acima disso so gasta espaco sem ganho — o Claude ja consegue ler todos os detalhes em 2x.
+[ASSISTANT|18:05] Não, o code-review-graph não está sendo atualizado automaticamente.**
+===
+[USER|18:06] https://github.com/tirth8205/code-review-graph leia a docs
+===
+[ASSISTANT|18:06] Segundo a docs, o **code-review-graph suporta auto-update via hooks** — atualiza o graph automaticamente a cada edit de arquivo e git commit. Mas isso precisa ser configurado com `code-review-graph install`.
+===
+[USER|18:07] sim
 ===

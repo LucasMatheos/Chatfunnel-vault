@@ -1,63 +1,25 @@
 {
   "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec \"$r/.claude/hooks/pre-edit-main-guard.sh\"'",
-            "timeout": 5
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec \"$r/.claude/hooks/pre-bash-firewall.sh\"'",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
     "PostToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "Edit|Write|Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec node \"$r/.claude/hooks/track-edit.js\"'"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec node \"$r/.claude/hooks/track-bash.js\"'"
+            "command": "code-review-graph update --skip-flows",
+            "timeout": 30
           }
         ]
       }
     ],
-    "UserPromptSubmit": [
+    "SessionStart": [
       {
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec node \"$r/.claude/hooks/track-prompt.js\"'"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash -c 'r=\"$(pwd)\";while [ ! -d \"$r/.claude/hooks\" ];do p=\"$(dirname \"$r\")\";[ \"$p\" = \"$r\" ]&&exit 0;r=\"$p\";done;exec node \"$r/.claude/hooks/diary-stop.js\"'"
+            "command": "code-review-graph status",
+            "timeout": 10
           }
         ]
       }

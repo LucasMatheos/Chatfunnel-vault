@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OrganizationCardV2 — Founder Member Variants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --brand-100: oklch(0.95 0.04 175);
+    --brand-300: oklch(0.78 0.10 175);
+    --brand-500: oklch(0.65 0.14 175);
+    --brand-600: oklch(0.55 0.13 175);
+    --brand-700: oklch(0.48 0.11 175);
+    --gray-100: #F7F7F8;
+    --gray-200: #EDEDF0;
+    --gray-300: #DDDDE2;
+    --gray-400: #C5C5CC;
+    --gray-500: #9D9DA7;
+    --gray-600: #6E6E7A;
+    --gray-900: #3D3A4B;
+    --gray-1000: #33303E;
+    --teal-600: #0d9488;
+    --teal-700: #0f766e;
+    --teal-800: #115e59;
+    --shadow-purple: rgba(55, 30, 145, 0.10);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Figtree', system-ui, sans-serif;
+    background: #f3f2f6;
+    min-height: 100dvh;
+    padding: 48px 32px;
+  }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--gray-1000);
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-bottom: 40px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 340px);
+    gap: 32px;
+    justify-content: center;
+  }
+
+  .column { display: flex; flex-direction: column; gap: 16px; }
+
+  .column-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--gray-500);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-300);
+  }
+
+  .column-label span {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--gray-400);
+    margin-top: 4px;
+  }
+
+  /* ── Base Card ── */
+  .card {
+    position: relative;
+    width: 340px;
+    height: 170px;
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    border-color: var(--brand-300);
+    box-shadow: 0 4px 24px var(--shadow-purple), 0 1px 4px var(--shadow-purple);
+    transform: translateY(-2px);
+  }
+
+  /* ── Header ── */
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .avatar--normal {
+    background: oklch(0.95 0.04 175);
+    color: oklch(0.55 0.13 175);
+  }
+
+  .identity { flex: 1; min-width: 0; }
+
+  .identity-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .org-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-900);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .org-desc {
+    font-size: 12px;
+    color: var(--gray-500);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px;
+  }
+
+  /* ── Plan Pill ── */
+  .pill {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 7px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    line-height: 1.4;
+  }
+
+  .pill--pro { background: oklch(0.95 0.04 175); color: oklch(0.48 0.11 175); }
+
+  /* ── Leads Bar ── */
+  .leads-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .leads-text {
+    font-size: 12px;
+    color: var(--gray-600);
+    flex-shrink: 0;
+  }
+
+  .leads-text strong {
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: var(--gray-200);
+    border-radius: 99px;
+    min-width: 60px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.6s ease;
+  }
+
+  .progress-fill--ok { background: oklch(0.65 0.14 175); }
+
+  .leads-pct {
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 28px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .leads-pct--ok { color: oklch(0.65 0.14 175); }
+
+  /* ── Meta Bar ── */
+  .meta-bar {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid var(--gray-200);
+    padding-top: 12px;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--gray-600);
+  }
+
+  .meta-icon {
+    width: 14px;
+    height: 14px;
+    color: var(--gray-600);
+  }
+
+  /* ── Dots Menu ── */
+  .dots-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: none;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-500);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .card:hover .dots-btn { opacity: 1; }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     OPTION A — Subtle Differentiation
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+  .card--option-a {
+    border-color: rgba(15, 118, 110, 0.18);
+  }
+
+  .card--option-a:hover {
+    border-color: rgba(15, 118, 110, 0.40);
+    box-shadow: 0 4px 24px rgba(15, 118, 110, 0.10), 0 1px 4px rgba(15, 118, 110, 0.06);
+  }
+
+  .avatar--founder-a {
+    background: linear-gradient(135deg, var(--teal-800), var(--teal-700));
+    color: white;
+  }
+
+  .pill--founder {
+    background: linear-gradient(135deg, var(--teal-800), var(--teal-700), var(--teal-600));
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: 1px solid rgba(13, 148, 136, 0.35);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pill--founder::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    animation: shimmer 3.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Unlimited leads text */
+  .leads-unlimited {
+    font-size: 12px;
+    color: var(--teal-700);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .leads-unlimited svg { color: var(--teal-600); }
+
+  .infinity-track {
+    flex: 1;
+    height: 4px;
+    background: linear-gradient(90deg, rgba(15,118,110,0.15), rgba(15,118,110,0.06));
+    border-radius: 99px;
+    min-width: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .infinity-track::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, var(--teal-700), var(--teal-600));
+    border-radius: 99px;
+    opacity: 0.5;
+    animation: pulse-track 2.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-track {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.6; }
+  }
+
+  .infinity-symbol {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--teal-700);
+    min-width: 28px;
+    text-align: right;
+  }
+
+  .leads-unlimited-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--teal-700);
+    min-width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+     OPTION C — Prestige / VIP
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+  .card--option-c {
+    border: 1.5px solid rgba(15, 118, 110, 0.35);
+    background: linear-gradient(165deg, #fff 60%, rgba(15, 118, 110, 0.03) 100%);
+    box-shadow:
+      0 0 0 1px rgba(15, 118, 110, 0.06),
+      0 2px 12px rgba(15, 118, 110, 0.08);
+  }
+
+  .card--option-c::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    right: -1px; bottom: -1px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(15,118,110,0.25), transparent 50%, rgba(15,118,110,0.15));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card--option-c:hover {
+    border-color: rgba(15, 118, 110, 0.50);
+    box-shadow:
+      0 0 24px rgba(15, 118, 110, 0.18),
+      0 0 8px rgba(15, 118, 110, 0.10),
+      0 4px 16px rgba(55, 30, 145, 0.06);
+    transform: translateY(-2px);
+  }
+
+  .card--option-c:hover::before { opacity: 1; }
+
+  /* Corner star decoration */
+  .founder-star {
+    position: absolute;
+    top: 14px;
+    right: 52px;
+    color: var(--teal-700);
+    opacity: 0.7;
+  }
+
+  .avatar--founder-c {
+    background: linear-gradient(135deg, var(--teal-800), var(--teal-600));
+    color: white;
+    box-shadow:
+      0 0 12px rgba(15, 118, 110, 0.30),
+      0 0 4px rgba(15, 118, 110, 0.20);
+  }
+
+  .pill--founder-c {
+    background: linear-gradient(135deg, var(--teal-800), var(--teal-700), var(--teal-600));
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    border: 1px solid rgba(13, 148, 136, 0.4);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.12);
+    box-shadow:
+      0 0 12px rgba(13, 148, 136, 0.30),
+      0 0 4px rgba(13, 148, 136, 0.20),
+      inset 0 1px 0 rgba(255,255,255,0.18);
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .pill--founder-c::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    animation: shimmer 3.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .pill--founder-c svg {
+    width: 10px;
+    height: 10px;
+    fill: currentColor;
+  }
+
+  .meta-bar--founder {
+    border-color: rgba(15, 118, 110, 0.12);
+  }
+
+  .meta-founder-tag {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--teal-700);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0.75;
+  }
+
+  .meta-founder-tag svg {
+    width: 12px;
+    height: 12px;
+    fill: var(--teal-700);
+  }
+
+  /* Glow ring animation for option C */
+  .card--option-c::after {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px;
+    right: -2px; bottom: -2px;
+    border-radius: 13px;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0%,
+      rgba(15, 118, 110, 0.15) 25%,
+      transparent 50%,
+      rgba(15, 118, 110, 0.10) 75%,
+      transparent 100%
+    );
+    z-index: -2;
+    animation: glow-rotate 8s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card--option-c:hover::after { opacity: 1; }
+
+  @keyframes glow-rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+  }
+
+  /* ── SVG Icons (inline) ── */
+  .icon-sm { width: 14px; height: 14px; }
+  .icon-xs { width: 10px; height: 10px; }
+
+  /* ── Annotations ── */
+  .annotation {
+    font-size: 11px;
+    color: var(--gray-500);
+    background: var(--gray-100);
+    border: 1px dashed var(--gray-300);
+    border-radius: 8px;
+    padding: 10px 14px;
+    line-height: 1.5;
+  }
+
+  .annotation strong { color: var(--gray-900); }
+  .annotation code {
+    background: var(--gray-200);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 10px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 1120px) {
+    .grid {
+      grid-template-columns: 340px;
+      gap: 40px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill--founder::after,
+    .pill--founder-c::after,
+    .card--option-c::after,
+    .infinity-track::after {
+      animation: none;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h1>OrganizationCardV2 — Founder Member</h1>
+<p class="subtitle">Comparacao: card normal vs opcao A (sutil) vs opcao C (prestigio). Hover nos cards para ver interacao.</p>
+
+<div class="grid">
+
+  <!-- ════════════════════════════════════
+       COLUMN 1 — Current (normal)
+  ════════════════════════════════════ -->
+  <div class="column">
+    <div class="column-label">
+      Atual (referencia)
+      <span>Card PRO padrao, sem tratamento founder</span>
+    </div>
+
+    <div class="card">
+      <button class="dots-btn" aria-label="Acoes">
+        <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="16"/><circle cx="64" cy="128" r="16"/><circle cx="192" cy="128" r="16"/></svg>
+      </button>
+
+      <div class="card-header">
+        <div class="avatar avatar--normal">CF</div>
+        <div class="identity">
+          <div class="identity-row">
+            <span class="org-name">ChatFunnel Labs</span>
+            <span class="pill pill--pro">PRO</span>
+          </div>
+          <span class="org-desc">Automacao de marketing digital</span>
+        </div>
+      </div>
+
+      <div class="leads-row">
+        <span class="leads-text"><strong>4.832</strong> / 10.000 leads</span>
+        <div class="progress-track">
+          <div class="progress-fill progress-fill--ok" style="width: 48%"></div>
+        </div>
+        <span class="leads-pct leads-pct--ok">48%</span>
+      </div>
+
+      <div class="meta-bar">
+        <div class="meta-item">
+          <svg class="meta-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.25-3.78l.09-.07L83,209.4A4,4,0,0,1,85.5,208.5H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48ZM40,224h0Z"/></svg>
+          3 canais
+        </div>
+        <div class="meta-item">
+          <svg class="meta-icon" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-width="16"/><polyline points="128 72 128 128 184 128" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Mensal
+        </div>
+      </div>
+    </div>
+
+    <div class="annotation">
+      Badge <code>pill--pro</code> padrao.<br>
+      Barra de leads com porcentagem.<br>
+      Sem nenhum indicador de founder.
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       COLUMN 2 — Option A (Subtle)
+  ════════════════════════════════════ -->
+  <div class="column">
+    <div class="column-label">
+      Opcao A — Sutil
+      <span>Diferencia visualmente sem "gritar"</span>
+    </div>
+
+    <div class="card card--option-a">
+      <button class="dots-btn" aria-label="Acoes">
+        <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="16"/><circle cx="64" cy="128" r="16"/><circle cx="192" cy="128" r="16"/></svg>
+      </button>
+
+      <div class="card-header">
+        <div class="avatar avatar--founder-a">CF</div>
+        <div class="identity">
+          <div class="identity-row">
+            <span class="org-name">ChatFunnel Labs</span>
+            <span class="pill pill--founder">FOUNDER</span>
+          </div>
+          <span class="org-desc">Automacao de marketing digital</span>
+        </div>
+      </div>
+
+      <div class="leads-row">
+        <span class="leads-text"><strong>4.832</strong> leads</span>
+        <div class="progress-track" style="flex:1">
+          <div class="progress-fill progress-fill--ok" style="width: 100%; background: linear-gradient(90deg, var(--teal-700), var(--teal-600)); opacity: 0.35;"></div>
+        </div>
+        <span class="infinity-symbol">&infin;</span>
+      </div>
+
+      <div class="meta-bar">
+        <div class="meta-item">
+          <svg class="meta-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.25-3.78l.09-.07L83,209.4A4,4,0,0,1,85.5,208.5H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48ZM40,224h0Z"/></svg>
+          3 canais
+        </div>
+        <div class="meta-item">
+          <svg class="meta-icon" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-width="16"/><polyline points="128 72 128 128 184 128" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Mensal
+        </div>
+      </div>
+    </div>
+
+    <div class="annotation">
+      <strong>Mudancas vs normal:</strong><br>
+      - Badge <code>pill--founder</code> com gradiente teal + shimmer<br>
+      - Avatar com fundo teal (em vez de brand-100)<br>
+      - Borda do card levemente teal<br>
+      - <code>4.832 leads</code> + barra cheia teal suave + "Ilimitado" no lugar da %<br>
+      - Tom geral: reconhecivel mas discreto
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       COLUMN 3 — Option C (Prestige)
+  ════════════════════════════════════ -->
+  <div class="column">
+    <div class="column-label">
+      Opcao C — Prestigio
+      <span>Card VIP que "salta" visualmente</span>
+    </div>
+
+    <div class="card card--option-c">
+      <button class="dots-btn" aria-label="Acoes">
+        <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="16"/><circle cx="64" cy="128" r="16"/><circle cx="192" cy="128" r="16"/></svg>
+      </button>
+
+      <!-- Corner star -->
+      <div class="founder-star">
+        <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,95l59.46-4.75,22.67-55.92a16.36,16.36,0,0,1,29.58,0l22.67,55.92L224.92,95a16.46,16.46,0,0,1,9.37,19.86Z"/></svg>
+      </div>
+
+      <div class="card-header">
+        <div class="avatar avatar--founder-c">CF</div>
+        <div class="identity">
+          <div class="identity-row">
+            <span class="org-name">ChatFunnel Labs</span>
+            <span class="pill pill--founder-c">
+              <svg viewBox="0 0 256 256"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,95l59.46-4.75,22.67-55.92a16.36,16.36,0,0,1,29.58,0l22.67,55.92L224.92,95a16.46,16.46,0,0,1,9.37,19.86Z" fill="currentColor"/></svg>
+              FOUNDER
+            </span>
+          </div>
+          <span class="org-desc">Automacao de marketing digital</span>
+        </div>
+      </div>
+
+      <div class="leads-row">
+        <span class="leads-unlimited">
+          <svg class="icon-sm" viewBox="0 0 256 256" fill="currentColor"><path d="M248,128a56,56,0,0,1-96,39.14A56,56,0,1,1,64,88.86,56,56,0,0,1,248,128Z" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Contatos ilimitados
+        </span>
+        <div class="infinity-track"></div>
+        <span class="infinity-symbol">&infin;</span>
+      </div>
+
+      <div class="meta-bar meta-bar--founder">
+        <div class="meta-item">
+          <svg class="meta-icon" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.25-3.78l.09-.07L83,209.4A4,4,0,0,1,85.5,208.5H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48ZM40,224h0Z"/></svg>
+          3 canais
+        </div>
+        <div class="meta-item">
+          <svg class="meta-icon" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-width="16"/><polyline points="128 72 128 128 184 128" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Mensal
+        </div>
+        <div class="meta-founder-tag">
+          <svg viewBox="0 0 256 256"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,95l59.46-4.75,22.67-55.92a16.36,16.36,0,0,1,29.58,0l22.67,55.92L224.92,95a16.46,16.46,0,0,1,9.37,19.86Z" fill="currentColor"/></svg>
+          Founder Member
+        </div>
+      </div>
+    </div>
+
+    <div class="annotation">
+      <strong>Mudancas vs opcao A:</strong><br>
+      - Borda teal mais forte (1.5px) + background gradient sutil<br>
+      - Avatar com glow teal<br>
+      - Badge <code>FOUNDER</code> com estrela + glow shadow<br>
+      - Estrela decorativa no canto superior direito<br>
+      - Tag "Founder Member" na meta bar<br>
+      - Hover: glow conic-gradient rotativo na borda<br>
+      - Tom geral: card VIP que se destaca na grid
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

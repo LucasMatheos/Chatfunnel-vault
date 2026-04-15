@@ -1,0 +1,107 @@
+<h2>Como os maiores SaaS fazem upgrade/checkout — Pesquisa real</h2>
+<p class="subtitle">Patterns extraidos de Notion, Figma, Linear, Slack, Miro, Loom, Coda, Neon, HubSpot, Lovable e mais 20+ produtos</p>
+
+<div class="section">
+  <h3>5 Patterns dominantes que os top SaaS usam</h3>
+
+  <div style="display: grid; gap: 20px; margin-top: 16px;">
+
+    <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border-left: 4px solid #3CA1A1;">
+      <h3 style="margin-top: 0; font-size: 16px;">1. Modal de upgrade contextual (nao pagina separada)</h3>
+      <p style="font-size: 14px; color: #555; line-height: 1.6;">
+        <strong>Quem faz:</strong> Notion, Figma, Slack, Miro, HubSpot, Loom, Neon, Lovable<br>
+        <strong>Como:</strong> Quando o usuario clica numa feature bloqueada ou atinge um limite, abre um <strong>modal sobre o app atual</strong> — nao uma pagina separada. O modal mostra o valor da feature + plano + CTA.
+        O usuario nunca sai do contexto do trabalho.<br>
+        <strong>Neon case study:</strong> Redesenharam de multi-step page pra um unico modal clean. Resultado: <strong>+7% conversao, -47% abandono</strong>.
+      </p>
+    </div>
+
+    <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border-left: 4px solid #6366f1;">
+      <h3 style="margin-top: 0; font-size: 16px;">2. Action-based triggers (nao calendar-based)</h3>
+      <p style="font-size: 14px; color: #555; line-height: 1.6;">
+        <strong>Quem faz:</strong> Miro, Grammarly, Spotify, Dropbox, Slack, Coda<br>
+        <strong>Como:</strong> O upgrade nao aparece porque "faltam 3 dias". Aparece quando o usuario <strong>tenta usar algo bloqueado</strong> ou <strong>atinge um limite</strong>.
+        Miro mostra uma animacao do que a feature faz e entao oferece upgrade. Grammarly mostra issues detectadas que so o premium resolve. Spotify bloqueia skip e mostra o valor do premium.<br>
+        <strong>Dado:</strong> Feature-gated triggers convertem mais que calendar-based (GrowthLayer, 2026).
+      </p>
+    </div>
+
+    <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border-left: 4px solid #f59e0b;">
+      <h3 style="margin-top: 0; font-size: 16px;">3. Reverse trial (dar premium, depois tirar)</h3>
+      <p style="font-size: 14px; color: #555; line-height: 1.6;">
+        <strong>Quem faz:</strong> Coda, Duolingo, Canva, varias startups AI<br>
+        <strong>Como:</strong> O usuario recebe acesso total ao plano premium durante X dias. Quando acaba, volta pro free — mas ja "sentiu" o que perde.
+        Coda: apos upgrade trial, destaca visualmente na UI tudo que e "feature do trial" com badges. Quando o trial acaba, o usuario sabe exatamente o que perde.<br>
+        <strong>Dado:</strong> Endowment effect — usuarios valorizam 2-3x mais algo que ja "possuem" (Kahneman).
+      </p>
+    </div>
+
+    <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border-left: 4px solid #22c55e;">
+      <h3 style="margin-top: 0; font-size: 16px;">4. Checkout via Stripe hosted ou 1-click</h3>
+      <p style="font-size: 14px; color: #555; line-height: 1.6;">
+        <strong>Quem faz:</strong> Linear, Vercel, v0, Better Stack, Figma, Notion<br>
+        <strong>Como:</strong> Nao constroem form de pagamento custom. Usam <strong>Stripe Checkout hosted</strong> — redirect pra pagina Stripe, preenche cartao, volta pro app.
+        Ou usam Stripe Elements embeddados num modal minimo. Zero fricao, zero custom code desnecessario.<br>
+        <strong>Figma:</strong> Um botao "Complete purchase" → Stripe processa → volta pro app. Sem 4 steps.
+        <strong>Linear:</strong> Pricing page → "Get started" → Stripe checkout → done.
+      </p>
+    </div>
+
+    <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border-left: 4px solid #ec4899;">
+      <h3 style="margin-top: 0; font-size: 16px;">5. Profile/Settings como hub de upgrade</h3>
+      <p style="font-size: 14px; color: #555; line-height: 1.6;">
+        <strong>Quem faz:</strong> Lovable, Linear, Figma, Slack<br>
+        <strong>Como:</strong> O upgrade nao e um fluxo separado com paginas proprias. Vive dentro de <strong>Settings → Billing</strong>.
+        Lovable transforma o perfil do usuario no ponto principal de nudges e upsells. Linear tem tudo em Settings → Workspace → Plans.
+        O usuario sente que esta gerenciando sua conta, nao "sendo vendido".<br>
+        <strong>Insight:</strong> Nenhum dos top SaaS tem um "checkout flow" de 4 paginas dedicadas. O upgrade e integrado ao produto.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<div class="section" style="margin-top: 32px; background: #fef3c7; padding: 24px; border-radius: 12px;">
+  <h3 style="margin-top: 0;">Conclusao critica pra voce</h3>
+  <p style="font-size: 14px; line-height: 1.7; color: #78350f;">
+    <strong>O que o ChatFunnel faz hoje (4 paginas dedicadas de checkout) nao e o que nenhum top SaaS faz.</strong>
+    O pattern dominante e: <strong>modal contextual + Stripe checkout/hosted + settings page</strong>. Ninguem cria um "wizard de 4 steps" separado do app.
+  </p>
+  <p style="font-size: 14px; line-height: 1.7; color: #78350f; margin-top: 8px;">
+    A pergunta real nao e "como redesenhar os 4 steps" — e <strong>"deveriamos ter steps?"</strong>
+  </p>
+</div>
+
+<div class="section" style="margin-top: 24px;">
+  <h3>O que isso significa pro ChatFunnel?</h3>
+  <p class="subtitle">3 direcoes possiveis baseadas na pesquisa real</p>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Modal contextual + Stripe Checkout hosted</h3>
+      <p>Quando o trial acaba (ou o usuario tenta feature premium): abre modal no app mostrando metricas do trial + planos. Ao clicar "Selecionar plano" → redirect pra Stripe Checkout hosted. Stripe cuida de tudo (form, seguranca, 3DS). Volta pro app apos pagamento. Sem nenhuma pagina custom de checkout.</p>
+      <p style="font-size: 12px; color: #22c55e; font-weight: 600;">Pattern de: Linear, Vercel, Better Stack, v0</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Upgrade integrado em Settings + banner no app</h3>
+      <p>Banner persistente no topo do app ("Trial expira em X dias"). Clicando, vai pra Settings → Planos onde ve metricas, planos e paga via Stripe Elements embeddado. O upgrade e parte do app, nao uma experiencia separada. Sem paginas dedicadas.</p>
+      <p style="font-size: 12px; color: #6366f1; font-weight: 600;">Pattern de: Slack, Figma, Lovable, Notion</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Hibrido: Banner + Modal rico + Stripe hosted</h3>
+      <p>Banner no app → clica → abre modal full-screen (overlay) com: metricas do trial hero, cards de plano, social proof, tudo numa unica tela overlay. Ao selecionar plano → redirect Stripe Checkout. Junta o melhor de A (simplicidade) com contexto visual (metricas, social proof). Nao e uma pagina separada, e um overlay sobre o app.</p>
+      <p style="font-size: 12px; color: #ec4899; font-weight: 600;">Pattern de: Neon (modal redesign), HubSpot, Coda</p>
+    </div>
+  </div>
+</div>

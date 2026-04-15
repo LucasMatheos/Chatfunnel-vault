@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatFunnel — Upgrade Modal</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* Fake dashboard behind */
+.dashboard-bg {
+  position: fixed; inset: 0;
+  background: #F9FAFC;
+  display: flex;
+}
+.dash-sidebar {
+  width: 240px; background: #fff; border-right: 1px solid #E7E7E7;
+  padding: 20px 16px;
+}
+.dash-sidebar .logo { color: #3CA1A1; font-family: 'Figtree', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 32px; display: flex; align-items: center; gap: 8px; }
+.dash-sidebar .logo-box { width: 24px; height: 24px; background: #3CA1A1; border-radius: 5px; }
+.dash-nav-item { padding: 10px 12px; border-radius: 6px; font-size: 13px; color: #7A7786; font-family: 'Figtree', sans-serif; margin-bottom: 2px; }
+.dash-nav-item.active { background: #e6fffa; color: #3CA1A1; font-weight: 600; }
+.dash-content { flex: 1; padding: 24px 32px; }
+.dash-header { height: 48px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.dash-header h2 { font-family: 'Figtree', sans-serif; font-size: 20px; font-weight: 700; color: #33303E; }
+.dash-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.dash-card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 2px 24px rgba(55,30,145,0.05); }
+.dash-card-label { font-family: 'Figtree', sans-serif; font-size: 12px; color: #7A7786; }
+.dash-card-value { font-family: 'Figtree', sans-serif; font-size: 24px; font-weight: 700; color: #33303E; margin-top: 4px; }
+
+/* Overlay */
+.overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(30, 27, 40, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Modal */
+.modal {
+  width: 100%; max-width: 920px;
+  max-height: 92vh;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 4px 16px 35px rgba(55, 30, 145, 0.15);
+  overflow-y: auto;
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+.modal-header {
+  padding: 28px 36px 0;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.modal-close {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid #E7E7E7; background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s;
+  color: #7A7786; font-size: 18px;
+}
+.modal-close:hover { background: #F2F2F2; color: #33303E; }
+
+.modal-body { padding: 8px 36px 36px; font-family: 'Figtree', sans-serif; }
+
+/* Chip */
+.trial-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, #f6a623, #e67e22);
+  color: white; font-size: 12px; font-weight: 600;
+  padding: 5px 14px; border-radius: 9999px;
+  text-transform: uppercase; letter-spacing: 0.3px;
+}
+.trial-chip svg { width: 14px; height: 14px; }
+
+/* Hero */
+.hero { text-align: center; margin: 28px 0 32px; }
+.hero h1 { font-size: 30px; font-weight: 800; color: #33303E; line-height: 1.2; }
+.hero p { font-size: 15px; color: #7A7786; margin-top: 8px; line-height: 1.5; }
+
+/* Metrics */
+.metrics {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  margin-bottom: 36px;
+}
+.metric {
+  background: linear-gradient(135deg, #e6fffa 0%, #f0fdfb 100%);
+  border-radius: 14px; padding: 24px 16px; text-align: center;
+  border: 1px solid rgba(60, 161, 161, 0.1);
+  transition: transform 0.2s;
+}
+.metric:hover { transform: translateY(-2px); }
+.metric-icon { margin-bottom: 8px; }
+.metric-icon svg { width: 28px; height: 28px; color: #3CA1A1; }
+.metric-value { font-size: 34px; font-weight: 800; color: #2F585E; letter-spacing: -1px; }
+.metric-label { font-size: 13px; color: #5f8a8a; margin-top: 4px; font-weight: 500; }
+
+/* Billing toggle */
+.billing-section { text-align: center; margin-bottom: 20px; }
+.billing-label { font-size: 13px; color: #7A7786; margin-bottom: 10px; }
+.billing-toggle {
+  display: inline-flex; gap: 2px;
+  background: #F2F2F2; border-radius: 10px; padding: 3px;
+}
+.billing-btn {
+  padding: 8px 18px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  border: none; cursor: pointer; transition: all 0.2s;
+  background: transparent; color: #7A7786; font-family: 'Figtree', sans-serif;
+}
+.billing-btn.active {
+  background: white; color: #33303E; font-weight: 600;
+  box-shadow: 0 1px 4px rgba(55,30,145,0.08);
+}
+.billing-save { color: #24B26E; font-size: 11px; font-weight: 700; }
+
+/* Plans */
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
+.plan {
+  border-radius: 14px; padding: 28px;
+  border: 1.5px solid #E7E7E7;
+  transition: all 0.2s; cursor: pointer; position: relative;
+}
+.plan:hover { border-color: #D0D0D2; box-shadow: 0 2px 24px rgba(55,30,145,0.06); }
+.plan.featured {
+  border: 2px solid #3CA1A1;
+  background: linear-gradient(180deg, #fafffe 0%, #fff 100%);
+}
+.plan-badge {
+  position: absolute; top: -11px; left: 24px;
+  background: #3CA1A1; color: white;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 12px; border-radius: 6px;
+}
+.plan-name { font-size: 18px; font-weight: 700; color: #33303E; }
+.plan-price { margin: 12px 0 4px; display: flex; align-items: baseline; gap: 3px; }
+.plan-price-val { font-size: 38px; font-weight: 800; color: #33303E; letter-spacing: -1px; }
+.plan-price-period { font-size: 14px; color: #7A7786; }
+.plan-contacts { font-size: 13px; color: #7A7786; margin-bottom: 18px; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
+.plan-features li { font-size: 13px; color: #4E4B59; display: flex; align-items: center; gap: 8px; }
+.plan-features li svg { width: 16px; height: 16px; color: #3CA1A1; flex-shrink: 0; }
+.plan-btn {
+  width: 100%; height: 44px; border-radius: 10px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all 0.15s; font-family: 'Figtree', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.plan-btn.outline { background: #fff; border: 1.5px solid #3CA1A1; color: #3CA1A1; }
+.plan-btn.outline:hover { background: #f0fdfb; }
+.plan-btn.filled { background: #3CA1A1; border: none; color: white; }
+.plan-btn.filled:hover { background: #358f8f; }
+
+/* Social proof */
+.social-proof { margin-bottom: 24px; }
+.testimonials { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.testimonial {
+  background: #FAFAFA; border-radius: 10px; padding: 16px 18px;
+  border-left: 3px solid #3CA1A1;
+}
+.testimonial-stars { color: #f6a623; font-size: 11px; letter-spacing: 1px; margin-bottom: 6px; }
+.testimonial-quote { font-size: 12.5px; color: #4E4B59; font-style: italic; line-height: 1.55; margin-bottom: 10px; }
+.testimonial-author { display: flex; align-items: center; gap: 8px; }
+.testimonial-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #3CA1A1; color: white;
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.testimonial-name { font-size: 12px; font-weight: 600; color: #33303E; }
+
+/* Trust */
+.trust {
+  display: flex; justify-content: center; gap: 24px;
+  padding: 16px 0 4px;
+  border-top: 1px solid #F2F2F2;
+}
+.trust-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #8C8A97; }
+.trust-item svg { width: 16px; height: 16px; color: #24B26E; }
+
+/* Stripe note */
+.stripe-note { text-align: center; margin-top: 10px; font-size: 11px; color: #D0D0D2; }
+
+@media (max-width: 768px) {
+  .modal { max-width: 100%; border-radius: 16px 16px 0 0; max-height: 96vh; margin-top: auto; }
+  .metrics { grid-template-columns: 1fr; }
+  .plans { grid-template-columns: 1fr; }
+  .testimonials { grid-template-columns: 1fr; }
+  .trust { flex-wrap: wrap; gap: 12px; }
+  .modal-body { padding: 8px 20px 28px; }
+  .modal-header { padding: 20px 20px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Fake dashboard behind the overlay -->
+<div class="dashboard-bg">
+  <div class="dash-sidebar">
+    <div class="logo"><div class="logo-box"></div> ChatFunnel</div>
+    <div class="dash-nav-item active">Dashboard</div>
+    <div class="dash-nav-item">Livechat</div>
+    <div class="dash-nav-item">Automacoes</div>
+    <div class="dash-nav-item">CRM</div>
+    <div class="dash-nav-item">Contatos</div>
+    <div class="dash-nav-item">Broadcast</div>
+    <div class="dash-nav-item">Agentes IA</div>
+    <div class="dash-nav-item">Relatorios</div>
+  </div>
+  <div class="dash-content">
+    <div class="dash-header"><h2>Dashboard</h2></div>
+    <div class="dash-cards">
+      <div class="dash-card"><div class="dash-card-label">Conversas hoje</div><div class="dash-card-value">47</div></div>
+      <div class="dash-card"><div class="dash-card-label">Leads captados</div><div class="dash-card-value">12</div></div>
+      <div class="dash-card"><div class="dash-card-label">Tempo medio resp.</div><div class="dash-card-value">2m 14s</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Full-screen overlay modal -->
+<div class="overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="trial-chip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Trial expira em 3 dias
+      </div>
+      <button class="modal-close">✕</button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="hero">
+        <h1>Seus resultados falam por si</h1>
+        <p>Olha o que voce construiu em 14 dias. Continue automatizando sem perder seu progresso.</p>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="metric-value">1.247</div>
+          <div class="metric-label">Fluxos executados</div>
+        </div>
+        <div class="metric">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="metric-value">342</div>
+          <div class="metric-label">Leads captados</div>
+        </div>
+        <div class="metric">
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="metric-value">4h 32m</div>
+          <div class="metric-label">Tempo economizado</div>
+        </div>
+      </div>
+
+      <div class="billing-section">
+        <div class="billing-toggle">
+          <button class="billing-btn active">Mensal</button>
+          <button class="billing-btn">Trimestral</button>
+          <button class="billing-btn">Semestral</button>
+          <button class="billing-btn">Anual <span class="billing-save">-20%</span></button>
+        </div>
+      </div>
+
+      <div class="plans">
+        <div class="plan">
+          <div class="plan-name">Starter</div>
+          <div class="plan-price">
+            <span class="plan-price-val">R$197</span>
+            <span class="plan-price-period">/mes</span>
+          </div>
+          <div class="plan-contacts">Ate 500 contatos</div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Automacoes ilimitadas</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>1 agente de IA</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Livechat integrado</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>CRM basico</li>
+          </ul>
+          <button class="plan-btn outline">Selecionar Starter</button>
+        </div>
+
+        <div class="plan featured">
+          <div class="plan-badge">Mais escolhido</div>
+          <div class="plan-name">Advanced</div>
+          <div class="plan-price">
+            <span class="plan-price-val">R$397</span>
+            <span class="plan-price-period">/mes</span>
+          </div>
+          <div class="plan-contacts">Ate 2.500 contatos</div>
+          <ul class="plan-features">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Tudo do Starter +</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Agentes de IA ilimitados</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Broadcast WhatsApp</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>CRM completo + Kanban</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Relatorios avancados</li>
+          </ul>
+          <button class="plan-btn filled">Selecionar Advanced →</button>
+        </div>
+      </div>
+
+      <div class="social-proof">
+        <div class="testimonials">
+          <div class="testimonial">
+            <div class="testimonial-stars">★★★★★</div>
+            <div class="testimonial-quote">"Ja vendi R$400 mil com ticket baixo, so com automacao do ChatFunnel."</div>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">M</div>
+              <span class="testimonial-name">Matheus Garcia</span>
+            </div>
+          </div>
+          <div class="testimonial">
+            <div class="testimonial-stars">★★★★★</div>
+            <div class="testimonial-quote">"Captamos leads com custo baixissimo. O ChatFunnel e essencial."</div>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">A</div>
+              <span class="testimonial-name">Armando Urzum</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="trust">
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Pagamento seguro
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          7 dias de garantia
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Suporte dedicado
+        </div>
+        <div class="trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Cancele quando quiser
+        </div>
+      </div>
+
+      <div class="stripe-note">Pagamento processado com seguranca via Stripe</div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

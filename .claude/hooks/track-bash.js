@@ -68,6 +68,10 @@ process.stdin.on('end', () => {
     fs.mkdirSync(path.dirname(TRACKING_FILE), { recursive: true })
     fs.appendFileSync(TRACKING_FILE, `[bash] ${tracked}\n`, 'utf8')
 
+    // Also append to handoff accumulator (survives diary-stop cleanup)
+    const HANDOFF_ACC = path.join(DIARY_ROOT, 'raw', '.tracking-handoff.tmp')
+    try { fs.appendFileSync(HANDOFF_ACC, `[bash] ${tracked}\n`, 'utf8') } catch (_) {}
+
     process.exit(0)
   } catch (e) {
     process.exit(0)

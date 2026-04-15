@@ -2,8 +2,8 @@
 title: Onboarding Flow
 description: Jornada do novo usuario desde signup ate o dashboard, com onboarding V2 via chat interativo.
 tags: [onboarding, signup, auth, organization, channels]
-related: ["[[organization-form]]", "[[channels]]", "[[automations]]"]
-last_updated: 2026-04-08
+related: ["[[organization-form]]", "[[channels]]", "[[automations]]", "[[signup-profile-step]]"]
+last_updated: 2026-04-13
 ---
 
 # Onboarding Flow
@@ -20,7 +20,7 @@ Jornada completa de um novo usuario no ChatFunnel.
 
 | Fase | O que acontece | Condicao de saida |
 |------|---------------|-------------------|
-| Signup | Cria conta, verifica email, preenche perfil e survey | `currentSignUpStep == "DONE"` |
+| Signup | Cria conta, verifica email, preenche perfil ([[signup-profile-step]]) e survey | `currentSignUpStep == "DONE"` |
 | Selecao de Org | Lista orgs ou cria nova (com plano via Stripe) | `organizationData.id` existe |
 | Onboarding V2 | Chat interativo com 3 milestones | `hasAnsweredInitialForm == true` |
 | Dashboard | Acesso livre ao app | — |

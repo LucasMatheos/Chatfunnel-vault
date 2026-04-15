@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "7a161e63ba60dd62",
+        "id": "48d7c258ea2d17e0",
         "type": "tabs",
         "children": [
           {
-            "id": "cdc3c3a1d365bcd2",
+            "id": "eea323cf64a5600b",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "wiki/guides/pencil-dev-guide.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "pencil-dev-guide"
+              "title": "Nova aba"
             }
           }
         ]
@@ -194,8 +190,30 @@
       "omnisearch:Omnisearch": false
     }
   },
-  "active": "cdc3c3a1d365bcd2",
+  "active": "eea323cf64a5600b",
   "lastOpenFiles": [
+    "wiki/repos/chatfunnel-front.md",
+    "diary/raw/11-04-2026.md",
+    "Excalidraw/Drawing 2026-04-13 13.20.54.excalidraw.md",
+    "Excalidraw",
+    "diary/10-04-2026-daily.md",
+    "diary/13-04-2026-daily.md",
+    "wiki/gotchas/frontend-gotchas.md",
+    "wiki/features/signup-profile-step.md",
+    "wiki/guides/archon-workflow-engine.md",
+    "wiki/guides/code-review-graph.md",
+    "prototipos/intelligence-chat.pen",
+    "wiki/architecture/error-handling.md",
+    "wiki/guides/cognee-knowledge-engine.md",
+    "wiki/guides/pencil-dev-guide.md",
+    "prototipos/payment-upgrade-modal.pen",
+    "prototipos/figma-refs/Brand.png",
+    "prototipos/figma-refs/Typography.png",
+    "prototipos/figma-refs/Iconography.png",
+    "prototipos/figma-refs/Grid.png",
+    "prototipos/figma-refs/Effect styles.png",
+    "prototipos/figma-refs/Colors.png",
+    "prototipos/figma-refs",
     "prototipos",
     "Base List Links.base",
     "wiki/diagrams/chatfunnel-architecture.excalidraw.md",
@@ -214,19 +232,7 @@
     "Excalidraw/Drawing 2026-04-08 08.10.04.excalidraw.md",
     "wiki/features/Drawing 2026-04-08 08.08.55.excalidraw.md",
     "Excalidraw/Drawing 2026-04-08 08.07.39.excalidraw.md",
-    "Excalidraw",
-    "wiki/features/onboarding-flow.md",
-    "wiki/ai-patterns/rag.md",
-    "wiki/guides/_index.md",
     "wiki/guides",
-    "wiki/features/organization-form.md",
-    "Features.md",
-    "Brainstorm.md",
-    "raw.md",
-    "guide-skills.md",
-    "diary/07-04-2026-daily.md",
-    "diary/raw/08-04-2026.md",
-    "diary/raw/07-04-2026.md",
     "wiki/ai-patterns",
     "Clippings"
   ]

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Step 2 — Pagamento</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Figtree', sans-serif; background: #F9FAFC; color: #33303E; min-height: 100vh; }
+
+.header { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1px solid #E7E7E7; padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+.header-left { display: flex; align-items: center; gap: 16px; }
+.back-btn { display: flex; align-items: center; gap: 6px; font-size: 14px; color: #7A7786; cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #E7E7E7; background: white; transition: all 0.2s; }
+.back-btn:hover { background: #F2F2F2; color: #33303E; }
+.logo { font-size: 20px; font-weight: 700; color: #3CA1A1; display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 32px; height: 32px; background: #3CA1A1; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+.logo-icon svg { width: 18px; height: 18px; fill: white; }
+.chip-trial { background: #f6a623; color: white; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 9999px; text-transform: uppercase; }
+
+.content { max-width: 1100px; margin: 0 auto; padding: 48px 32px 64px; display: grid; grid-template-columns: 5fr 3fr; gap: 32px; align-items: start; }
+
+/* Payment form */
+.payment-form { background: white; border-radius: 12px; padding: 40px; box-shadow: 0px 2px 24px rgba(55, 30, 145, 0.05); }
+.form-header { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+.form-header-icon { width: 44px; height: 44px; background: #e6fffa; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.form-header h2 { font-size: 22px; font-weight: 700; }
+.form-header p { font-size: 14px; color: #7A7786; margin-top: 2px; }
+
+.form-group { margin-bottom: 20px; }
+.form-label { font-size: 13px; font-weight: 500; color: #33303E; margin-bottom: 6px; display: block; }
+.form-input { width: 100%; height: 48px; border: 1px solid #E7E7E7; border-radius: 8px; padding: 0 16px; font-size: 14px; font-family: 'Figtree', sans-serif; color: #7A7786; background: white; transition: border-color 0.2s; display: flex; align-items: center; gap: 10px; }
+.form-input:focus-within { border-color: #3CA1A1; outline: none; box-shadow: 0 0 0 3px rgba(60,161,161,0.1); }
+.form-input-icon { color: #D0D0D2; display: flex; align-items: center; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.form-divider { height: 1px; background: #F2F2F2; margin: 28px 0; }
+
+.form-submit { width: 100%; height: 52px; background: #3CA1A1; border: none; border-radius: 8px; color: white; font-size: 16px; font-weight: 600; font-family: 'Figtree', sans-serif; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+.form-submit:hover { background: #358f8f; }
+.form-submit svg { width: 18px; height: 18px; }
+
+.form-secure { text-align: center; margin-top: 12px; font-size: 12px; color: #D0D0D2; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+/* Resume sidebar */
+.resume { position: sticky; top: 96px; display: flex; flex-direction: column; gap: 20px; }
+
+.resume-card { background: white; border-radius: 12px; padding: 28px; box-shadow: 0px 2px 24px rgba(55, 30, 145, 0.05); }
+.resume-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+.resume-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.resume-row-label { font-size: 14px; color: #7A7786; }
+.resume-row-value { font-size: 14px; font-weight: 600; color: #33303E; }
+.resume-divider { height: 1px; background: #E7E7E7; margin: 16px 0; }
+.resume-total { display: flex; justify-content: space-between; align-items: center; }
+.resume-total-label { font-size: 16px; font-weight: 600; }
+.resume-total-value { font-size: 18px; font-weight: 700; color: #3CA1A1; }
+
+.resume-plan { display: flex; align-items: center; gap: 12px; padding: 12px; background: #e6fffa; border-radius: 8px; margin-bottom: 16px; }
+.resume-plan-icon { width: 36px; height: 36px; background: #3CA1A1; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.resume-plan-name { font-size: 14px; font-weight: 600; }
+.resume-plan-desc { font-size: 12px; color: #7A7786; }
+
+.trust-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0px 2px 24px rgba(55, 30, 145, 0.05); display: flex; flex-direction: column; gap: 14px; }
+.trust-item { display: flex; align-items: center; gap: 10px; }
+.trust-icon { color: #24B26E; display: flex; align-items: center; }
+.trust-text { font-size: 13px; color: #7A7786; }
+.trust-text strong { color: #33303E; display: block; font-size: 13px; }
+.trust-text span { font-size: 11px; }
+
+.nav-label { text-align: center; margin-top: 24px; font-size: 12px; color: #D0D0D2; grid-column: 1 / -1; }
+
+/* Stripe badge */
+.stripe-badge { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 8px; font-size: 11px; color: #D0D0D2; }
+
+@media (max-width: 768px) {
+  .content { grid-template-columns: 1fr; }
+  .resume { position: static; }
+  .header { padding: 0 16px; }
+  .content { padding: 32px 16px 48px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <button class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Voltar
+    </button>
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="4" height="16" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="2" width="4" height="18" rx="1"/></svg>
+      </div>
+      ChatFunnel
+    </div>
+  </div>
+  <div class="chip-trial">Trial expira em 3 dias</div>
+</div>
+
+<div class="content">
+  <div class="payment-form">
+    <div class="form-header">
+      <div class="form-header-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3CA1A1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+      </div>
+      <div>
+        <h2>Dados de pagamento</h2>
+        <p>Insira os dados do seu cartao de credito</p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Numero do cartao</label>
+      <div class="form-input">
+        <div class="form-input-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        </div>
+        4242 4242 4242 4242
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nome do titular</label>
+      <div class="form-input">NOME COMPLETO</div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Validade</label>
+        <div class="form-input">MM / AA</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">CVC</label>
+        <div class="form-input">
+          <div class="form-input-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          123
+        </div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <button class="form-submit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+      Confirmar pagamento
+    </button>
+
+    <div class="form-secure">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+      Seus dados estao protegidos com criptografia SSL
+    </div>
+
+    <div class="stripe-badge">
+      Processado por Stripe
+    </div>
+  </div>
+
+  <div class="resume">
+    <div class="resume-card">
+      <div class="resume-title">Resumo do pedido</div>
+
+      <div class="resume-plan">
+        <div class="resume-plan-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        </div>
+        <div>
+          <div class="resume-plan-name">Plano Advanced</div>
+          <div class="resume-plan-desc">Ate 2.500 contatos</div>
+        </div>
+      </div>
+
+      <div class="resume-row">
+        <span class="resume-row-label">Plano</span>
+        <span class="resume-row-value">Advanced</span>
+      </div>
+      <div class="resume-row">
+        <span class="resume-row-label">Contatos</span>
+        <span class="resume-row-value">2.500</span>
+      </div>
+      <div class="resume-row">
+        <span class="resume-row-label">Periodo</span>
+        <span class="resume-row-value">Mensal</span>
+      </div>
+
+      <div class="resume-divider"></div>
+
+      <div class="resume-total">
+        <span class="resume-total-label">Total</span>
+        <span class="resume-total-value">R$ 397,00/mes</span>
+      </div>
+    </div>
+
+    <div class="trust-card">
+      <div class="trust-item">
+        <div class="trust-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+        <div class="trust-text">
+          <strong>Pagamento 100% seguro</strong>
+          <span>Criptografia SSL de ponta a ponta</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+        </div>
+        <div class="trust-text">
+          <strong>7 dias de garantia</strong>
+          <span>Cancele e receba reembolso total</span>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <div class="trust-text">
+          <strong>Suporte especializado</strong>
+          <span>Time dedicado para te ajudar</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-label">Step 2 de 2 — Apos confirmar, voce sera redirecionado ao dashboard</div>
+</div>
+
+</body>
+</html>
