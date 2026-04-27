@@ -32,7 +32,13 @@ desktop.ini
 # Skills runtime
 .claude/skills/*/data/
 .claude/skills/*/.venv/
+
+# HTTP tests (contain API keys)
+http-tests/
 # Added by code-review-graph
 .code-review-graph/
 .envs
 envs/
+graphify-out/
+/_archive/
+/graphify-test/

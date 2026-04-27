@@ -112,3 +112,54 @@ O schema Prisma vive em `chatfunnel-core/prisma/schema.prisma`. O `@chatfunnel/c
 ### Workaround
 
 Tratar `chatfunnel-database/` no CLAUDE.md como placeholder historico ou atualizar o doc. Toda mudanca de schema vai em `chatfunnel-core`.
+
+---
+
+## Dialog aninhado com `:modal="false"` fica invisivel
+
+**Arquivos de referencia:** `src/views/agents/AgentsForm/components/modals/AutomationsConfigDialog.vue`, `AutomationBuilderDialog.vue`
+
+### O que acontece
+
+Dialog interno aberto de dentro de outro Dialog (shadcn-vue / reka-ui) usando `:modal="false"` renderiza no DOM mas fica **invisivel e nao-clicavel**. `document.querySelectorAll('[role="dialog"]').length` sobe (ex: 1 -> 2) confirmando que o conteudo existe, mas nada aparece na tela.
+
+### Por que
+
+Quando o dialog externo abre em modo modal (default), reka-ui aplica globalmente:
+
+1. `pointer-events: none` no `<body>` — so o portal do modal ativo fica interativo
+2. Registra o dialog no seu stack interno de modais
+
+O dialog interno com `:modal="false"`:
+
+- Nao entra no stack do reka-ui
+- Nao renderiza `DialogOverlay` proprio (reka-ui so renderiza overlay quando modal=true)
+- O `DialogContent` e teleportado ao `<body>` como sibling do portal externo
+- Herda o `pointer-events: none` propagado pelo modal externo
+- Fica visualmente atras do overlay opaco (`bg-black/80` em `z-[9999]`) do externo
+
+Resultado: existe no DOM mas e inalcancavel.
+
+### Fix
+
+Deixar o dialog interno como modal tambem. O reka-ui gerencia nested modals via stack LIFO: o overlay do interno empilha por cima do externo, ESC fecha o de cima primeiro, dismiss do externo nao fecha o interno.
+
+```vue
+<!-- Errado -->
+<Dialog v-model:open="isOpen" :modal="false">
+
+<!-- Certo -->
+<Dialog v-model:open="isOpen">
+```
+
+Para evitar que clicar no overlay do interno feche o externo por engano, o externo deve condicionar o `close-on-overlay`:
+
+```vue
+<DialogControl :close-on-overlay="!builderIsOpen" ... />
+```
+
+Onde `builderIsOpen = computed(() => !!builderRef.value?.isOpen)`.
+
+### Nao resolve com z-index
+
+Tentar bumpar z-index do `DialogContent` interno (ex: `z-[100000]!`) **nao resolve** porque o bloqueio vem do `pointer-events: none` no body, nao apenas de stacking. A raiz e o modal mode, nao CSS.

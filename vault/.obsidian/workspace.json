@@ -11,10 +11,14 @@
             "id": "eea323cf64a5600b",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "wiki/ai-patterns/graphify.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "Nova aba"
+              "title": "graphify"
             }
           }
         ]
@@ -192,12 +196,23 @@
   },
   "active": "eea323cf64a5600b",
   "lastOpenFiles": [
+    "claude/handoff.md",
+    "claude/context-pack.md",
+    "Docs/tutorial-construir-vault.md",
+    "wiki/diagrams/chatfunnel-architecture.excalidraw.md",
+    "wiki/diagrams/chatfunnel-architecture-mermaid.md",
+    "wiki/architecture/message-flow.md",
+    "wiki/architecture/queue-architecture.md",
+    "wiki/features/contacts-utm-fields.md",
+    "diary/14-04-2026-daily.md",
+    "diary/raw/14-04-2026.md",
+    "wiki/architecture/_index.md",
+    "diary/13-04-2026-daily.md",
     "wiki/repos/chatfunnel-front.md",
     "diary/raw/11-04-2026.md",
     "Excalidraw/Drawing 2026-04-13 13.20.54.excalidraw.md",
     "Excalidraw",
     "diary/10-04-2026-daily.md",
-    "diary/13-04-2026-daily.md",
     "wiki/gotchas/frontend-gotchas.md",
     "wiki/features/signup-profile-step.md",
     "wiki/guides/archon-workflow-engine.md",
@@ -216,22 +231,11 @@
     "prototipos/figma-refs",
     "prototipos",
     "Base List Links.base",
-    "wiki/diagrams/chatfunnel-architecture.excalidraw.md",
-    "wiki/diagrams/chatfunnel-architecture-mermaid.md",
     "diary/09-04-2026-daily.md",
     "wiki/guides/components-catalog.md",
     "diary/08-04-2026-daily.md",
-    "wiki/features/calendar-permissions.md",
-    "wiki/guides/onboarding-flow-guide.md",
-    "wiki/guides/calendar-permissions-test-guide.md",
-    "diary/05-04-2026-daily.md",
-    "wiki/guides/skills-workspace-guide.md",
-    "onboarding-flow-canvas.md",
     "wiki/guides/onboarding-flow-canvas.canvas",
     "wiki/guides/onboarding-flow.excalidraw",
-    "Excalidraw/Drawing 2026-04-08 08.10.04.excalidraw.md",
-    "wiki/features/Drawing 2026-04-08 08.08.55.excalidraw.md",
-    "Excalidraw/Drawing 2026-04-08 08.07.39.excalidraw.md",
     "wiki/guides",
     "wiki/ai-patterns",
     "Clippings"

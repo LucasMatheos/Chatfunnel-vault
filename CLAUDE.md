@@ -83,3 +83,42 @@ O vault Obsidian em `vault/` e a knowledge base do projeto. Use a skill `obsidia
 
 - ALWAYS consulte o vault antes de implementar features ou tomar decisoes arquiteturais
 - ALWAYS atualize o vault apos descobrir gotchas ou tomar decisoes relevantes
+
+## Graphify: knowledge graph do codebase
+
+Cada sub-repo tem seu próprio grafo em `graphify-out/`:
+- `GRAPH_REPORT.md` — god nodes, communities, surprising connections, knowledge gaps
+- `graph.json` — grafo completo (AST + edges)
+- `graph.html` — visualização interativa D3
+
+**Use o grafo ANTES de Grep/Glob/Read** para explorar o código.
+
+### CLI
+
+```bash
+GF="D:/Code/4-Vinicius/Chatfunnel/graphify-test/.venv/Scripts/graphify.exe"
+
+"$GF" update .                     # rebuild incremental (AST only, 1-10s, sem LLM)
+"$GF" query "pergunta em NL"       # BFS traversal do graph.json
+"$GF" explain "Gateway()"          # neighborhood de um node
+"$GF" path "A()" "B()"             # caminho mais curto entre dois nodes
+"$GF" cluster-only .               # re-roda Leiden sem reparse
+"$GF" watch .                      # rebuild on file change
+```
+
+### Ordem de preferência
+
+1. **Pergunta arquitetural** → `graphify-out/GRAPH_REPORT.md` (god nodes, communities)
+2. **Buscar função/conceito** → `graphify query "..." --budget 800`
+3. **Entender relações** → `graphify explain "nome_do_node"`
+4. **Só então** Grep/Read para ler o código in loco
+
+### Manter atualizado
+
+Após editar código num repo, rodar `graphify update .` dentro dele. Build é
+incremental e gratuito (AST-only, sem API). Tempo: 1-10s por repo.
+
+### Multi-repo
+
+Cada repo tem seu grafo isolado. Para entender dependências cross-repo (ex:
+front → api), consultar `graphify-out/GRAPH_REPORT.md` de cada um.

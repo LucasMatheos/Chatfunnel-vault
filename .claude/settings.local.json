@@ -21,14 +21,13 @@
       "Bash(pip --version)",
       "Bash(pip3 --version)",
       "Bash(pip install:*)",
-      "Bash(python -m code_review_graph --version)",
-      "Bash(python -c \"import code_review_graph; print\\('OK'\\)\")",
-      "Bash(python -m code_review_graph build)",
-      "Bash(timeout 30 python -m code_review_graph stats)",
-      "Bash(timeout 30 python -m code_review_graph status)",
-      "Bash(python -m code_review_graph build --help)",
       "Bash(python:*)",
-      "mcp__plugin_context-mode_context-mode__ctx_execute_file"
+      "mcp__plugin_context-mode_context-mode__ctx_execute_file",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"./sync-core.ps1\")",
+      "Bash(rm -rf D:/Code/4-Vinicius/Chatfunnel/.code-review-graph)",
+      "Bash(rm -f D:/Code/4-Vinicius/Chatfunnel/.code-review-graphignore)",
+      "Bash(rm -f D:/Code/4-Vinicius/Chatfunnel/.claude/skills/explore-codebase.md)",
+      "Bash(rm -rf C:/Users/lucas/.code-review-graph)"
     ]
   }
 }

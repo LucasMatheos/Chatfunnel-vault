@@ -3,7 +3,7 @@ title: Contacts UTM & Scheduled Link Fields
 description: 7 campos nativos no model Contacts para rastreamento UTM e agendamento — schema pronto, falta sync core/api/front.
 tags: [contacts, utm, tracking, scheduled-links, in-progress]
 related: ["[[contacts]]", "[[custom-fields]]", "[[crm-kanban]]"]
-last_updated: 2026-04-14
+last_updated: 2026-04-16
 ---
 
 # Contacts UTM & Scheduled Link Fields
@@ -41,12 +41,17 @@ Adicionar campos nativos de rastreamento UTM e ultimo agendamento diretamente no
 - [x] 7 CustomField system entries na migration
 - [x] Variaveis de template no front (`MenuVariables.vue` + `useContactFields.ts`)
 - [x] API retorna os campos no GET (findFirst sem select explicito)
+- [x] **chatfunnel-api** `UpdateContactInfo/handler.js` — aceita e salva UTM/schedule no update (2026-04-15)
+  - Destructure dos 7 campos no `req.body`, incluidos no `prisma.contacts.update()`
+  - `lastScheduleDate` convertido via `new Date()` quando string vier do front
+  - Prisma ignora `undefined` — front pode omitir UTMs sem apagar dados existentes
+- [x] **chatfunnel-api** `BaseHandler._addInfoToCustomField()` — switch com IDs system `000006`-`000012` ja mapeia UTM/schedule para `prisma.contacts.update()` (preexistente, verificado 2026-04-16)
+- [x] **chatfunnel-api** Agente seta `lastScheduleLink` e `lastScheduleDate` automaticamente ao criar evento (2026-04-16)
+  - `HandlerAssistantGoogleCalendar.createEvent()` agora retorna `startAt` nos dois paths (nativo e Google)
+  - `HandlerAssistant.js` case `create_google_calendar_event` chama `_addInfoToCustomField` com IDs `000011` (link) e `000012` (data) apos sucesso
 
 ### Falta
 
-- [ ] **chatfunnel-api** `UpdateContactInfo/handler.js` — aceitar e salvar campos UTM/schedule no update
-  - Hoje so aceita: `firstName`, `lastName`, `email`, `phone`, `instagramUsername`, `customFields`
-  - Precisa: destructure UTM fields do `req.body` + incluir no `prisma.update()`
 - [ ] **chatfunnel-core** `contacts.repository.ts` — adicionar filtros UTM no `getContacts()`
   - Metodo `getContacts()` filtra por: searchTerm, phone, email, instagram, tags, pipeline, dates, priority
   - Falta: filtro por utmSource, utmMedium, utmCampaign, utmTerm, utmContent

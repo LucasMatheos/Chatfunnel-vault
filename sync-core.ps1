@@ -5,9 +5,10 @@
 $ErrorActionPreference = "Stop"
 
 $ROOT     = "D:\Code\4-Vinicius\Chatfunnel"
-$CORE     = "$ROOT\chatfunnel-core"
-$SERVICES = "$ROOT\chatfunnel-services"
-$API      = "$ROOT\chatfunnel-api"
+$CORE         = "$ROOT\chatfunnel-core"
+$SERVICES     = "$ROOT\chatfunnel-services"
+$API          = "$ROOT\chatfunnel-api"
+$EXTERNAL_API = "$ROOT\chatfunnel-external-api"
 
 Write-Host "Building chatfunnel-core..." -ForegroundColor Cyan
 Push-Location $CORE
@@ -27,13 +28,30 @@ function Sync-Core($target, $name) {
     Copy-Item -Path "$CORE\prisma\schema.prisma" -Destination "$destPrisma\schema.prisma" -Force
 }
 
-Sync-Core $SERVICES "chatfunnel-services"
-Sync-Core $API      "chatfunnel-api"
+Sync-Core $SERVICES     "chatfunnel-services"
+Sync-Core $API          "chatfunnel-api"
+Sync-Core $EXTERNAL_API "chatfunnel-external-api"
 
-Write-Host "Regenerating Prisma client in chatfunnel-services..." -ForegroundColor Cyan
-Push-Location $SERVICES
-npx prisma generate --schema=node_modules/@chatfunnel/core/prisma/schema.prisma
-if ($LASTEXITCODE -ne 0) { throw "Prisma generate failed in services" }
-Pop-Location
+function Regenerate-Prisma($target, $name) {
+    Write-Host "Regenerating Prisma client in $name..." -ForegroundColor Cyan
+    Push-Location $target
+    npx prisma generate --schema=node_modules/@chatfunnel/core/prisma/schema.prisma
+    $code = $LASTEXITCODE
+    Pop-Location
+    if ($code -ne 0) {
+        Write-Host "WARN: Prisma generate failed in $name (code $code). Provavel causa: '$name' esta rodando e o .dll esta travado. Pare o processo e rode de novo se precisar." -ForegroundColor Yellow
+        return $false
+    }
+    return $true
+}
 
+$servicesOk    = Regenerate-Prisma $SERVICES     "chatfunnel-services"
+$apiOk         = Regenerate-Prisma $API          "chatfunnel-api"
+$externalApiOk = Regenerate-Prisma $EXTERNAL_API "chatfunnel-external-api"
+
+Write-Host ""
+Write-Host "Sync summary:" -ForegroundColor Cyan
+Write-Host ("  services     prisma generate: {0}" -f $(if ($servicesOk)    { 'OK' } else { 'FAILED' }))
+Write-Host ("  api          prisma generate: {0}" -f $(if ($apiOk)         { 'OK' } else { 'FAILED' }))
+Write-Host ("  external-api prisma generate: {0}" -f $(if ($externalApiOk) { 'OK' } else { 'FAILED' }))
 Write-Host "Done. Restart services and api." -ForegroundColor Green

@@ -1,7 +1,7 @@
 ---
 title: Features Index
 description: Indice de todas as features do ChatFunnel documentadas end-to-end (front + api + services + database).
-last_updated: 2026-04-14
+last_updated: 2026-04-20
 ---
 
 # Features
@@ -24,6 +24,8 @@ Cada artigo documenta uma feature completa do produto — logica de negocio, flu
 | Signup ProfileStep | [[signup-profile-step]] | complete |
 | Calendar Permissions | [[calendar-permissions]] | complete |
 | Contacts UTM & Scheduled Links | [[contacts-utm-fields]] | in-progress |
+| In-app Campaigns | [[in-app-campaigns]] | design-approved |
+| Send Moderator Name | [[send-moderator-name]] | planned |
 
 <!-- Formato para novas entradas:
 | Agents | [[agents]] | complete |

@@ -1,0 +1,1716 @@
+{
+  "version": "2.11",
+  "children": [
+    {
+      "type": "frame",
+      "id": "9PVkD",
+      "x": 80,
+      "y": 80,
+      "name": "Dialog - Estado Completo",
+      "width": 760,
+      "fill": "#FFFFFF",
+      "cornerRadius": 16,
+      "stroke": {
+        "thickness": 1,
+        "fill": "#E7E7E7"
+      },
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#371E911A",
+        "offset": {
+          "x": 4,
+          "y": 16
+        },
+        "blur": 35
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "igLcf",
+          "name": "Header",
+          "width": "fill_container",
+          "stroke": {
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "#E7E7E7"
+          },
+          "padding": [
+            24,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "MiZS8",
+              "name": "headerText",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "IqZ4k",
+                  "fill": "#33303E",
+                  "content": "Objetivos",
+                  "fontFamily": "Figtree",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "xMfFW",
+                  "fill": "#7A7786",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Defina metas nomeadas que o agente pode declarar como concluidas durante a conversa.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Figtree",
+                  "fontSize": 13
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KUrpM",
+              "name": "closeBtn",
+              "width": 32,
+              "height": 32,
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "xFGlA",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "x",
+                  "iconFontFamily": "phosphor",
+                  "fill": "#7A7786"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "fSM2r",
+          "name": "Body",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            24,
+            32
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "s1pKx",
+              "name": "Alert Info",
+              "width": "fill_container",
+              "fill": "#EFF6FF",
+              "cornerRadius": 8,
+              "gap": 10,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "kbFz8",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "info",
+                  "iconFontFamily": "phosphor",
+                  "fill": "#1D4ED8"
+                },
+                {
+                  "type": "text",
+                  "id": "WDft8",
+                  "fill": "#1D4ED8",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Cada objetivo vira uma ferramenta que o LLM pode acionar. No modo manual, a chave tecnica e gerada a partir do nome. No modo vinculado, o objetivo reaproveita uma ferramenta ja cadastrada.",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Figtree",
+                  "fontSize": 12
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Dsdfs",
+              "name": "Manual Objective",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 8,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E7E7E7"
+              },
+              "layout": "vertical",
+              "gap": 12,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ljUEp",
+                  "name": "manualHeader",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "FWWAg",
+                      "name": "badge",
+                      "fill": "#CAFFFB",
+                      "cornerRadius": 4,
+                      "padding": [
+                        4,
+                        8
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "H8Qja",
+                          "fill": "#3C7C7F",
+                          "content": "Objetivo #1",
+                          "fontFamily": "Figtree",
+                          "fontSize": 11,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "MPm7g",
+                      "name": "trashBtn",
+                      "width": 28,
+                      "height": 28,
+                      "cornerRadius": 6,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "6sJyU",
+                          "width": 14,
+                          "height": 14,
+                          "iconFontName": "trash",
+                          "iconFontFamily": "phosphor",
+                          "fill": "#C91D1D"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "uwTK7",
+                  "name": "nameField",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hzH9f",
+                      "fill": "#33303E",
+                      "content": "Nome",
+                      "fontFamily": "Figtree",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "xdFcB",
+                      "name": "nameInput",
+                      "width": "fill_container",
+                      "height": 40,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#E7E7E7"
+                      },
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pWvgE",
+                          "fill": "#33303E",
+                          "content": "Agendar Demo",
+                          "fontFamily": "Figtree",
+                          "fontSize": 14
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xL4l0",
+                  "name": "keyField",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GeAqe",
+                      "fill": "#33303E",
+                      "content": "Chave tecnica",
+                      "fontFamily": "Figtree",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "stwJv",
+                      "name": "keyPreview",
+                      "width": "fill_container",
+                      "height": 36,
+                      "fill": "#F9FAFC",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#E7E7E7"
+                      },
+                      "padding": [
+                        8,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "uROAH",
+                          "fill": "#5F5C6B",
+                          "content": "agendar_demo",
+                          "fontFamily": "Figtree",
+                          "fontSize": 13
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "QG6ZG",
+                      "fill": "#8C8A97",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "Gerada automaticamente a partir do nome. Use apenas letras, numeros e underline se editar.",
+                      "lineHeight": 1.5,
+                      "fontFamily": "Figtree",
+                      "fontSize": 11
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "43DDx",
+                  "name": "descField",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "QnRci",
+                      "fill": "#33303E",
+                      "content": "Descricao",
+                      "fontFamily": "Figtree",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Qdyd8",
+                      "name": "descInput",
+                      "width": "fill_container",
+                      "height": 72,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#E7E7E7"
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "psi75",
+                          "fill": "#33303E",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Chame quando o lead confirmar o agendamento da demonstracao",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Figtree",
+                          "fontSize": 14
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "9vYR4",
+              "name": "Bound Card - External Query",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 8,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E7E7E7"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "t9T5I",
+                  "name": "bc1Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ZHBD0",
+                      "name": "bc1Left",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bNI65",
+                          "name": "bc1Icon",
+                          "width": 36,
+                          "height": 36,
+                          "fill": "#E0F2FE",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "Hj7ET",
+                              "width": 18,
+                              "height": 18,
+                              "iconFontName": "globe-simple",
+                              "iconFontFamily": "phosphor",
+                              "fill": "#0284C7"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "9H6vv",
+                          "name": "bc1Info",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "v0uPC",
+                              "fill": "#33303E",
+                              "content": "consultar_plano",
+                              "fontFamily": "Figtree",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "DKclD",
+                              "name": "bc1Meta",
+                              "gap": 4,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "ZqoFm",
+                                  "fill": "#7A7786",
+                                  "content": "Tool vinculada — chave",
+                                  "fontFamily": "Figtree",
+                                  "fontSize": 11
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "BbnlL",
+                                  "name": "bc1KeyPill",
+                                  "fill": "#F2F2F2",
+                                  "cornerRadius": 4,
+                                  "padding": [
+                                    2,
+                                    6
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "snyHO",
+                                      "fill": "#5F5C6B",
+                                      "content": "consultar_plano",
+                                      "fontFamily": "Figtree",
+                                      "fontSize": 11,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "DmKnM",
+                      "name": "bc1Trash",
+                      "width": 28,
+                      "height": 28,
+                      "cornerRadius": 6,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "pqZCa",
+                          "width": 14,
+                          "height": 14,
+                          "iconFontName": "trash",
+                          "iconFontFamily": "phosphor",
+                          "fill": "#C91D1D"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Z84Ff",
+                  "name": "bc1DescField",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xNehH",
+                      "fill": "#33303E",
+                      "content": "Descricao",
+                      "fontFamily": "Figtree",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "9I7ob",
+                      "name": "bc1DescInput",
+                      "width": "fill_container",
+                      "height": 72,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#E7E7E7"
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "wBtns",
+                          "fill": "#33303E",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Considerar atingido quando a consulta retornar o plano do cliente",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Figtree",
+                          "fontSize": 14
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ChBdC",
+              "name": "Bound Card - Data Mapping",
+              "width": "fill_container",
+              "fill": "#FFFFFF",
+              "cornerRadius": 8,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E7E7E7"
+              },
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "zg4rx",
+                  "name": "bc2Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "9Oreo",
+                      "name": "bc2Left",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "bwIkF",
+                          "name": "bc2Icon",
+                          "width": 36,
+                          "height": 36,
+                          "fill": "#EDE9FE",
+                          "cornerRadius": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon_font",
+                              "id": "jBWxM",
+                              "width": 18,
+                              "height": 18,
+                              "iconFontName": "database",
+                              "iconFontFamily": "phosphor",
+                              "fill": "#7C3AED"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "5I6yh",
+                          "name": "bc2Info",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 2,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "KbhJ0",
+                              "fill": "#33303E",
+                              "content": "Mapeamento de Dados",
+                              "fontFamily": "Figtree",
+                              "fontSize": 14,
+                              "fontWeight": "500"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "4D7c7",
+                              "name": "bc2Meta",
+                              "gap": 4,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "WFDal",
+                                  "fill": "#7A7786",
+                                  "content": "Tool vinculada — chave",
+                                  "fontFamily": "Figtree",
+                                  "fontSize": 11
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "C3daB",
+                                  "name": "bc2KeyPill",
+                                  "fill": "#F2F2F2",
+                                  "cornerRadius": 4,
+                                  "padding": [
+                                    2,
+                                    6
+                                  ],
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "ntxVS",
+                                      "fill": "#5F5C6B",
+                                      "content": "save_contact_data",
+                                      "fontFamily": "Figtree",
+                                      "fontSize": 11,
+                                      "fontWeight": "500"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "7O5qf",
+                      "name": "bc2Trash",
+                      "width": 28,
+                      "height": 28,
+                      "cornerRadius": 6,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon_font",
+                          "id": "wfVL7",
+                          "width": 14,
+                          "height": 14,
+                          "iconFontName": "trash",
+                          "iconFontFamily": "phosphor",
+                          "fill": "#C91D1D"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "daMJ9",
+                  "name": "bc2DescField",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "gV9Kc",
+                      "fill": "#33303E",
+                      "content": "Descricao",
+                      "fontFamily": "Figtree",
+                      "fontSize": 12,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "cythw",
+                      "name": "bc2DescInput",
+                      "width": "fill_container",
+                      "height": 72,
+                      "fill": "#FFFFFF",
+                      "cornerRadius": 6,
+                      "stroke": {
+                        "thickness": 1,
+                        "fill": "#E7E7E7"
+                      },
+                      "layout": "vertical",
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "H4PjT",
+                          "fill": "#33303E",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Considerar atingido quando os dados do contato forem salvos com sucesso",
+                          "lineHeight": 1.5,
+                          "fontFamily": "Figtree",
+                          "fontSize": 14
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "cl6F4",
+              "name": "Action Buttons",
+              "width": "fill_container",
+              "gap": 12,
+              "padding": [
+                8,
+                0
+              ],
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "xKn80",
+                  "name": "btnAddManual",
+                  "height": 40,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#3CA1A1"
+                  },
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "occzF",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "plus",
+                      "iconFontFamily": "phosphor",
+                      "fill": "#3CA1A1"
+                    },
+                    {
+                      "type": "text",
+                      "id": "VeqgC",
+                      "fill": "#3CA1A1",
+                      "content": "Adicionar manualmente",
+                      "fontFamily": "Figtree",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dhmaO",
+                  "name": "btnUseTool",
+                  "height": 40,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#33303E"
+                  },
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "s4FMW",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "link",
+                      "iconFontFamily": "phosphor",
+                      "fill": "#33303E"
+                    },
+                    {
+                      "type": "text",
+                      "id": "dkUS1",
+                      "fill": "#33303E",
+                      "content": "Usar tool existente",
+                      "fontFamily": "Figtree",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "OzbER",
+          "name": "Footer",
+          "width": "fill_container",
+          "stroke": {
+            "thickness": {
+              "top": 1
+            },
+            "fill": "#E7E7E7"
+          },
+          "gap": 12,
+          "padding": [
+            16,
+            32,
+            20,
+            32
+          ],
+          "justifyContent": "end",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "QcH25",
+              "name": "btnCancel",
+              "height": 40,
+              "fill": "#FFFFFF",
+              "cornerRadius": 6,
+              "stroke": {
+                "thickness": 1,
+                "fill": "#E7E7E7"
+              },
+              "padding": [
+                10,
+                20
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "GHeTW",
+                  "fill": "#5F5C6B",
+                  "content": "Cancelar",
+                  "fontFamily": "Figtree",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "0Hzl9",
+              "name": "btnSave",
+              "height": 40,
+              "fill": "#3CA1A1",
+              "cornerRadius": 6,
+              "padding": [
+                10,
+                20
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "MCwOe",
+                  "fill": "#FFFFFF",
+                  "content": "Salvar",
+                  "fontFamily": "Figtree",
+                  "fontSize": 13,
+                  "fontWeight": "600"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "ySljX",
+      "x": 920,
+      "y": 80,
+      "name": "Dialog - Dropdown Aberto",
+      "width": 760,
+      "fill": "#FFFFFF",
+      "cornerRadius": 16,
+      "stroke": {
+        "thickness": 1,
+        "fill": "#E7E7E7"
+      },
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#371E911A",
+        "offset": {
+          "x": 4,
+          "y": 16
+        },
+        "blur": 35
+      },
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "B99wK",
+          "name": "d2Header",
+          "width": "fill_container",
+          "stroke": {
+            "thickness": {
+              "bottom": 1
+            },
+            "fill": "#E7E7E7"
+          },
+          "padding": [
+            24,
+            32
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "pavJB",
+              "name": "d2HeaderText",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qHvaz",
+                  "fill": "#33303E",
+                  "content": "Objetivos",
+                  "fontFamily": "Figtree",
+                  "fontSize": 20,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "olARz",
+                  "fill": "#7A7786",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Usar tool existente como objetivo",
+                  "lineHeight": 1.5,
+                  "fontFamily": "Figtree",
+                  "fontSize": 13
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "3o8Mw",
+              "name": "d2Close",
+              "width": 32,
+              "height": 32,
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "7LFoX",
+                  "width": 16,
+                  "height": 16,
+                  "iconFontName": "x",
+                  "iconFontFamily": "phosphor",
+                  "fill": "#7A7786"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "sYcze",
+          "name": "Body",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "padding": [
+            24,
+            32
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "h8qwY",
+              "name": "d2EmptyState",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "padding": [
+                24,
+                0
+              ],
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "yfFDk",
+                  "fill": "#7A7786",
+                  "content": "Nenhum objetivo adicionado ainda.",
+                  "fontFamily": "Figtree",
+                  "fontSize": 14
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "iNM4V",
+              "name": "d2Actions",
+              "width": "fill_container",
+              "gap": 12,
+              "justifyContent": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ZBlRK",
+                  "name": "d2BtnAdd",
+                  "height": 40,
+                  "fill": "#FFFFFF",
+                  "cornerRadius": 6,
+                  "stroke": {
+                    "thickness": 1,
+                    "fill": "#3CA1A1"
+                  },
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "ArmsI",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "plus",
+                      "iconFontFamily": "phosphor",
+                      "fill": "#3CA1A1"
+                    },
+                    {
+                      "type": "text",
+                      "id": "LlXML",
+                      "fill": "#3CA1A1",
+                      "content": "Adicionar manualmente",
+                      "fontFamily": "Figtree",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "QKjBk",
+                  "name": "d2BtnUse",
+                  "height": 40,
+                  "fill": "#33303E",
+                  "cornerRadius": 6,
+                  "gap": 8,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "lUR3B",
+                      "width": 16,
+                      "height": 16,
+                      "iconFontName": "link",
+                      "iconFontFamily": "phosphor",
+                      "fill": "#FFFFFF"
+                    },
+                    {
+                      "type": "text",
+                      "id": "s1Ajr",
+                      "fill": "#FFFFFF",
+                      "content": "Usar tool existente",
+                      "fontFamily": "Figtree",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "UIxJK",
+      "x": 1380,
+      "y": 300,
+      "name": "Dropdown - Tool Sources",
+      "width": 360,
+      "fill": "#FFFFFF",
+      "cornerRadius": 8,
+      "stroke": {
+        "thickness": 1,
+        "fill": "#E7E7E7"
+      },
+      "effect": {
+        "type": "shadow",
+        "shadowType": "outer",
+        "color": "#371E911A",
+        "offset": {
+          "x": 0,
+          "y": 8
+        },
+        "blur": 24
+      },
+      "layout": "vertical",
+      "gap": 2,
+      "padding": 6,
+      "children": [
+        {
+          "type": "frame",
+          "id": "F8Vpo",
+          "name": "lblDM",
+          "width": "fill_container",
+          "padding": [
+            8,
+            12,
+            4,
+            12
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "BGgyD",
+              "fill": "#8C8A97",
+              "content": "Mapeamento de dados",
+              "fontFamily": "Figtree",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 0.5
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "5jSha",
+          "name": "itemDM",
+          "width": "fill_container",
+          "cornerRadius": 6,
+          "gap": 10,
+          "padding": [
+            8,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "zMksV",
+              "name": "iconDM",
+              "width": 28,
+              "height": 28,
+              "fill": "#EDE9FE",
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "31O6D",
+                  "width": 14,
+                  "height": 14,
+                  "iconFontName": "database",
+                  "iconFontFamily": "phosphor",
+                  "fill": "#7C3AED"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "WRHTt",
+              "name": "itemDMText",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "gCB69",
+                  "fill": "#33303E",
+                  "content": "Mapeamento de Dados",
+                  "fontFamily": "Figtree",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "LzJo8",
+                  "fill": "#7A7786",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Salva dados extraidos do contato em campos customizados",
+                  "fontFamily": "Figtree",
+                  "fontSize": 11
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "V5zwa",
+          "name": "sep1",
+          "width": "fill_container",
+          "height": 1,
+          "fill": "#E7E7E7"
+        },
+        {
+          "type": "frame",
+          "id": "z06CU",
+          "name": "lblEQ",
+          "width": "fill_container",
+          "padding": [
+            8,
+            12,
+            4,
+            12
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "dXAdl",
+              "fill": "#8C8A97",
+              "content": "Consultas externas",
+              "fontFamily": "Figtree",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 0.5
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "2QaG4",
+          "name": "itemEQ1",
+          "width": "fill_container",
+          "fill": "#F9FAFC",
+          "cornerRadius": 6,
+          "gap": 10,
+          "padding": [
+            8,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "QLmdZ",
+              "name": "iconEQ1",
+              "width": 28,
+              "height": 28,
+              "fill": "#E0F2FE",
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "ijzI1",
+                  "width": 14,
+                  "height": 14,
+                  "iconFontName": "globe-simple",
+                  "iconFontFamily": "phosphor",
+                  "fill": "#0284C7"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fisVB",
+              "name": "itemEQ1Text",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "9AYIj",
+                  "fill": "#33303E",
+                  "content": "consultar_plano",
+                  "fontFamily": "Figtree",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "UQGVi",
+                  "fill": "#7A7786",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Busca plano do cliente",
+                  "fontFamily": "Figtree",
+                  "fontSize": 11
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "XbDTV",
+          "name": "itemEQ2",
+          "width": "fill_container",
+          "cornerRadius": 6,
+          "gap": 10,
+          "padding": [
+            8,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "lY2Lt",
+              "name": "iconEQ2",
+              "width": 28,
+              "height": 28,
+              "fill": "#E0F2FE",
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "hnEOy",
+                  "width": 14,
+                  "height": 14,
+                  "iconFontName": "globe-simple",
+                  "iconFontFamily": "phosphor",
+                  "fill": "#0284C7"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "bjn6N",
+              "name": "itemEQ2Text",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Jb13h",
+                  "fill": "#33303E",
+                  "content": "verificar_estoque",
+                  "fontFamily": "Figtree",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "Khn18",
+                  "fill": "#7A7786",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Verifica estoque disponivel do produto",
+                  "fontFamily": "Figtree",
+                  "fontSize": 11
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "1eHiC",
+          "name": "sep2",
+          "width": "fill_container",
+          "height": 1,
+          "fill": "#E7E7E7"
+        },
+        {
+          "type": "frame",
+          "id": "fvV3l",
+          "name": "lblCal",
+          "width": "fill_container",
+          "padding": [
+            8,
+            12,
+            4,
+            12
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "d7O5U",
+              "fill": "#8C8A97",
+              "content": "Calendario Google",
+              "fontFamily": "Figtree",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 0.5
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "2du2v",
+          "name": "itemCal1",
+          "width": "fill_container",
+          "cornerRadius": 6,
+          "gap": 10,
+          "padding": [
+            8,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "23Pre",
+              "name": "iconCal1",
+              "width": 28,
+              "height": 28,
+              "fill": "#FEF3C7",
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "zvvGq",
+                  "width": 14,
+                  "height": 14,
+                  "iconFontName": "calendar-blank",
+                  "iconFontFamily": "phosphor",
+                  "fill": "#D97706"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "eDyXq",
+              "name": "itemCal1Text",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "9Ugpi",
+                  "fill": "#33303E",
+                  "content": "Buscar horarios disponiveis",
+                  "fontFamily": "Figtree",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "ou82q",
+                  "fill": "#7A7786",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "get_google_calendar_slots",
+                  "fontFamily": "Figtree",
+                  "fontSize": 11
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "v69VV",
+          "name": "itemCal2",
+          "width": "fill_container",
+          "cornerRadius": 6,
+          "gap": 10,
+          "padding": [
+            8,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "zQaF9",
+              "name": "iconCal2",
+              "width": 28,
+              "height": 28,
+              "fill": "#FEF3C7",
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "AAVs0",
+                  "width": 14,
+                  "height": 14,
+                  "iconFontName": "calendar-blank",
+                  "iconFontFamily": "phosphor",
+                  "fill": "#D97706"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "O82MT",
+              "name": "itemCal2Text",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "3mQRD",
+                  "fill": "#33303E",
+                  "content": "Criar evento",
+                  "fontFamily": "Figtree",
+                  "fontSize": 13,
+                  "fontWeight": "500"
+                },
+                {
+                  "type": "text",
+                  "id": "9TRhN",
+                  "fill": "#7A7786",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "create_google_calendar_event",
+                  "fontFamily": "Figtree",
+                  "fontSize": 11
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "quAD7",
+          "name": "sep3",
+          "width": "fill_container",
+          "height": 1,
+          "fill": "#E7E7E7"
+        },
+        {
+          "type": "frame",
+          "id": "AbAEG",
+          "name": "lblAuto",
+          "width": "fill_container",
+          "padding": [
+            8,
+            12,
+            4,
+            12
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "pvlWc",
+              "fill": "#8C8A97",
+              "content": "Automacoes",
+              "fontFamily": "Figtree",
+              "fontSize": 11,
+              "fontWeight": "600",
+              "letterSpacing": 0.5
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "kbiy8",
+          "name": "itemAuto",
+          "opacity": 0.5,
+          "width": "fill_container",
+          "cornerRadius": 6,
+          "gap": 10,
+          "padding": [
+            8,
+            12
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "bL9B3",
+              "name": "iconAuto",
+              "width": 28,
+              "height": 28,
+              "fill": "#E0E7FF",
+              "cornerRadius": 6,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon_font",
+                  "id": "yDLEu",
+                  "width": 14,
+                  "height": 14,
+                  "iconFontName": "robot",
+                  "iconFontFamily": "phosphor",
+                  "fill": "#4F46E5"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "f2M4P",
+              "name": "itemAutoText",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 2,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "bS6HM",
+                  "name": "itemAutoName",
+                  "width": "fill_container",
+                  "gap": 6,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "FutEs",
+                      "fill": "#33303E",
+                      "content": "fechar_venda",
+                      "fontFamily": "Figtree",
+                      "fontSize": 13,
+                      "fontWeight": "500"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "py4u8",
+                      "name": "badgeUsed",
+                      "fill": "#F2F2F2",
+                      "cornerRadius": 4,
+                      "padding": [
+                        2,
+                        6
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "J4Mdz",
+                          "fill": "#7A7786",
+                          "content": "Ja usado",
+                          "fontFamily": "Figtree",
+                          "fontSize": 10,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "Yi2mH",
+                  "fill": "#7A7786",
+                  "textGrowth": "fixed-width",
+                  "width": "fill_container",
+                  "content": "Dispara quando o cliente confirma a compra",
+                  "fontFamily": "Figtree",
+                  "fontSize": 11
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
