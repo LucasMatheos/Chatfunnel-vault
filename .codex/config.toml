@@ -1,0 +1,81 @@
+# Codex CLI — config do projeto ChatFunnel
+# Docs: https://github.com/openai/codex
+#
+# Este arquivo define o profile do projeto. Carrega quando o Codex CLI
+# e invocado dentro deste workspace. Settings globais (auth, telemetria,
+# etc.) ficam em ~/.codex/config.toml.
+
+# Modelo padrao do projeto. Override por sessao: codex --model <id>
+model = "gpt-5-codex"
+
+# Aprovacao manual de comandos sensiveis. Codex pede confirmacao antes
+# de executar acoes fora do sandbox (rede, escrita fora do workspace).
+# Valores: "on-request" | "on-failure" | "never" | "untrusted"
+approval_policy = "on-request"
+
+# Sandbox: Codex pode ler/escrever dentro do workspace, mas precisa
+# pedir permissao para escrever fora ou acessar rede.
+# Valores: "read-only" | "workspace-write" | "danger-full-access"
+sandbox_mode = "workspace-write"
+
+# Reasoning effort default. Sobe para "high" em refactors complexos.
+# Valores: "minimal" | "low" | "medium" | "high"
+model_reasoning_effort = "medium"
+
+# Resumo de raciocinio — "auto" deixa o modelo decidir quando exibir.
+model_reasoning_summary = "auto"
+
+# Notify hook — alimenta a daily note (vault/diary/raw/) com prompts e respostas
+# do Codex, mesmo buffer compartilhado com os hooks do Claude. Detalhes em
+# .codex/hooks/codex-diary-notify.js.
+notify = ["node", "D:/Code/4-Vinicius/Chatfunnel/.codex/hooks/codex-diary-notify.js"]
+
+[sandbox_workspace_write]
+# Rede negada por default — evita exfiltracao acidental e comandos
+# como `npm install` rodando sem aprovacao. Override por sessao com
+# `codex --sandbox workspace-write` + aprovacao on-request.
+network_access = false
+
+# Permite escrita em diretorios fora do workspace que sao
+# pre-requisito comum (envs compartilhadas usadas pelos scripts dev
+# em chatfunnel-api e chatfunnel-services via `--env-file=../envs/*`).
+writable_roots = [
+  "D:/Code/4-Vinicius/Chatfunnel/envs",
+]
+
+[history]
+# Persistencia entre sessoes — util para retomar tarefas longas.
+persistence = "save-all"
+
+[tui]
+# Notifica quando o agente termina um turno (Windows toast / OS bell).
+notifications = true
+
+# --- Profiles opcionais ---------------------------------------------------
+# Ativa via: codex --profile <nome>
+
+# Read-only: navegacao e revisao de codigo sem escrever em disco.
+[profiles.review]
+model = "gpt-5-codex"
+sandbox_mode = "read-only"
+approval_policy = "never"
+model_reasoning_effort = "low"
+
+# Refactor pesado: mais reasoning para mudancas cross-repo.
+[profiles.refactor]
+model = "gpt-5-codex"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+model_reasoning_effort = "high"
+
+# Migration / Prisma: aprovacao obrigatoria em todo comando — protege
+# contra `prisma db push` / `prisma migrate deploy` (proibidos pelas
+# regras do projeto, ver AGENTS.md secao Prisma).
+[profiles.prisma]
+model = "gpt-5-codex"
+sandbox_mode = "workspace-write"
+approval_policy = "untrusted"
+model_reasoning_effort = "high"
+
+[profiles.prisma.sandbox_workspace_write]
+network_access = false

@@ -1,0 +1,590 @@
+{
+  "appUrl": "https://forms.chatfunnel.com.br",
+  "environmentId": "cmpbps9dx0002mg01wvvuwufr",
+  "user": {
+    "expiresAt": null,
+    "data": {
+      "userId": null,
+      "contactId": null,
+      "segments": [],
+      "displays": [
+        {
+          "surveyId": "cmpe33wid00b4qr0173r57iue",
+          "createdAt": "2026-05-20T13:16:39.494Z"
+        }
+      ],
+      "responses": [],
+      "lastDisplayAt": "2026-05-20T13:16:39.494Z"
+    }
+  },
+  "environment": {
+    "data": {
+      "surveys": [
+        {
+          "id": "cmpe33wid00b4qr0173r57iue",
+          "welcomeCard": {
+            "enabled": false,
+            "headline": {
+              "default": "Bem-vindo!"
+            },
+            "subheader": {
+              "default": "<p class=\"fb-editor-paragraph\"><span style=\"\">Valeu pelo feedback - bora lá!</span></p>"
+            },
+            "buttonLabel": {
+              "default": "Próximo"
+            },
+            "timeToFinish": false,
+            "showResponseCount": false
+          },
+          "name": "Pesquisa de Abandono de Carrinho",
+          "questions": [],
+          "blocks": [
+            {
+              "id": "axr5g3lk5ciq07nonv0inues",
+              "name": "Bloco 1",
+              "elements": [
+                {
+                  "id": "c3ytudj01wjjj748zcl9tpo3",
+                  "type": "cta",
+                  "headline": {
+                    "default": "<p class=\"fb-editor-paragraph\"><b><strong class=\"fb-editor-text-bold\" style=\"\">Você tem 2 minutos para nos ajudar a melhorar?</strong></b></p>"
+                  },
+                  "required": false,
+                  "subheader": {
+                    "default": "<p class=\"fb-editor-paragraph\"><span style=\"\">Percebemos que você deixou alguns itens no seu carrinho. Adoraríamos entender o motivo.</span></p>"
+                  },
+                  "buttonExternal": false
+                }
+              ],
+              "buttonLabel": {
+                "default": "Claro!"
+              },
+              "backButtonLabel": {
+                "default": ""
+              }
+            },
+            {
+              "id": "zh4h542otbh9rsjwswr5tpaw",
+              "name": "Bloco 2",
+              "elements": [
+                {
+                  "id": "xdsj9orjyqcv2o4wiqwox7mt",
+                  "type": "multipleChoiceSingle",
+                  "choices": [
+                    {
+                      "id": "ytutq6eyci0cq29gg6eha17k",
+                      "label": {
+                        "default": "Custos de frete altos"
+                      }
+                    },
+                    {
+                      "id": "ugzvete16bxnkbsawkmgzv61",
+                      "label": {
+                        "default": "Encontrei um preço melhor em outro lugar"
+                      }
+                    },
+                    {
+                      "id": "rrfjc44n4euyoy2wiuu5iiip",
+                      "label": {
+                        "default": "Só dando uma olhada"
+                      }
+                    },
+                    {
+                      "id": "konyhw34vlrs0bsod5da8q4x",
+                      "label": {
+                        "default": "Decidi não comprar"
+                      }
+                    },
+                    {
+                      "id": "t88bc5juyw38rr5mmb28sago",
+                      "label": {
+                        "default": "Problemas com pagamento"
+                      }
+                    },
+                    {
+                      "id": "other",
+                      "label": {
+                        "default": "outro"
+                      }
+                    }
+                  ],
+                  "headline": {
+                    "default": "Qual foi o principal motivo pra você não ter finalizado a compra?"
+                  },
+                  "required": false,
+                  "subheader": {
+                    "default": "Por favor, escolha uma das opções a seguir:"
+                  },
+                  "shuffleOption": "none"
+                }
+              ],
+              "buttonLabel": {
+                "default": ""
+              },
+              "backButtonLabel": {
+                "default": ""
+              }
+            },
+            {
+              "id": "meutamef0smuwurng17boeaj",
+              "name": "Bloco 3",
+              "elements": [
+                {
+                  "id": "cflr3guik74imuxf84999qm5",
+                  "type": "openText",
+                  "headline": {
+                    "default": "Por favor, explique o motivo de não ter concluído a compra:"
+                  },
+                  "required": false,
+                  "charLimit": {
+                    "enabled": false
+                  },
+                  "inputType": "text",
+                  "insightsEnabled": false
+                }
+              ],
+              "buttonLabel": {
+                "default": ""
+              },
+              "backButtonLabel": {
+                "default": ""
+              }
+            },
+            {
+              "id": "qemcz6j2t0897cda8xeuywd1",
+              "name": "Bloco 4",
+              "elements": [
+                {
+                  "id": "kektav3m7saqkj7524vd4165",
+                  "type": "rating",
+                  "range": 5,
+                  "scale": "number",
+                  "headline": {
+                    "default": "Como você avaliaria sua experiência geral de compra?"
+                  },
+                  "required": true,
+                  "lowerLabel": {
+                    "default": "Muito insatisfeito"
+                  },
+                  "upperLabel": {
+                    "default": "Muito satisfeito"
+                  },
+                  "isColorCodingEnabled": false
+                }
+              ],
+              "buttonLabel": {
+                "default": ""
+              },
+              "backButtonLabel": {
+                "default": ""
+              }
+            },
+            {
+              "id": "yh8x0x1j70c4x3ij0i5lj5sn",
+              "name": "Bloco 5",
+              "elements": [
+                {
+                  "id": "inf1fhdyoyiazvw5ac6dr0ll",
+                  "type": "multipleChoiceMulti",
+                  "choices": [
+                    {
+                      "id": "b3cqs3zn1dv25txw2b67mz8a",
+                      "label": {
+                        "default": "Reduzir os custos de envio"
+                      }
+                    },
+                    {
+                      "id": "p4bpfyfiy9erzbr2qsh454mi",
+                      "label": {
+                        "default": "Descontos ou promoções"
+                      }
+                    },
+                    {
+                      "id": "fjvuy29hpfpuirknqbp87oxf",
+                      "label": {
+                        "default": "Mais opções de pagamento"
+                      }
+                    },
+                    {
+                      "id": "k2fcevr80s8tk3bh1d0tswj3",
+                      "label": {
+                        "default": "Melhores descrições de produtos"
+                      }
+                    },
+                    {
+                      "id": "l0n3gncqhywnbqfzdyc6eruz",
+                      "label": {
+                        "default": "Navegação do site melhorada"
+                      }
+                    },
+                    {
+                      "id": "other",
+                      "label": {
+                        "default": "outro"
+                      }
+                    }
+                  ],
+                  "headline": {
+                    "default": "O que te incentivaria a finalizar sua compra no futuro?"
+                  },
+                  "required": true,
+                  "subheader": {
+                    "default": "Por favor, selecione todas as opções que se aplicam:"
+                  },
+                  "shuffleOption": "none"
+                }
+              ],
+              "buttonLabel": {
+                "default": ""
+              },
+              "backButtonLabel": {
+                "default": ""
+              }
+            },
+            {
+              "id": "afrtw36p9ypkljvjho2v9a1d",
+              "name": "Bloco 6",
+              "logic": [
+                {
+                  "id": "nr8pjc0nj240y29lyz0h8ilc",
+                  "actions": [
+                    {
+                      "id": "u8lkpyjojegwfrg7lhw7n9r4",
+                      "target": "iua1lzw89paaqod9tfhnun9n",
+                      "objective": "jumpToBlock"
+                    }
+                  ],
+                  "conditions": {
+                    "id": "cckzashptvh4gp82a4xmbrwe",
+                    "connector": "and",
+                    "conditions": [
+                      {
+                        "id": "aaekuma7l8lk8dpuo5zi8j49",
+                        "operator": "isSkipped",
+                        "leftOperand": {
+                          "type": "element",
+                          "value": "krdboh081y5kbcxmhrez29ye"
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "elements": [
+                {
+                  "id": "krdboh081y5kbcxmhrez29ye",
+                  "type": "consent",
+                  "label": {
+                    "default": "Sim, por favor entre em contato."
+                  },
+                  "headline": {
+                    "default": "Você gostaria de receber um código de desconto por e-mail?"
+                  },
+                  "required": false,
+                  "subheader": {
+                    "default": ""
+                  }
+                }
+              ],
+              "buttonLabel": {
+                "default": ""
+              },
+              "backButtonLabel": {
+                "default": ""
+              }
+            },
+            {
+              "id": "ro3wzyzrynno2exor6bjox9g",
+              "name": "Bloco 7",
+              "elements": [
+                {
+                  "id": "cgchxg0fh3f0sod3qt2u3o0s",
+                  "type": "openText",
+                  "headline": {
+                    "default": "Por favor, compartilha seu e-mail:"
+                  },
+                  "required": true,
+                  "charLimit": {
+                    "enabled": false
+                  },
+                  "inputType": "email",
+                  "longAnswer": false,
+                  "placeholder": {
+                    "default": "example@email.com"
+                  },
+                  "insightsEnabled": false
+                }
+              ],
+              "buttonLabel": {
+                "default": ""
+              },
+              "backButtonLabel": {
+                "default": ""
+              }
+            },
+            {
+              "id": "iua1lzw89paaqod9tfhnun9n",
+              "name": "Bloco 8",
+              "elements": [
+                {
+                  "id": "zxlcfoj6o2jh6l91nnn3hlln",
+                  "type": "openText",
+                  "headline": {
+                    "default": "Algum comentário ou sugestão a mais?"
+                  },
+                  "required": false,
+                  "charLimit": {
+                    "enabled": false
+                  },
+                  "inputType": "text",
+                  "insightsEnabled": false
+                }
+              ],
+              "buttonLabel": {
+                "default": "Terminar"
+              },
+              "backButtonLabel": {
+                "default": ""
+              }
+            }
+          ],
+          "variables": [],
+          "type": "app",
+          "showLanguageSwitch": null,
+          "languages": [],
+          "endings": [
+            {
+              "id": "wuty75hy99bt4s56bcis6b3w",
+              "type": "endScreen",
+              "headline": {
+                "default": "Valeu!"
+              },
+              "subheader": {
+                "default": "Agradecemos seu feedback."
+              },
+              "buttonLink": "https://formbricks.com",
+              "buttonLabel": {
+                "default": "Crie sua própria pesquisa"
+              }
+            }
+          ],
+          "autoClose": null,
+          "styling": null,
+          "status": "inProgress",
+          "recaptcha": {
+            "enabled": false,
+            "threshold": 0.1
+          },
+          "segment": {
+            "id": "cmpe34clh00b5qr01h8mea32v",
+            "createdAt": "2026-05-20T13:15:36.772Z",
+            "updatedAt": "2026-05-20T13:15:36.772Z",
+            "title": "cmpe33wid00b4qr0173r57iue",
+            "description": null,
+            "isPrivate": true,
+            "filters": [],
+            "environmentId": "cmpbps9dx0002mg01wvvuwufr",
+            "surveys": [
+              "cmpe33wid00b4qr0173r57iue"
+            ]
+          },
+          "recontactDays": null,
+          "displayLimit": null,
+          "displayOption": "displayOnce",
+          "hiddenFields": {
+            "enabled": true,
+            "fieldIds": []
+          },
+          "isBackButtonHidden": false,
+          "triggers": [
+            {
+              "actionClass": {
+                "name": "Visualizou uma página"
+              }
+            }
+          ],
+          "displayPercentage": null,
+          "delay": 0,
+          "projectOverwrites": null
+        }
+      ],
+      "actionClasses": [
+        {
+          "id": "cmpbso9mt000tmg010d5edmma",
+          "type": "noCode",
+          "name": "Entrou",
+          "key": null,
+          "noCodeConfig": {
+            "type": "click",
+            "urlFilters": [],
+            "elementSelector": {
+              "innerHtml": "Dashboard",
+              "cssSelector": "side-menu-dashboard"
+            }
+          }
+        },
+        {
+          "id": "cmpbspn51000wmg010hz5cid0",
+          "type": "noCode",
+          "name": "Entrou no dashboard",
+          "key": null,
+          "noCodeConfig": {
+            "type": "pageView",
+            "urlFilters": []
+          }
+        },
+        {
+          "id": "cmpbssyig000zmg01h03p06fd",
+          "type": "noCode",
+          "name": "Ficou inativo",
+          "key": null,
+          "noCodeConfig": {
+            "type": "pageDwell",
+            "urlFilters": [],
+            "timeInSeconds": 5
+          }
+        },
+        {
+          "id": "cmpbtcex50015mg016rwcn4t4",
+          "type": "noCode",
+          "name": "Teste 10 segundos",
+          "key": null,
+          "noCodeConfig": {
+            "type": "pageDwell",
+            "urlFilters": [],
+            "timeInSeconds": 10
+          }
+        },
+        {
+          "id": "cmpbtj64f001amg01lnz86dlh",
+          "type": "noCode",
+          "name": "dashboard",
+          "key": null,
+          "noCodeConfig": {
+            "type": "pageView",
+            "urlFilters": [
+              {
+                "rule": "exactMatch",
+                "value": "https://localhost:5173/dashboard"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cmpe34qv700b6qr01k6bcf15c",
+          "type": "code",
+          "name": "Visualizou uma página",
+          "key": "page_view",
+          "noCodeConfig": null
+        }
+      ],
+      "project": {
+        "id": "cmpbps9a60001mg01rhxg5ty8",
+        "recontactDays": 7,
+        "clickOutsideClose": false,
+        "overlay": "dark",
+        "placement": "center",
+        "inAppSurveyBranding": true,
+        "styling": {
+          "roundness": 8,
+          "background": {
+            "bg": "#dafaf9",
+            "bgType": "color",
+            "brightness": 100
+          },
+          "brandColor": {
+            "light": "#00DDD7"
+          },
+          "inputColor": {
+            "light": "#ebfcfc"
+          },
+          "inputHeight": 20,
+          "inputShadow": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+          "buttonHeight": "auto",
+          "isLogoHidden": false,
+          "buttonBgColor": {
+            "light": "#00DDD7"
+          },
+          "inputFontSize": 14,
+          "inputPaddingX": 8,
+          "inputPaddingY": 8,
+          "optionBgColor": {
+            "light": "#ebfcfc"
+          },
+          "questionColor": {
+            "light": "#00908c"
+          },
+          "buttonFontSize": 16,
+          "buttonPaddingX": 12,
+          "buttonPaddingY": 12,
+          "inputTextColor": {
+            "light": "#00908c"
+          },
+          "optionFontSize": 14,
+          "optionPaddingX": 16,
+          "optionPaddingY": 16,
+          "buttonTextColor": {
+            "light": "#0f172a"
+          },
+          "cardArrangement": {
+            "appSurveys": "simple",
+            "linkSurveys": "casual"
+          },
+          "cardBorderColor": {
+            "light": "#ccf8f7"
+          },
+          "buttonFontWeight": 500,
+          "inputBorderColor": {
+            "light": "#99f1ef"
+          },
+          "optionLabelColor": {
+            "light": "#00908c"
+          },
+          "inputBorderRadius": 8,
+          "isDarkModeEnabled": false,
+          "optionBorderColor": {
+            "light": "#99f1ef"
+          },
+          "buttonBorderRadius": 8,
+          "optionBorderRadius": 8,
+          "allowStyleOverwrite": true,
+          "cardBackgroundColor": {
+            "light": "#f7fefe"
+          },
+          "progressTrackHeight": 8,
+          "elementHeadlineColor": {
+            "light": "#00908c"
+          },
+          "highlightBorderColor": {
+            "light": "#40e6e1"
+          },
+          "progressTrackBgColor": {
+            "light": "#ccf8f7"
+          },
+          "elementUpperLabelColor": {
+            "light": "#00908c"
+          },
+          "elementDescriptionColor": {
+            "light": "#00908c"
+          },
+          "elementHeadlineFontSize": 16,
+          "inputPlaceholderOpacity": 0.5,
+          "progressIndicatorBgColor": {
+            "light": "#00DDD7"
+          },
+          "elementHeadlineFontWeight": 600,
+          "elementUpperLabelFontSize": 12,
+          "elementDescriptionFontSize": 14,
+          "elementUpperLabelFontWeight": 400,
+          "elementDescriptionFontWeight": 400
+        }
+      }
+    },
+    "expiresAt": "2026-05-20T14:16:35.779Z"
+  },
+  "filteredSurveys": [],
+  "status": {
+    "value": "success",
+    "expiresAt": null
+  }
+}

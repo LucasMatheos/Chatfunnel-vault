@@ -29,6 +29,8 @@ Operadores criam contatos pelo frontend (`ContactsService.createContact`). O end
 ### Importacao em massa
 Importacao via CSV ou Excel (XLSX/XLS) pelo endpoint `ImportContacts`. Suporta mapeamento de colunas, validacao de telefone (inclusive notacao cientifica), e atribuicao de tags durante a importacao. O progresso e rastreado via Redis.
 
+O modal de importacao (`ImportCSV`) usa stepper de 4 passos: upload → mapeamento de colunas → configuracao (pasta, tag, campos personalizados) → resultado. No step 2, uma **tabela de preview** exibe os headers e valores da primeira linha da planilha para que o usuario saiba qual coluna mapear. Abaixo de cada select de mapeamento, o valor da primeira linha da coluna selecionada e exibido como exemplo. O parsing completo dos dados acontece no backend — o front le apenas headers + primeira linha para preview.
+
 ## Tags
 
 Tags classificam contatos livremente. Existem tags **do sistema** (criadas automaticamente) e tags **do usuario**.

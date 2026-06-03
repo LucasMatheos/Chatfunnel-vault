@@ -1,7 +1,7 @@
 ---
 title: Master Index
 description: Ponto de entrada principal da knowledge base do ChatFunnel. Claude deve ler este arquivo PRIMEIRO para navegar o vault.
-last_updated: 2026-04-13
+last_updated: 2026-05-11
 ---
 
 # ChatFunnel Knowledge Base — Master Index

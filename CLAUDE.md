@@ -15,6 +15,7 @@ Workspace multi-repo do ChatFunnel. Cada subpasta e um repositorio independente 
 | `chatfunnel-worker-broadcast/` | Node + TS | — | Worker de broadcast (filas BullMQ) |
 | `chatfunnel-scheduler/` | Node + TS | 3000 | Tarefas agendadas (API + worker) |
 | `chatfunnel-core/` | TS | — | Lib compartilhada (Prisma, repositories, queues, Redis, Meta APIs) |
+| `chatfunnel-contracts/` | TS + Zod | — | Wire contracts (schemas, types, TOOL_REGISTRY) — pure schema, zero runtime |
 
 **Banco:** PostgreSQL via Prisma (schema em `chatfunnel-database/`, submodulo compartilhado)
 **Infra:** Redis (cache, pub/sub, locks), BullMQ (filas), Docker

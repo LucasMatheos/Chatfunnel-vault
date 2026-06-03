@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "48d7c258ea2d17e0",
+        "id": "acfab1a772f7211a",
         "type": "tabs",
         "children": [
           {
-            "id": "eea323cf64a5600b",
+            "id": "a941460c0a07cdf1",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "wiki/ai-patterns/graphify.md",
+                "file": "wiki/features/intelligence-v2-fluxo-implementacao.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "graphify"
+              "title": "intelligence-v2-fluxo-implementacao"
             }
           }
         ]
@@ -194,10 +194,28 @@
       "omnisearch:Omnisearch": false
     }
   },
-  "active": "eea323cf64a5600b",
+  "active": "a941460c0a07cdf1",
   "lastOpenFiles": [
+    "wiki/features/reports-v2-arquitetura.md",
+    "diary/raw/27-05-2026.md",
+    "diary/27-05-2026-daily.md",
+    "diary/26-05-2026-daily.md",
+    "diary/25-05-2026-daily.md",
+    "wiki/features/intelligence-a2a-contratos.md",
     "claude/handoff.md",
     "claude/context-pack.md",
+    "wiki/repos/chatfunnel-front.md",
+    "wiki/gotchas/mcp-bugs-tracking.md",
+    "wiki/features/intelligence-v2-arquitetura.md",
+    "wiki/features/intelligence-a2a-shapes.md",
+    "wiki/features/intelligence-a2a-prototipo.md",
+    "wiki/features/intelligence-a2a-fixtures.md",
+    "wiki/features/intelligence-a2a-cobertura.md",
+    "prototipos/get_channels-v2.png",
+    "wiki/features/mcp-integration.md",
+    "wiki/features/intelligence-a2a.md",
+    "wiki/features/ai-agents.md",
+    "wiki/ai-patterns/graphify.md",
     "Docs/tutorial-construir-vault.md",
     "wiki/diagrams/chatfunnel-architecture.excalidraw.md",
     "wiki/diagrams/chatfunnel-architecture-mermaid.md",
@@ -205,22 +223,8 @@
     "wiki/architecture/queue-architecture.md",
     "wiki/features/contacts-utm-fields.md",
     "diary/14-04-2026-daily.md",
-    "diary/raw/14-04-2026.md",
-    "wiki/architecture/_index.md",
-    "diary/13-04-2026-daily.md",
-    "wiki/repos/chatfunnel-front.md",
-    "diary/raw/11-04-2026.md",
-    "Excalidraw/Drawing 2026-04-13 13.20.54.excalidraw.md",
     "Excalidraw",
-    "diary/10-04-2026-daily.md",
-    "wiki/gotchas/frontend-gotchas.md",
-    "wiki/features/signup-profile-step.md",
-    "wiki/guides/archon-workflow-engine.md",
-    "wiki/guides/code-review-graph.md",
     "prototipos/intelligence-chat.pen",
-    "wiki/architecture/error-handling.md",
-    "wiki/guides/cognee-knowledge-engine.md",
-    "wiki/guides/pencil-dev-guide.md",
     "prototipos/payment-upgrade-modal.pen",
     "prototipos/figma-refs/Brand.png",
     "prototipos/figma-refs/Typography.png",
@@ -231,9 +235,6 @@
     "prototipos/figma-refs",
     "prototipos",
     "Base List Links.base",
-    "diary/09-04-2026-daily.md",
-    "wiki/guides/components-catalog.md",
-    "diary/08-04-2026-daily.md",
     "wiki/guides/onboarding-flow-canvas.canvas",
     "wiki/guides/onboarding-flow.excalidraw",
     "wiki/guides",

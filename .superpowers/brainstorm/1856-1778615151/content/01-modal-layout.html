@@ -1,0 +1,125 @@
+<h2>Layout do CreateCardModal refatorado</h2>
+<p class="subtitle">Shell: Dialog (xl) + StepperControl + Tabs no step 1</p>
+
+<div class="mockup">
+  <div class="mockup-header">CreateCardModal - Step 1: Informacoes do contato</div>
+  <div class="mockup-body" style="background: #f8f8fa; padding: 0; border-radius: 0 0 8px 8px;">
+
+    <!-- Dialog Header -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; padding: 24px 32px 16px; border-bottom: 1px solid #e5e5e5;">
+      <div>
+        <div style="font-size: 18px; font-weight: 600; color: #1a1a2e;">Adicionar oportunidade</div>
+        <div style="font-size: 14px; color: #666; margin-top: 4px;">Pipeline: Marketing Inbound</div>
+      </div>
+      <button style="width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #666;">&times;</button>
+    </div>
+
+    <!-- Stepper -->
+    <div style="display: flex; align-items: center; gap: 12px; padding: 16px 32px; background: white;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: #e8e0ff; border: 2px solid #7c5cfc; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #7c5cfc; box-shadow: 0 0 0 3px #f0ecff;">1</div>
+        <span style="font-size: 14px; font-weight: 600; color: #7c5cfc;">Informacoes do contato</span>
+      </div>
+      <div style="width: 40px; height: 2px; background: #ddd;"></div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #999; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: #999;">2</div>
+        <span style="font-size: 14px; font-weight: 600; color: #999;">Configuracao no pipeline</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div style="padding: 0 32px;">
+      <div style="display: flex; gap: 0; border-bottom: 2px solid #e5e5e5; margin-top: 8px;">
+        <div style="padding: 10px 20px; font-size: 14px; font-weight: 600; color: #7c5cfc; border-bottom: 2px solid #7c5cfc; margin-bottom: -2px; cursor: pointer;">Contato existente</div>
+        <div style="padding: 10px 20px; font-size: 14px; font-weight: 500; color: #888; cursor: pointer;">Novo contato</div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Contato existente -->
+    <div style="padding: 24px 32px;">
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 500; color: #444; margin-bottom: 6px;">Nome</label>
+        <div style="position: relative;">
+          <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 10px; padding: 10px 12px; background: white;">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="margin-right: 8px; color: #999;"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><line x1="11" y1="11" x2="14" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span style="color: #333; font-size: 14px;">Maria Silva</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 500; color: #444; margin-bottom: 6px;">Telefone</label>
+          <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 10px; padding: 10px 12px; background: #fafafa; opacity: 0.7;">
+            <span style="font-size: 14px; color: #666;">+55 11 98765-4321</span>
+          </div>
+        </div>
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 500; color: #444; margin-bottom: 6px;">Email</label>
+          <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 10px; padding: 10px 12px; background: #fafafa; opacity: 0.7;">
+            <span style="font-size: 14px; color: #666;">maria@empresa.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="display: flex; justify-content: flex-end; gap: 12px; padding: 16px 32px; border-top: 1px solid #e5e5e5; background: white;">
+      <button style="padding: 10px 20px; border: 1px solid #ddd; border-radius: 10px; background: white; font-size: 14px; color: #555; cursor: pointer;">Fechar</button>
+      <button style="padding: 10px 20px; border: none; border-radius: 10px; background: #7c5cfc; font-size: 14px; color: white; cursor: pointer; font-weight: 500;">Proximo</button>
+    </div>
+  </div>
+</div>
+
+<div style="height: 32px"></div>
+
+<div class="mockup">
+  <div class="mockup-header">Tab "Novo contato" - com InputPhone (bandeira + mascara)</div>
+  <div class="mockup-body" style="background: #f8f8fa; padding: 0; border-radius: 0 0 8px 8px;">
+
+    <!-- Tabs -->
+    <div style="padding: 0 32px;">
+      <div style="display: flex; gap: 0; border-bottom: 2px solid #e5e5e5; margin-top: 16px;">
+        <div style="padding: 10px 20px; font-size: 14px; font-weight: 500; color: #888; cursor: pointer;">Contato existente</div>
+        <div style="padding: 10px 20px; font-size: 14px; font-weight: 600; color: #7c5cfc; border-bottom: 2px solid #7c5cfc; margin-bottom: -2px; cursor: pointer;">Novo contato</div>
+      </div>
+    </div>
+
+    <!-- Tab Content: Novo contato -->
+    <div style="padding: 24px 32px;">
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 500; color: #444; margin-bottom: 6px;">Nome <span style="color: #e53935;">*</span></label>
+        <div style="border: 1px solid #ddd; border-radius: 10px; padding: 10px 12px; background: white;">
+          <span style="color: #aaa; font-size: 14px;">Nome do contato</span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 500; color: #444; margin-bottom: 6px;">Telefone</label>
+          <!-- Phone input with flag -->
+          <div style="display: flex; align-items: center; border: 1px solid #ddd; border-radius: 10px; background: white; overflow: hidden;">
+            <div style="display: flex; align-items: center; gap: 6px; padding: 10px 12px; border-right: 1px solid #eee; cursor: pointer; background: #fafafa;">
+              <span style="font-size: 18px;">&#127463;&#127479;</span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 5l3 3 3-3" stroke="#666" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div style="padding: 10px 12px; flex: 1; display: flex; gap: 4px;">
+              <span style="color: #aaa; font-size: 14px;">(11) 98765-4321</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label style="display: block; font-size: 13px; font-weight: 500; color: #444; margin-bottom: 6px;">Email</label>
+          <div style="border: 1px solid #ddd; border-radius: 10px; padding: 10px 12px; background: white;">
+            <span style="color: #aaa; font-size: 14px;">email@exemplo.com</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Validation error example -->
+      <div style="margin-top: -12px; margin-bottom: 16px;">
+        <span style="font-size: 12px; color: #e53935;">Informe pelo menos telefone ou email</span>
+      </div>
+    </div>
+  </div>
+</div>

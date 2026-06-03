@@ -67,6 +67,8 @@ Sessoes expiradas sao hard-deleted. Na expiracao, lifecycle automations configur
 
 ## Intelligence (A2A)
 
+> Documentacao detalhada em [[intelligence-a2a]] (endpoints SSE, modelo de dados, protocolo de eventos, telas previstas no front).
+
 O modulo **A2A** (Agent-to-Agent) e uma ferramenta **interna** para moderadores/operadores do ChatFunnel. Nao e voltada para contatos finais.
 
 ### Como funciona

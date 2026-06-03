@@ -42,3 +42,6 @@ envs/
 graphify-out/
 /_archive/
 /graphify-test/
+
+# MCP corpus (contem secrets/PII de respostas reais)
+scripts/mcp-prompts-playbook.md

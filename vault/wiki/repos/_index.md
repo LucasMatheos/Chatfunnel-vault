@@ -1,7 +1,7 @@
 ---
 title: Repos Index
 description: Indice de todos os repositorios do ChatFunnel com referencia tecnica especifica de cada um.
-last_updated: 2026-04-06
+last_updated: 2026-05-25
 ---
 
 # Repos
@@ -19,6 +19,7 @@ Referencia tecnica por repositorio. Cada artigo cobre stack, estrutura, patterns
 | chatfunnel-worker-broadcast | [[chatfunnel-worker-broadcast]] | Node + TS | — | Worker de broadcast (filas BullMQ) |
 | chatfunnel-scheduler | [[chatfunnel-scheduler]] | Node + TS | 3000 | Tarefas agendadas (API + worker) |
 | chatfunnel-core | [[chatfunnel-core]] | TS | — | Lib compartilhada (Prisma, repositories, queues, Redis, Meta APIs) |
+| chatfunnel-contracts | [[chatfunnel-contracts]] | TS + Zod | — | Wire contracts (schemas, types, TOOL_REGISTRY) |
 | chatfunnel-mcp | [[chatfunnel-mcp]] | NestJS + TS | 8000 | Servidor MCP (Model Context Protocol) para LLMs |
 
 ## Veja tambem

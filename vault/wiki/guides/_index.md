@@ -1,7 +1,7 @@
 ---
 title: Guides Index
 description: Guias tecnicos detalhados — passo a passo de implementacao, arquivos envolvidos, APIs, composables e fluxos internos.
-last_updated: 2026-04-12
+last_updated: 2026-05-11
 ---
 
 # Guides
@@ -18,3 +18,4 @@ Documentacao tecnica detalhada de como cada feature foi implementada. Cada guia 
 | [[code-review-graph]] | — | Knowledge graph para code review — blast radius, analise de impacto, MCP tools, multi-repo registry |
 | [[cognee-knowledge-engine]] | — | Motor de memoria IA (referencia futura) — analise, decisao de nao instalar agora, criterios de reavaliacao |
 | [[archon-workflow-engine]] | — | Tutorial Archon — setup, workflows YAML, codebases registrados, uso pratico, integracao com plataformas |
+| [[review-ui-table]] | [[credenciais-page]] | Review UI/UX dos componentes ui/table — acessibilidade, performance, layout, patterns aplicados |
