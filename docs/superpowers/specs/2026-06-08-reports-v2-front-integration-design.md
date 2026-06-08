@@ -107,8 +107,26 @@ UTM/origem **não são enviados** (segmentação é follow-up do back).
 - **Nova seção "Receita ganha"**: reusa `MetricCard.vue`, consome `crm/revenue-card`.
 - **Nova seção "Oportunidades paradas (aging)"**: componente novo `AgingChart.vue`.
 - Grid "Resumo do funil" e tabela "Etapas": permanecem mock + selo.
-- `pipelineId`: hoje vem de `mockPipelineOptions`. Para o funil real, o `pipelineId` precisa ser
-  um id de pipeline **real**. (Ver Riscos.)
+- **`pipelineId` real (resolve o risco):** `pipelineId` = `kanbanId`. Substituir
+  `mockPipelineOptions` pela lista real de kanbans e seguir o mesmo padrão do `Kanban.vue`
+  (ver 3.9).
+
+### 3.9 Seleção de pipeline real (`pipelineId` = `kanbanId`)
+
+Reaproveitar a infra já existente do CRM, espelhando o `Kanban.vue:952-973`:
+
+1. Listar kanbans via **`KanbanService.list()`** (`GET /accounts/kanbans` → `[{ id, name }]`)
+   e popular o `<select>` de pipeline (substitui `mockPipelineOptions`).
+2. **Seleção inicial:**
+   - Se `authStore.getLastKanbanSelectedId` existe → usar esse id.
+   - Senão → usar o **primeiro** da lista.
+3. Ao trocar o pipeline no `<select>`, persistir com **`authStore.setLastKanbanSelectedId(id)`**
+   (mantém consistência com a tela de CRM) e atualizar `filters.pipelineId`.
+4. Encapsular essa lógica num composable `useDefaultPipeline()` em
+   `views/reportsV2/composables/`, para o `FunilTab` consumir sem duplicar.
+
+Assim o funil real (`crm/funnel`, que exige `pipelineId`) sempre tem um id válido na primeira
+carga, sem `400`.
 
 ### 3.6 Componente novo `components/primitives/AgingChart.vue`
 
@@ -153,10 +171,8 @@ UTM/origem **não são enviados** (segmentação é follow-up do back).
 
 ## 6. Riscos e dependências
 
-- **`pipelineId` real:** o funil real exige um `pipelineId` válido (senão `400`). O front hoje
-  usa opções mockadas. Resolver buscando pipelines/kanbans reais é **dependência** — se não
-  estiver pronto nesta entrega, o funil real fica condicionado a um `pipelineId` válido vindo do
-  filtro/seleção. Decidir na fase de plano se entra agora ou vira sub-tarefa.
+- **`pipelineId` real:** ~~risco~~ **resolvido** — ver 3.9. Reaproveita `KanbanService.list()` +
+  `authStore.getLastKanbanSelectedId`/`setLastKanbanSelectedId`, espelhando o `Kanban.vue`.
 - **Escala de moeda (`revenue-card`):** o back avisa que `value` é `Int` cru (centavos vs reais
   indefinido). Confirmar com o time de dados antes de formatar; por ora, formatar como `currency`
   assumindo a unidade que o back documentar.
