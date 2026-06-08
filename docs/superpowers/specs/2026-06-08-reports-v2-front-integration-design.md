@@ -105,6 +105,10 @@ UTM/origem **não são enviados** (segmentação é follow-up do back).
 
 - Gráfico de funil e "Motivos de perda": API real.
 - **Nova seção "Receita ganha"**: reusa `MetricCard.vue`, consome `crm/revenue-card`.
+  - **Conversão de moeda:** o backend manda `value` (e `delta.absolute`) em **centavos (Int)**.
+    Converter para reais **dividindo por 100** na borda do `ReportsV2Service.getRevenueCard`
+    (normaliza antes de entregar ao componente). O `MetricCard` permanece sem lógica de escala,
+    apenas formata como `currency` (pt-BR).
 - **Nova seção "Oportunidades paradas (aging)"**: componente novo `AgingChart.vue`.
 - Grid "Resumo do funil" e tabela "Etapas": permanecem mock + selo.
 - **`pipelineId` real (resolve o risco):** `pipelineId` = `kanbanId`. Substituir
