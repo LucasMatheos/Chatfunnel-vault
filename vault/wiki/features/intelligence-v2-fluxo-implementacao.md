@@ -157,5 +157,5 @@ O front trata identico ao caso normal — `useResourceCache.put()` faz last-writ
 ## 6. Estado atual (06/05/2026)
 
 - Plano de execucao: Tasks 1-14 concluidas (incluindo Task 14 de cleanup nesta sessao).
-- Smoke test (`docs/superpowers/plans/2026-05-29-intelligence-v2-fase2-smoke-test.md`): resultados ali sao STALE (foram capturados em estado intermediario do branch). Precisa ser re-rodado pra refletir o estado atual.
+- Smoke test (`docs/superpowers/plans/intelligence-v2/2026-05-29-intelligence-v2-fase2-smoke-test.md`): resultados ali sao STALE (foram capturados em estado intermediario do branch). Precisa ser re-rodado pra refletir o estado atual.
 - Bug aberto: 2+ chips de `present_resource` aparecendo em respostas curtas (label corrigido, mas comportamento de fundo pode merecer investigacao no servidor).

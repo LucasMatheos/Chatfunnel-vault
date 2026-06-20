@@ -41,7 +41,7 @@ sem exigir canais separados por atendente.
 - **Flag**: campo `sendModeratorName` (Boolean, default `false`) no model `Accounts` — schema em [`chatfunnel-core/prisma/schema.prisma`](../../../chatfunnel-core/prisma/schema.prisma)
 - **Backend**: [[livechat]] — [`chatfunnel-api/src/commands/contacts/SendMessageToContact.js`](../../../chatfunnel-api/src/commands/contacts/SendMessageToContact.js)
 - **Front toggle**: [[organization-form]] — tela de editar organizacao
-- **Plano de implementacao**: `docs/superpowers/plans/2026-04-20-send-moderator-name-plan.md`
+- **Plano de implementacao**: `docs/superpowers/plans/send-moderator-name/2026-04-20-send-moderator-name-plan.md`
 
 ## Fluxo
 

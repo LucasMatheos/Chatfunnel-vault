@@ -1,7 +1,7 @@
 ---
 type: context_pack
 description: Resumo compacto do estado atual do projeto — injetado automaticamente no inicio de cada sessao via hook SessionStart.
-updated: 2026-04-14
+updated: 2026-06-10
 auto_updated: true
 ---
 
@@ -9,11 +9,14 @@ auto_updated: true
 
 ## Objetivo atual
 
-Migrar UI para shadcn-vue + Tailwind v4 e estabilizar arquitetura do frontend.
-Prototipagem do fluxo de pagamento/upgrade em andamento.
+Reports V2 front: 27 relatorios novos integrados (cobertura 43/45 do catalogo) na
+branch `feature/reports-v2-novos-relatorios` — implementado em 2026-06-10, SEM
+commits, aguardando revisao do usuario em 2026-06-11. Ver [[reports-v2-front-arquitetura]] §11.
+Em paralelo: migracao UI para shadcn-vue + Tailwind v4.
 
 ## Tarefas ativas
 
+- [ ] Revisar + commitar Reports V2 front (28 arquivos na working tree de `feature/reports-v2-novos-relatorios`): smoke manual com services :3200, confirmar `wonRevenue` em centavos com dev backend
 - [ ] Prototipar modal de upgrade (payment flow) — design pencil em andamento
 - [ ] Validar skill vue-standards em feature real
 - [ ] Alinhar VueUse versions (core 14 vs components 12)

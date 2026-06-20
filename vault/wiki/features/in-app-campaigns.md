@@ -3,7 +3,7 @@ tags: [feature, backend, frontend, forms, modal]
 status: design-approved
 created: 2026-04-17
 spec: docs/superpowers/specs/2026-04-17-in-app-campaigns-design.md
-plan: docs/superpowers/plans/2026-04-17-in-app-campaigns-plan-01-backend.md
+plan: docs/superpowers/plans/in-app-campaigns/2026-04-17-in-app-campaigns-plan-01-backend.md
 ---
 
 # In-app Campaigns
@@ -84,7 +84,7 @@ Ver detalhes completos em [[#spec]] §7.
 ## Referências
 
 - Spec: `docs/superpowers/specs/2026-04-17-in-app-campaigns-design.md`
-- Plano Backend: `docs/superpowers/plans/2026-04-17-in-app-campaigns-plan-01-backend.md`
+- Plano Backend: `docs/superpowers/plans/in-app-campaigns/2026-04-17-in-app-campaigns-plan-01-backend.md`
 - Plans 2 (front runtime) e 3 (admin UI) serão escritos após Plan 1 shippado
 - Sistema correlato (complementar, **não substituído**): `chatfunnel-front/src/views/systemNotifications/`
 - Regra de repo: toda feature nova em `chatfunnel-services`, nunca `chatfunnel-api`

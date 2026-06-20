@@ -1,7 +1,7 @@
 ---
 title: Features Index
 description: Indice de todas as features do ChatFunnel documentadas end-to-end (front + api + services + database).
-last_updated: 2026-06-01
+last_updated: 2026-06-05
 ---
 
 # Features
@@ -36,6 +36,8 @@ Cada artigo documenta uma feature completa do produto — logica de negocio, flu
 | Send Moderator Name | [[send-moderator-name]] | planned |
 | Credenciais Page (API Keys + MCP Tokens) | [[credenciais-page]] | frontend-complete |
 | Reports v2 — Arquitetura do Modulo (Backend) | [[reports-v2-arquitetura]] | plano-pre-implementacao |
+| Reports v2 — Arquitetura do Front | [[reports-v2-front-arquitetura]] | plano-pre-implementacao |
+| Reports v2 — Relatório Imprimível | [[reports-v2-print]] | em-brainstorm |
 
 <!-- Formato para novas entradas:
 | Agents | [[agents]] | complete |

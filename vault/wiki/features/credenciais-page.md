@@ -21,7 +21,7 @@ Substitui a tela "Chaves API" e absorve o modal de Tokens MCP de Integrações e
 **Frontend completo (T1-T16).** Implementação executada em 28-04-2026 seguindo plan TDD.
 
 - Spec: `docs/superpowers/specs/2026-04-27-credenciais-page-design.md`
-- Plan: `docs/superpowers/plans/2026-04-27-credenciais-page.md` (16 tasks)
+- Plan: `docs/superpowers/plans/credenciais-page/2026-04-27-credenciais-page.md` (16 tasks)
 - Backend: já completo via `McpService` (criação/listagem/revoke/health)
 - Pendente: validação visual em produção do permissionamento unificado
 

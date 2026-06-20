@@ -151,4 +151,4 @@ const escapeHtml = (text) => {
 - [[frontend-gotchas]] — outros gotchas do frontend
 - `docs/security/2026-05-11-chatfunnel-front-security-audit.md` — audit completo (61 findings)
 - `docs/security/2026-05-11-pentest-exploitation-guide.md` — guia de pentest
-- `docs/superpowers/plans/2026-05-12-xss-dompurify-livechat.md` — plano de execucao
+- `docs/superpowers/plans/livechat-security/2026-05-12-xss-dompurify-livechat.md` — plano de execucao

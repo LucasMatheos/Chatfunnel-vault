@@ -551,7 +551,7 @@ V1 fica intacto para rollback (regra `feedback_v2_suffix_no_legacy`).
 - Arquitetura completa com levantamento do backend A2A real
 - Todas decisoes de UX batidas (A-L)
 - Prototipos Pencil completos (frames 10-22 em `intelligence-componetes.pen`): empty state, 6 modais tools, conversa ativa, artifact panel, health/throttle, 9 tool result cards, StepResult
-- Plano de implementacao F1 escrito: `docs/superpowers/plans/2026-05-05-intelligence-v2-f1-scaffold.md`
+- Plano de implementacao F1 escrito: `docs/superpowers/plans/intelligence-v2/2026-05-05-intelligence-v2-f1-scaffold.md`
 - Composables simplificados: 5 composables + 1 util (reduzido de 9)
 
 **Proximo passo: F1 — Scaffold (8 tasks, 21 arquivos)**

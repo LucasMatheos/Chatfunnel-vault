@@ -23,6 +23,9 @@ node_modules/
 Thumbs.db
 desktop.ini
 
+# Crash dumps (MSYS2/Git Bash)
+*.stackdump
+
 # IDE
 .idea/
 .vscode/

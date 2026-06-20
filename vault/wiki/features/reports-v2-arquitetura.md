@@ -2,7 +2,7 @@
 title: Reports v2 — Arquitetura do Modulo (Backend)
 description: Arquitetura do modulo ReportsV2Module no chatfunnel-services. Constroi do zero usando engines reusaveis + catalogo declarativo em vez de 1 handler por relatorio. Cobre os 34 relatorios do spec base.
 tags: [features, reports, reportsV2, backend, services, arquitetura, plano]
-related: ["[[contacts]]", "[[crm-kanban]]", "[[automations]]", "[[broadcast]]", "[[ai-agents]]"]
+related: ["[[reports-v2-front-arquitetura]]", "[[contacts]]", "[[crm-kanban]]", "[[automations]]", "[[broadcast]]", "[[ai-agents]]"]
 last_updated: 2026-06-03
 status: f0-em-implementacao
 ---
@@ -15,7 +15,7 @@ status: f0-em-implementacao
 > - **Decisoes de produto e backlog repriorizado** (`docs/superpowers/specs/2026-06-03-relatorios-v2-decisoes-e-backlog.md`) — tela unica, 5 abas, Agendamentos e Intelligence
 > - **Escopo por aba** (`docs/superpowers/specs/2026-06-03-relatorios-v2-escopo-por-aba.md`) — objetivo, componentes, metricas, filtros e dependencias por aba
 > - **Mapping tecnico por aba** (`docs/superpowers/specs/2026-06-03-relatorios-v2-mapping-tecnico-por-aba.md`) — endpoints candidatos, primitives, tabelas, riscos e status
-> - **Plano de implementacao por fatias** (`docs/superpowers/plans/2026-06-03-relatorios-v2-implementacao-por-fatias.md`) — sequencia de execucao por repo, endpoint e criterio de aceite
+> - **Plano de implementacao por fatias** (`docs/superpowers/plans/reports-v2/2026-06-03-relatorios-v2-implementacao-por-fatias.md`) — sequencia de execucao por repo, endpoint e criterio de aceite
 > - **Modulo legado** (`chatfunnel-services/src/modules/reports/`) — 6 handlers com `any`, sem cache, sem padronizacao
 >
 > **Estado v2:** branch `feature/reports-v2` ativa em services/front/core. Sem pasta `reports-v2/` criada ainda. Este doc e o plano.
@@ -264,7 +264,7 @@ Migration com os 6 indexes compostos do spec base. Roda independente dos handler
 - Decisoes de produto e backlog repriorizado: `docs/superpowers/specs/2026-06-03-relatorios-v2-decisoes-e-backlog.md`
 - Escopo por aba: `docs/superpowers/specs/2026-06-03-relatorios-v2-escopo-por-aba.md`
 - Mapping tecnico por aba: `docs/superpowers/specs/2026-06-03-relatorios-v2-mapping-tecnico-por-aba.md`
-- Plano de implementacao por fatias: `docs/superpowers/plans/2026-06-03-relatorios-v2-implementacao-por-fatias.md`
+- Plano de implementacao por fatias: `docs/superpowers/plans/reports-v2/2026-06-03-relatorios-v2-implementacao-por-fatias.md`
 - Regras do `chatfunnel-services`: `chatfunnel-services/CLAUDE.md`
 - Padroes do workspace: `CLAUDE.md` raiz
 - Branch ativa: `feature/reports-v2` (front, services, core)

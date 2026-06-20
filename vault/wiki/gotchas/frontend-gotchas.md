@@ -4,7 +4,7 @@ description: Armadilhas conhecidas do chatfunnel-front — componentes v2, build
 tags: [gotcha, frontend, vue, vite]
 severity: media
 related: ["[[wiki/repos/chatfunnel-front|chatfunnel-front]]", "[[signup-profile-step]]", "[[credenciais-page]]"]
-last_updated: 2026-04-30
+last_updated: 2026-06-08
 ---
 
 # Frontend Gotchas
@@ -827,3 +827,27 @@ Util pra UI mostrar warning "este template precisa configuracao" sem precisar in
 ### Pendente
 
 Audit acao 41 — documentar semantica explicita no schema do tool.
+
+## Reports V2: `conversionFromPrevious` sem bounds no contract (assumido 0..1)
+
+**Repo:** `chatfunnel-front` + `chatfunnel-contracts`
+**Arquivos de referencia:** `src/views/reportsV2/components/primitives/FunnelChart.vue`, `chatfunnel-contracts/src/endpoints/reports.contracts.ts`
+
+### O que acontece
+
+O campo `FunnelStage.conversionFromPrevious` (endpoint `crm/funnel` → `FunnelData`) e tipado como `z.number().optional()` no `@chatfunnel/contracts` — **sem `.min()/.max()`**. Nada no contract diz se o valor chega como fracao `0..1` ou percentual `0..100`.
+
+Na integracao front (2026-06-08) assumimos **`0..1`** (decisao do design doc §3.3, baseada em convencao do backend). `FunnelChart.vue` multiplica por 100 no modo "relativo" (`(conversionFromPrevious ?? 0) * 100`, com `index === 0 → 100`). O mock `mockFunnelData` foi realinhado pra fracoes `0..1`.
+
+### Risco
+
+Se o backend real emitir `0..100` em vez de `0..1`, o funil mostra a conversao **100× errada** (ex: 72,7% vira 7270%). O typecheck nao pega porque o contract nao tem bounds.
+
+### Acao pendente
+
+1. **Confirmar com o backend** a unidade real de `conversionFromPrevious` ao subir a branch `feature/reports` em services :3200.
+2. Sugerido: adicionar `.min(0).max(1)` ao schema em `chatfunnel-contracts` pra travar a convencao no tipo (belt-and-suspenders).
+
+### Gotcha irmao — escala de moeda em `revenue-card`
+
+`MetricCard.value` e `delta.absolute` do endpoint `crm/revenue-card` chegam em **centavos (Int)**. `ReportsV2Service.getRevenueCard` divide por 100 na borda (cents→reais) **uma unica vez**; `MetricCard.vue` so formata `currency`. Confirmar com o time de dados se a unidade e realmente centavos antes do go-live (design doc §6).

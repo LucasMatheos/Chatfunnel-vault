@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Claude Code Insights</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #334155; line-height: 1.65; padding: 48px 24px; }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { font-size: 32px; font-weight: 700; color: #0f172a; margin-bottom: 8px; }
+    h2 { font-size: 20px; font-weight: 600; color: #0f172a; margin-top: 48px; margin-bottom: 16px; }
+    .subtitle { color: #64748b; font-size: 15px; margin-bottom: 32px; }
+    .nav-toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 32px 0; padding: 16px; background: white; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .nav-toc a { font-size: 12px; color: #64748b; text-decoration: none; padding: 6px 12px; border-radius: 6px; background: #f1f5f9; transition: all 0.15s; }
+    .nav-toc a:hover { background: #e2e8f0; color: #334155; }
+    .stats-row { display: flex; gap: 24px; margin-bottom: 40px; padding: 20px 0; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; }
+    .stat { text-align: center; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #0f172a; }
+    .stat-label { font-size: 11px; color: #64748b; text-transform: uppercase; }
+    .at-a-glance { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #f59e0b; border-radius: 12px; padding: 20px 24px; margin-bottom: 32px; }
+    .glance-title { font-size: 16px; font-weight: 700; color: #92400e; margin-bottom: 16px; }
+    .glance-sections { display: flex; flex-direction: column; gap: 12px; }
+    .glance-section { font-size: 14px; color: #78350f; line-height: 1.6; }
+    .glance-section strong { color: #92400e; }
+    .see-more { color: #b45309; text-decoration: none; font-size: 13px; white-space: nowrap; }
+    .see-more:hover { text-decoration: underline; }
+    .project-areas { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+    .project-area { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+    .area-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .area-name { font-weight: 600; font-size: 15px; color: #0f172a; }
+    .area-count { font-size: 12px; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; }
+    .area-desc { font-size: 14px; color: #475569; line-height: 1.5; }
+    .narrative { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 24px; }
+    .narrative p { margin-bottom: 12px; font-size: 14px; color: #475569; line-height: 1.7; }
+    .key-insight { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 16px; margin-top: 12px; font-size: 14px; color: #166534; }
+    .section-intro { font-size: 14px; color: #64748b; margin-bottom: 16px; }
+    .big-wins { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .big-win { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; }
+    .big-win-title { font-weight: 600; font-size: 15px; color: #166534; margin-bottom: 8px; }
+    .big-win-desc { font-size: 14px; color: #15803d; line-height: 1.5; }
+    .friction-categories { display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+    .friction-category { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 8px; padding: 16px; }
+    .friction-title { font-weight: 600; font-size: 15px; color: #991b1b; margin-bottom: 6px; }
+    .friction-desc { font-size: 13px; color: #7f1d1d; margin-bottom: 10px; }
+    .friction-examples { margin: 0 0 0 20px; font-size: 13px; color: #334155; }
+    .friction-examples li { margin-bottom: 4px; }
+    .claude-md-section { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+    .claude-md-section h3 { font-size: 14px; font-weight: 600; color: #1e40af; margin: 0 0 12px 0; }
+    .claude-md-actions { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #dbeafe; }
+    .copy-all-btn { background: #2563eb; color: white; border: none; border-radius: 4px; padding: 6px 12px; font-size: 12px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+    .copy-all-btn:hover { background: #1d4ed8; }
+    .copy-all-btn.copied { background: #16a34a; }
+    .claude-md-item { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; padding: 10px 0; border-bottom: 1px solid #dbeafe; }
+    .claude-md-item:last-child { border-bottom: none; }
+    .cmd-checkbox { margin-top: 2px; }
+    .cmd-code { background: white; padding: 8px 12px; border-radius: 4px; font-size: 12px; color: #1e40af; border: 1px solid #bfdbfe; font-family: monospace; display: block; white-space: pre-wrap; word-break: break-word; flex: 1; }
+    .cmd-why { font-size: 12px; color: #64748b; width: 100%; padding-left: 24px; margin-top: 4px; }
+    .features-section, .patterns-section { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+    .feature-card { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 16px; }
+    .pattern-card { background: #f0f9ff; border: 1px solid #7dd3fc; border-radius: 8px; padding: 16px; }
+    .feature-title, .pattern-title { font-weight: 600; font-size: 15px; color: #0f172a; margin-bottom: 6px; }
+    .feature-oneliner { font-size: 14px; color: #475569; margin-bottom: 8px; }
+    .pattern-summary { font-size: 14px; color: #475569; margin-bottom: 8px; }
+    .feature-why, .pattern-detail { font-size: 13px; color: #334155; line-height: 1.5; }
+    .feature-examples { margin-top: 12px; }
+    .feature-example { padding: 8px 0; border-top: 1px solid #d1fae5; }
+    .feature-example:first-child { border-top: none; }
+    .example-desc { font-size: 13px; color: #334155; margin-bottom: 6px; }
+    .example-code-row { display: flex; align-items: flex-start; gap: 8px; }
+    .example-code { flex: 1; background: #f1f5f9; padding: 8px 12px; border-radius: 4px; font-family: monospace; font-size: 12px; color: #334155; overflow-x: auto; white-space: pre-wrap; }
+    .copyable-prompt-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8f0; }
+    .copyable-prompt-row { display: flex; align-items: flex-start; gap: 8px; }
+    .copyable-prompt { flex: 1; background: #f8fafc; padding: 10px 12px; border-radius: 4px; font-family: monospace; font-size: 12px; color: #334155; border: 1px solid #e2e8f0; white-space: pre-wrap; line-height: 1.5; }
+    .feature-code { background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 12px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 8px; }
+    .feature-code code { flex: 1; font-family: monospace; font-size: 12px; color: #334155; white-space: pre-wrap; }
+    .pattern-prompt { background: #f8fafc; padding: 12px; border-radius: 6px; margin-top: 12px; border: 1px solid #e2e8f0; }
+    .pattern-prompt code { font-family: monospace; font-size: 12px; color: #334155; display: block; white-space: pre-wrap; margin-bottom: 8px; }
+    .prompt-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
+    .copy-btn { background: #e2e8f0; border: none; border-radius: 4px; padding: 4px 8px; font-size: 11px; cursor: pointer; color: #475569; flex-shrink: 0; }
+    .copy-btn:hover { background: #cbd5e1; }
+    .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+    .chart-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+    .chart-title { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; margin-bottom: 12px; }
+    .bar-row { display: flex; align-items: center; margin-bottom: 6px; }
+    .bar-label { width: 100px; font-size: 11px; color: #475569; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { flex: 1; height: 6px; background: #f1f5f9; border-radius: 3px; margin: 0 8px; }
+    .bar-fill { height: 100%; border-radius: 3px; }
+    .bar-value { width: 28px; font-size: 11px; font-weight: 500; color: #64748b; text-align: right; }
+    .empty { color: #94a3b8; font-size: 13px; }
+    .horizon-section { display: flex; flex-direction: column; gap: 16px; }
+    .horizon-card { background: linear-gradient(135deg, #faf5ff 0%, #f5f3ff 100%); border: 1px solid #c4b5fd; border-radius: 8px; padding: 16px; }
+    .horizon-title { font-weight: 600; font-size: 15px; color: #5b21b6; margin-bottom: 8px; }
+    .horizon-possible { font-size: 14px; color: #334155; margin-bottom: 10px; line-height: 1.5; }
+    .horizon-tip { font-size: 13px; color: #6b21a8; background: rgba(255,255,255,0.6); padding: 8px 12px; border-radius: 4px; }
+    .feedback-header { margin-top: 48px; color: #64748b; font-size: 16px; }
+    .feedback-intro { font-size: 13px; color: #94a3b8; margin-bottom: 16px; }
+    .feedback-section { margin-top: 16px; }
+    .feedback-section h3 { font-size: 14px; font-weight: 600; color: #475569; margin-bottom: 12px; }
+    .feedback-card { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+    .feedback-card.team-card { background: #eff6ff; border-color: #bfdbfe; }
+    .feedback-card.model-card { background: #faf5ff; border-color: #e9d5ff; }
+    .feedback-title { font-weight: 600; font-size: 14px; color: #0f172a; margin-bottom: 6px; }
+    .feedback-detail { font-size: 13px; color: #475569; line-height: 1.5; }
+    .feedback-evidence { font-size: 12px; color: #64748b; margin-top: 8px; }
+    .fun-ending { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #fbbf24; border-radius: 12px; padding: 24px; margin-top: 40px; text-align: center; }
+    .fun-headline { font-size: 18px; font-weight: 600; color: #78350f; margin-bottom: 8px; }
+    .fun-detail { font-size: 14px; color: #92400e; }
+    .collapsible-section { margin-top: 16px; }
+    .collapsible-header { display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 12px 0; border-bottom: 1px solid #e2e8f0; }
+    .collapsible-header h3 { margin: 0; font-size: 14px; font-weight: 600; color: #475569; }
+    .collapsible-arrow { font-size: 12px; color: #94a3b8; transition: transform 0.2s; }
+    .collapsible-content { display: none; padding-top: 16px; }
+    .collapsible-content.open { display: block; }
+    .collapsible-header.open .collapsible-arrow { transform: rotate(90deg); }
+    @media (max-width: 640px) { .charts-row { grid-template-columns: 1fr; } .stats-row { justify-content: center; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Claude Code Insights</h1>
+    <p class="subtitle">1.018 messages across 114 sessions (127 total) | 2026-05-13 to 2026-06-12</p>
+
+    
+    <div class="at-a-glance">
+      <div class="glance-title">At a Glance</div>
+      <div class="glance-sections">
+        <div class="glance-section"><strong>What's working:</strong> You work plan-first and disciplined: recovering context from git logs and a knowledge vault, analyzing backend docs against the existing frontend, and producing committed architecture specs before any code is written. Your test-driven debugging stands out—when channel filters silently failed, you had Claude trace it to two distinct root causes, write failing tests, then fix and verify the whole suite passing. You also orchestrate subagent-driven feature delivery well, catching blockers like stale contracts mid-run and pausing cleanly. <a href="#section-wins" class="see-more">Impressive Things You Did →</a></div>
+        <div class="glance-section"><strong>What's hindering you:</strong> On Claude&apos;s side, it tends to start editing or investigating before scope is locked—touching shared components, exploring the wrong file, or picking the wrong design tokens—forcing you to interrupt and unwind work. On your side, friction clusters around long-running sessions: expensive per-edit hooks drove costs up and usage limits cut off work mid-recovery, and a few requests (a stale unpulled branch, an unclear pagination ask) sent Claude down paths that had to be discarded. <a href="#section-friction" class="see-more">Where Things Go Wrong →</a></div>
+        <div class="glance-section"><strong>Quick wins to try:</strong> Try <strong>Task Agents</strong> more deliberately for parallel exploration so investigation stays scoped to the right area instead of wandering into shared code. Codify your repeated context-recovery and convention-checking steps as <strong>Custom Skills</strong>, so resuming Reports V2 or enforcing your service-folder conventions becomes a single command rather than tokens spent re-reading git logs. Audit your <strong>Hooks</strong>—the GateGuard fact-declaration retries are costing you real money on every edit and are worth trimming. <a href="#section-features" class="see-more">Features to Try →</a></div>
+        <div class="glance-section"><strong>Ambitious workflows:</strong> As models improve, expect self-maintaining project memory: any new session could instantly resume the exact phase, pending tasks, and passing-test status without burning tokens rebuilding state—ending the mid-recovery cutoffs. A convention-enforcing TDD pipeline could validate every plan and diff against your documented conventions before code is written, eliminating the wrong-folder and missing-sidebar rework loops. And budgeted, self-throttling implementation loops could run multi-slice features hands-off overnight, batching expensive operations and stopping cleanly at a cost ceiling with a resumable checkpoint. <a href="#section-horizon" class="see-more">On the Horizon →</a></div>
+      </div>
+    </div>
+    
+
+    <nav class="nav-toc">
+      <a href="#section-work">What You Work On</a>
+      <a href="#section-usage">How You Use CC</a>
+      <a href="#section-wins">Impressive Things</a>
+      <a href="#section-friction">Where Things Go Wrong</a>
+      <a href="#section-features">Features to Try</a>
+      <a href="#section-patterns">New Usage Patterns</a>
+      <a href="#section-horizon">On the Horizon</a>
+      <a href="#section-feedback">Team Feedback</a>
+    </nav>
+
+    <div class="stats-row">
+      <div class="stat"><div class="stat-value">1.018</div><div class="stat-label">Messages</div></div>
+      <div class="stat"><div class="stat-value">+75.766/-4.464</div><div class="stat-label">Lines</div></div>
+      <div class="stat"><div class="stat-value">400</div><div class="stat-label">Files</div></div>
+      <div class="stat"><div class="stat-value">22</div><div class="stat-label">Days</div></div>
+      <div class="stat"><div class="stat-value">46.3</div><div class="stat-label">Msgs/Day</div></div>
+    </div>
+
+    
+    <h2 id="section-work">What You Work On</h2>
+    <div class="project-areas">
+      
+        <div class="project-area">
+          <div class="area-header">
+            <span class="area-name">Reports V2 Frontend Implementation</span>
+            <span class="area-count">~22 sessions</span>
+          </div>
+          <div class="area-desc">Extensive work building out the Reports V2 frontend feature, including channel filters, custom field inputs, infinite scroll, and slice-by-slice (Fatia/F0-F3) implementations. Claude used subagent-driven development, TDD with passing test suites, and frequent context recovery via git log and vault notes. Friction arose from cost-warning hooks, stale contracts dependencies, and occasional session usage limits cutting off work.</div>
+        </div>
+      
+        <div class="project-area">
+          <div class="area-header">
+            <span class="area-name">Charts &amp; Data Visualization</span>
+            <span class="area-count">~8 sessions</span>
+          </div>
+          <div class="area-desc">Iterative improvement of dashboard charts, including swapping to funnel-graph-js, recommending ECharts, building Glass/Premium mockups, and adding counts, percentages, and absolute/relative bar widths. Claude explained charting library options and applied incremental edits to components like FunnelChart.vue and FunilTab.vue with clear explanations of each change.</div>
+        </div>
+      
+        <div class="project-area">
+          <div class="area-header">
+            <span class="area-name">UI Styling &amp; Component Refactoring</span>
+            <span class="area-count">~9 sessions</span>
+          </div>
+          <div class="area-desc">Numerous CSS and layout fixes such as matching input heights, z-index/stacking-context bugs, dynamic delta-based card colors, full-width grids, and merging metric cards. Claude diagnosed box-sizing and Tailwind preflight issues and swapped manual toggles for reusable Tabs/TabUnderline components. Some friction came from overreaching into shared components and incorrect design tokens that users corrected.</div>
+        </div>
+      
+        <div class="project-area">
+          <div class="area-header">
+            <span class="area-name">Code Explanation &amp; Documentation</span>
+            <span class="area-count">~7 sessions</span>
+          </div>
+          <div class="area-desc">Claude explored codebases to explain module structure (intelligenceV2), Vue rendering, Tailwind tokens, and conversation naming, producing co-located ARCHITECTURE.md docs in pt-BR. It also verified spec/research consistency, consolidated daily notes, and updated knowledge vaults. Explanations were thorough and well-received with high satisfaction.</div>
+        </div>
+      
+        <div class="project-area">
+          <div class="area-header">
+            <span class="area-name">Bug Fixing &amp; Diagnosis</span>
+            <span class="area-count">~5 sessions</span>
+          </div>
+          <div class="area-desc">Systematic root-cause debugging of issues like channel filters not applying, null-reference crashes, tag dropdowns behind modals, and SSE streaming problems. Claude often used TDD by writing failing tests first, then fixing and verifying. Occasional misdirected initial investigations required user redirection before reaching the correct fix.</div>
+        </div>
+      
+    </div>
+    
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">What You Wanted</div>
+        <div class="bar-row">
+        <div class="bar-label">Code Explanation</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#2563eb"></div></div>
+        <div class="bar-value">21</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Feature Implementation</div>
+        <div class="bar-track"><div class="bar-fill" style="width:90.47619047619048%;background:#2563eb"></div></div>
+        <div class="bar-value">19</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Documentation</div>
+        <div class="bar-track"><div class="bar-fill" style="width:47.61904761904761%;background:#2563eb"></div></div>
+        <div class="bar-value">10</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Ui Styling</div>
+        <div class="bar-track"><div class="bar-fill" style="width:33.33333333333333%;background:#2563eb"></div></div>
+        <div class="bar-value">7</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Information Retrieval</div>
+        <div class="bar-track"><div class="bar-fill" style="width:28.57142857142857%;background:#2563eb"></div></div>
+        <div class="bar-value">6</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Explanation</div>
+        <div class="bar-track"><div class="bar-fill" style="width:23.809523809523807%;background:#2563eb"></div></div>
+        <div class="bar-value">5</div>
+      </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Top Tools Used</div>
+        <div class="bar-row">
+        <div class="bar-label">Read</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#0891b2"></div></div>
+        <div class="bar-value">1148</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Edit</div>
+        <div class="bar-track"><div class="bar-fill" style="width:93.72822299651567%;background:#0891b2"></div></div>
+        <div class="bar-value">1076</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Bash</div>
+        <div class="bar-track"><div class="bar-fill" style="width:56.09756097560976%;background:#0891b2"></div></div>
+        <div class="bar-value">644</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Grep</div>
+        <div class="bar-track"><div class="bar-fill" style="width:42.77003484320557%;background:#0891b2"></div></div>
+        <div class="bar-value">491</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Write</div>
+        <div class="bar-track"><div class="bar-fill" style="width:29.70383275261324%;background:#0891b2"></div></div>
+        <div class="bar-value">341</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Glob</div>
+        <div class="bar-track"><div class="bar-fill" style="width:23.08362369337979%;background:#0891b2"></div></div>
+        <div class="bar-value">265</div>
+      </div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Languages</div>
+        <div class="bar-row">
+        <div class="bar-label">Markdown</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#10b981"></div></div>
+        <div class="bar-value">558</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">TypeScript</div>
+        <div class="bar-track"><div class="bar-fill" style="width:85.30465949820788%;background:#10b981"></div></div>
+        <div class="bar-value">476</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">JavaScript</div>
+        <div class="bar-track"><div class="bar-fill" style="width:32.437275985663085%;background:#10b981"></div></div>
+        <div class="bar-value">181</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">CSS</div>
+        <div class="bar-track"><div class="bar-fill" style="width:1.4336917562724014%;background:#10b981"></div></div>
+        <div class="bar-value">8</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">JSON</div>
+        <div class="bar-track"><div class="bar-fill" style="width:1.4336917562724014%;background:#10b981"></div></div>
+        <div class="bar-value">8</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">HTML</div>
+        <div class="bar-track"><div class="bar-fill" style="width:0.7168458781362007%;background:#10b981"></div></div>
+        <div class="bar-value">4</div>
+      </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Session Types</div>
+        <div class="bar-row">
+        <div class="bar-label">Multi Task</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#8b5cf6"></div></div>
+        <div class="bar-value">26</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Single Task</div>
+        <div class="bar-track"><div class="bar-fill" style="width:38.46153846153847%;background:#8b5cf6"></div></div>
+        <div class="bar-value">10</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Iterative Refinement</div>
+        <div class="bar-track"><div class="bar-fill" style="width:30.76923076923077%;background:#8b5cf6"></div></div>
+        <div class="bar-value">8</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Exploration</div>
+        <div class="bar-track"><div class="bar-fill" style="width:11.538461538461538%;background:#8b5cf6"></div></div>
+        <div class="bar-value">3</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Quick Question</div>
+        <div class="bar-track"><div class="bar-fill" style="width:11.538461538461538%;background:#8b5cf6"></div></div>
+        <div class="bar-value">3</div>
+      </div>
+      </div>
+    </div>
+
+    
+    <h2 id="section-usage">How You Use Claude Code</h2>
+    <div class="narrative">
+      <p>You work in a structured, plan-driven way, especially on your long-running Reports V2 and Intelligence V2 frontend projects. A consistent pattern is that you <strong>anchor major work in planning documents before any code is written</strong> — you repeatedly ask Claude to recover context, analyze backend docs against existing frontend code, evolve contracts, and produce phased implementation plans (F0/F1/F2, &apos;Fatia&apos; slices) before execution begins. You&apos;re explicit about workflow hygiene: you frequently demand that commit steps be stripped from plans and that work follow your project conventions (e.g., correcting the API service into `src/common/services` as `XxxService`), and you lean on subagent-driven development and TDD for larger multi-task batches. This makes your sessions long (148 hours across 50 analyzed sessions) but highly directed.</p>
+<p>You <strong>interrupt decisively when Claude overreaches or drifts</strong>, and you trust your own knowledge of the codebase. When Claude started modifying shared Dialog components, you stopped it and demanded the fix be isolated to one file with the shared changes rolled back. When it investigated the wrong area (LiveChat instead of ContatosTab.vue), you redirected it. You also catch omissions and wrong choices after the fact — flagging a missing sidebar menu item, correcting brand tokens to green tokens, and pointing out a wrong test expectation. Notably, you <strong>change your mind mid-task</strong> (stub vs. real contracts), accepting the rework cost in exchange for getting the implementation exactly right. You verify outcomes rather than assume them, expecting typechecks and full test suites to pass before considering something done.</p>
+<p>Your requests tend to be <strong>bundled and multi-part</strong> — a single session often combines an explanation request, a refactor, and a doc update (e.g., explain conversation naming, animate messages, and rewire tool selection). This explains why code_explanation is your top goal alongside feature_implementation: you want to *understand* the system as you change it. Your main sources of friction are environmental rather than directional — usage limits cutting sessions off mid-task, and cost-warning/GateGuard hooks burning tokens on repeated retries (one session hit $62). Despite this, your satisfaction is very high, because your upfront specs and quick corrections keep Claude tightly on-target.</p>
+      <div class="key-insight"><strong>Key pattern:</strong> You drive structured, plan-first multi-task sessions and interrupt sharply to correct scope creep or convention violations, while expecting verified (test-passing) outcomes.</div>
+    </div>
+    
+
+    <!-- Response Time Distribution -->
+    <div class="chart-card" style="margin: 24px 0;">
+      <div class="chart-title">User Response Time Distribution</div>
+      <div class="bar-row">
+        <div class="bar-label">2-10s</div>
+        <div class="bar-track"><div class="bar-fill" style="width:12.790697674418606%;background:#6366f1"></div></div>
+        <div class="bar-value">22</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">10-30s</div>
+        <div class="bar-track"><div class="bar-fill" style="width:37.7906976744186%;background:#6366f1"></div></div>
+        <div class="bar-value">65</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">30s-1m</div>
+        <div class="bar-track"><div class="bar-fill" style="width:59.30232558139535%;background:#6366f1"></div></div>
+        <div class="bar-value">102</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">1-2m</div>
+        <div class="bar-track"><div class="bar-fill" style="width:72.67441860465115%;background:#6366f1"></div></div>
+        <div class="bar-value">125</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">2-5m</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#6366f1"></div></div>
+        <div class="bar-value">172</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">5-15m</div>
+        <div class="bar-track"><div class="bar-fill" style="width:73.83720930232558%;background:#6366f1"></div></div>
+        <div class="bar-value">127</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">>15m</div>
+        <div class="bar-track"><div class="bar-fill" style="width:43.02325581395349%;background:#6366f1"></div></div>
+        <div class="bar-value">74</div>
+      </div>
+      <div style="font-size: 12px; color: #64748b; margin-top: 8px;">
+        Median: 136.0s &bull; Average: 336.1s
+      </div>
+    </div>
+
+    <!-- Multi-clauding Section (matching Python reference) -->
+    <div class="chart-card" style="margin: 24px 0;">
+      <div class="chart-title">Multi-Clauding (Parallel Sessions)</div>
+      
+        <div style="display: flex; gap: 24px; margin: 12px 0;">
+          <div style="text-align: center;">
+            <div style="font-size: 24px; font-weight: 700; color: #7c3aed;">3</div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase;">Overlap Events</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 24px; font-weight: 700; color: #7c3aed;">5</div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase;">Sessions Involved</div>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 24px; font-weight: 700; color: #7c3aed;">2%</div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase;">Of Messages</div>
+          </div>
+        </div>
+        <p style="font-size: 13px; color: #475569; margin-top: 12px;">
+          You run multiple Claude Code sessions simultaneously. Multi-clauding is detected when sessions
+          overlap in time, suggesting parallel workflows.
+        </p>
+      
+    </div>
+
+    <!-- Time of Day & Tool Errors -->
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title" style="display: flex; align-items: center; gap: 12px;">
+          User Messages by Time of Day
+          <select id="timezone-select" style="font-size: 12px; padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+            <option value="0">PT (UTC-8)</option>
+            <option value="3">ET (UTC-5)</option>
+            <option value="8">London (UTC)</option>
+            <option value="9">CET (UTC+1)</option>
+            <option value="17">Tokyo (UTC+9)</option>
+            <option value="custom">Custom offset...</option>
+          </select>
+          <input type="number" id="custom-offset" placeholder="UTC offset" style="display: none; width: 80px; font-size: 12px; padding: 4px; border-radius: 4px; border: 1px solid #e2e8f0;">
+        </div>
+        <div id="hour-histogram">
+      <div class="bar-row">
+        <div class="bar-label">Morning (6-12)</div>
+        <div class="bar-track"><div class="bar-fill" style="width:68.60254083484574%;background:#8b5cf6"></div></div>
+        <div class="bar-value">378</div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">Afternoon (12-18)</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#8b5cf6"></div></div>
+        <div class="bar-value">551</div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">Evening (18-24)</div>
+        <div class="bar-track"><div class="bar-fill" style="width:16.152450090744104%;background:#8b5cf6"></div></div>
+        <div class="bar-value">89</div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">Night (0-6)</div>
+        <div class="bar-track"><div class="bar-fill" style="width:0%;background:#8b5cf6"></div></div>
+        <div class="bar-value">0</div>
+      </div></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Tool Errors Encountered</div>
+        <div class="bar-row">
+        <div class="bar-label">Other</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#dc2626"></div></div>
+        <div class="bar-value">571</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Command Failed</div>
+        <div class="bar-track"><div class="bar-fill" style="width:5.779334500875657%;background:#dc2626"></div></div>
+        <div class="bar-value">33</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">File Not Found</div>
+        <div class="bar-track"><div class="bar-fill" style="width:2.626970227670753%;background:#dc2626"></div></div>
+        <div class="bar-value">15</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">User Rejected</div>
+        <div class="bar-track"><div class="bar-fill" style="width:1.926444833625219%;background:#dc2626"></div></div>
+        <div class="bar-value">11</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">File Changed</div>
+        <div class="bar-track"><div class="bar-fill" style="width:1.2259194395796849%;background:#dc2626"></div></div>
+        <div class="bar-value">7</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Edit Failed</div>
+        <div class="bar-track"><div class="bar-fill" style="width:1.0507880910683012%;background:#dc2626"></div></div>
+        <div class="bar-value">6</div>
+      </div>
+      </div>
+    </div>
+
+    
+    <h2 id="section-wins">Impressive Things You Did</h2>
+    <p class="section-intro">Over a month of intensive Vue/TypeScript work, you drove a major Reports V2 feature from architecture through tested implementation while maintaining strong context across many sessions.</p>
+    <div class="big-wins">
+      
+        <div class="big-win">
+          <div class="big-win-title">Test-driven root-cause debugging</div>
+          <div class="big-win-desc">When channel filters silently failed on the Reports V2 screen, you had Claude trace it to two distinct root causes—state not re-syncing with the URL and channelId missing from reload watchers—then write failing tests, fix them, and confirm all 134 tests passed. You consistently lean on TDD to pin down crashes and contract bugs before fixing them, turning vague symptoms into verified solutions.</div>
+        </div>
+      
+        <div class="big-win">
+          <div class="big-win-title">Subagent-driven feature delivery</div>
+          <div class="big-win-desc">You orchestrated multi-task Reports V2 and Intelligence V2 work through subagent-driven development, completing batches of 7-8 contract-independent tasks with full test suites passing (83 and 27 specs). You catch blockers like stale contracts mid-run and pause cleanly, treating the agent as a disciplined executor against a written plan.</div>
+        </div>
+      
+        <div class="big-win">
+          <div class="big-win-title">Plan-first architecture with a vault</div>
+          <div class="big-win-desc">You routinely have Claude recover context from git logs and a knowledge vault, analyze backend docs against the existing frontend, and produce committed architecture specs and numbered implementation plans before any code is written. You review and correct these plans for project conventions—like service folder structure—so implementation stays clean and consistent across long-running, multi-session work.</div>
+        </div>
+      
+    </div>
+    
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">What Helped Most (Claude's Capabilities)</div>
+        <div class="bar-row">
+        <div class="bar-label">Correct Code Edits</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#16a34a"></div></div>
+        <div class="bar-value">14</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Good Explanations</div>
+        <div class="bar-track"><div class="bar-fill" style="width:92.85714285714286%;background:#16a34a"></div></div>
+        <div class="bar-value">13</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Multi-file Changes</div>
+        <div class="bar-track"><div class="bar-fill" style="width:85.71428571428571%;background:#16a34a"></div></div>
+        <div class="bar-value">12</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Good Debugging</div>
+        <div class="bar-track"><div class="bar-fill" style="width:42.857142857142854%;background:#16a34a"></div></div>
+        <div class="bar-value">6</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Fast/Accurate Search</div>
+        <div class="bar-track"><div class="bar-fill" style="width:21.428571428571427%;background:#16a34a"></div></div>
+        <div class="bar-value">3</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Proactive Help</div>
+        <div class="bar-track"><div class="bar-fill" style="width:7.142857142857142%;background:#16a34a"></div></div>
+        <div class="bar-value">1</div>
+      </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Outcomes</div>
+        <div class="bar-row">
+        <div class="bar-label">Not Achieved</div>
+        <div class="bar-track"><div class="bar-fill" style="width:13.043478260869565%;background:#8b5cf6"></div></div>
+        <div class="bar-value">3</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Partially Achieved</div>
+        <div class="bar-track"><div class="bar-fill" style="width:13.043478260869565%;background:#8b5cf6"></div></div>
+        <div class="bar-value">3</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Mostly Achieved</div>
+        <div class="bar-track"><div class="bar-fill" style="width:91.30434782608695%;background:#8b5cf6"></div></div>
+        <div class="bar-value">21</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Fully Achieved</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#8b5cf6"></div></div>
+        <div class="bar-value">23</div>
+      </div>
+      </div>
+    </div>
+
+    
+    <h2 id="section-friction">Where Things Go Wrong</h2>
+    <p class="section-intro">Your friction mostly comes from Claude jumping into implementation before scope is settled, exploratory work in the wrong area or shared files, and recurring session-cost/usage-limit interruptions during long Reports V2 work.</p>
+    <div class="friction-categories">
+      
+        <div class="friction-category">
+          <div class="friction-title">Premature implementation before scope is confirmed</div>
+          <div class="friction-desc">Claude often starts editing, creating tasks, or planning implementations before you&apos;ve finalized the approach, forcing you to interrupt and unwind work. Confirming scope, conventions, and commit/no-commit preferences upfront before any edits would save rework.</div>
+          <ul class="friction-examples"><li>Claude began creating tasks and implementing before you interrupted to demand all commit steps be removed from the plan first, requiring a restart of the planning phase.</li><li>Claude spent significant time investigating and planning a backend UTM implementation that you ultimately discarded because you&apos;d forgotten to pull the branch — wasted effort that confirming branch state first would have avoided.</li></ul>
+        </div>
+      
+        <div class="friction-category">
+          <div class="friction-title">Wrong-target investigation and overreach into shared code</div>
+          <div class="friction-desc">Claude frequently explored or edited the wrong file/area or touched shared components instead of isolating changes, requiring you to redirect it. Pointing Claude to the specific file and explicitly scoping edits to one location prevents these detours.</div>
+          <ul class="friction-examples"><li>Claude began modifying shared Dialog components (DialogControl/DialogContent) and you had to interrupt to demand the fix be isolated to a single file and the shared files rolled back.</li><li>Claude initially investigated the wrong LiveChat channel filter before you redirected it to the correct ContatosTab.vue, and its implementation plan placed an API service in the wrong folder against your src/common/services convention.</li></ul>
+        </div>
+      
+        <div class="friction-category">
+          <div class="friction-title">Session-cost and usage-limit interruptions on long tasks</div>
+          <div class="friction-desc">Long Reports V2 and subagent-driven sessions repeatedly hit cost warnings or usage limits, cutting off work before results were delivered. Breaking large plans into smaller scoped sessions and disabling expensive per-edit hooks (like GateGuard fact-declaration retries) would reduce wasted, incomplete runs.</div>
+          <ul class="friction-examples"><li>Repeated GateGuard fact-declaration retries on every edit drove session cost to a critical $62 with repeated cost warnings, and the subagent approach burned tokens reacting to cost hooks, forcing a fallback to direct implementation.</li><li>Multiple sessions (route translations, vault note retrieval) were cut off by usage limits before any edits or results could be delivered, leaving goals not achieved.</li></ul>
+        </div>
+      
+    </div>
+    
+
+    <div class="charts-row">
+      <div class="chart-card">
+        <div class="chart-title">Primary Friction Types</div>
+        <div class="bar-row">
+        <div class="bar-label">Wrong Approach</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#dc2626"></div></div>
+        <div class="bar-value">11</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Buggy Code</div>
+        <div class="bar-track"><div class="bar-fill" style="width:81.81818181818183%;background:#dc2626"></div></div>
+        <div class="bar-value">9</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Excessive Changes</div>
+        <div class="bar-track"><div class="bar-fill" style="width:36.36363636363637%;background:#dc2626"></div></div>
+        <div class="bar-value">4</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Misunderstood Request</div>
+        <div class="bar-track"><div class="bar-fill" style="width:36.36363636363637%;background:#dc2626"></div></div>
+        <div class="bar-value">4</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">User Rejected Action</div>
+        <div class="bar-track"><div class="bar-fill" style="width:18.181818181818183%;background:#dc2626"></div></div>
+        <div class="bar-value">2</div>
+      </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Inferred Satisfaction (model-estimated)</div>
+        <div class="bar-row">
+        <div class="bar-label">Dissatisfied</div>
+        <div class="bar-track"><div class="bar-fill" style="width:5.357142857142857%;background:#eab308"></div></div>
+        <div class="bar-value">6</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Likely Satisfied</div>
+        <div class="bar-track"><div class="bar-fill" style="width:100%;background:#eab308"></div></div>
+        <div class="bar-value">112</div>
+      </div>
+<div class="bar-row">
+        <div class="bar-label">Satisfied</div>
+        <div class="bar-track"><div class="bar-fill" style="width:7.142857142857142%;background:#eab308"></div></div>
+        <div class="bar-value">8</div>
+      </div>
+      </div>
+    </div>
+
+    
+    
+    <h2 id="section-features">Existing CC Features to Try</h2>
+    <div class="claude-md-section">
+      <h3>Suggested CLAUDE.md Additions</h3>
+      <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Just copy this into Claude Code to add it to your CLAUDE.md.</p>
+      <div class="claude-md-actions">
+        <button class="copy-all-btn" onclick="copyAllCheckedClaudeMd()">Copy All Checked</button>
+      </div>
+      
+        <div class="claude-md-item">
+          <input type="checkbox" id="cmd-0" class="cmd-checkbox" checked data-text="Add under a ## Scope &amp; Edits section near the top of CLAUDE.md.\n\nWhen fixing a bug or styling issue, isolate changes to the specifically named file(s); do NOT modify shared components (e.g., DialogControl/DialogContent) unless explicitly asked.">
+          <label for="cmd-0">
+            <code class="cmd-code">When fixing a bug or styling issue, isolate changes to the specifically named file(s); do NOT modify shared components (e.g., DialogControl/DialogContent) unless explicitly asked.</code>
+            <button class="copy-btn" onclick="copyCmdItem(0)">Copy</button>
+          </label>
+          <div class="cmd-why">Multiple sessions showed Claude overreaching into shared components and requiring rollback (z-index fix, Dialog changes), wasting time and frustrating the user.</div>
+        </div>
+      
+        <div class="claude-md-item">
+          <input type="checkbox" id="cmd-1" class="cmd-checkbox" checked data-text="Add under a ## Planning Conventions section.\n\nDo NOT include git commit steps in implementation plans unless explicitly requested; the user removes them every time.">
+          <label for="cmd-1">
+            <code class="cmd-code">Do NOT include git commit steps in implementation plans unless explicitly requested; the user removes them every time.</code>
+            <button class="copy-btn" onclick="copyCmdItem(1)">Copy</button>
+          </label>
+          <div class="cmd-why">In at least two sessions the user interrupted to demand commit steps be stripped from the plan before implementation.</div>
+        </div>
+      
+        <div class="claude-md-item">
+          <input type="checkbox" id="cmd-2" class="cmd-checkbox" checked data-text="Add under a ## Project Conventions / File Layout section.\n\nPlace new API services in src/common/services as XxxService following project naming conventions.">
+          <label for="cmd-2">
+            <code class="cmd-code">Place new API services in src/common/services as XxxService following project naming conventions.</code>
+            <button class="copy-btn" onclick="copyCmdItem(2)">Copy</button>
+          </label>
+          <div class="cmd-why">A plan put the API service in the wrong folder and the user had to correct it to the established convention.</div>
+        </div>
+      
+        <div class="claude-md-item">
+          <input type="checkbox" id="cmd-3" class="cmd-checkbox" checked data-text="Add under a ## Testing section.\n\nAfter implementing any feature or fix, run the typecheck and the test suite and confirm they pass before declaring done.">
+          <label for="cmd-3">
+            <code class="cmd-code">After implementing any feature or fix, run the typecheck and the test suite and confirm they pass before declaring done.</code>
+            <button class="copy-btn" onclick="copyCmdItem(3)">Copy</button>
+          </label>
+          <div class="cmd-why">The most successful sessions consistently ended with verified typechecks/passing tests, while friction sessions had buggy code (kebab-case events, undefined MarkerType, null refs) that tests would have caught.</div>
+        </div>
+      
+        <div class="claude-md-item">
+          <input type="checkbox" id="cmd-4" class="cmd-checkbox" checked data-text="Add under a ## Debugging section.\n\nBefore investigating a bug, confirm the working branch is current (git status/pull) and verify which file/component actually owns the behavior before editing.">
+          <label for="cmd-4">
+            <code class="cmd-code">Before investigating a bug, confirm the working branch is current (git status/pull) and verify which file/component actually owns the behavior before editing.</code>
+            <button class="copy-btn" onclick="copyCmdItem(4)">Copy</button>
+          </label>
+          <div class="cmd-why">Claude investigated the wrong area (LiveChat vs ContatosTab) and once planned an entire backend feature the user discarded because they hadn&apos;t pulled the latest branch.</div>
+        </div>
+      
+    </div>
+    
+    
+    <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Just copy this into Claude Code and it'll set it up for you.</p>
+    <div class="features-section">
+      
+        <div class="feature-card">
+          <div class="feature-title">Custom Skills</div>
+          <div class="feature-oneliner">Reusable single-command prompts defined as markdown files.</div>
+          <div class="feature-why"><strong>Why for you:</strong> You repeatedly do plan-then-implement-with-tests cycles on Reports V2 and Intelligence V2; a skill encodes your conventions (no commit steps, run typecheck+tests, correct service folder) so you stop re-explaining them.</div>
+          
+          <div class="feature-examples">
+            <div class="feature-example">
+              <div class="example-code-row">
+                <code class="example-code">Create .claude/skills/plan/SKILL.md:
+# Implementation Plan
+Produce a numbered task plan. Rules: NO git commit steps. Place API services in src/common/services as XxxService. End every implemented task with `npm run typecheck` and the test suite, confirming pass.</code>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      
+        <div class="feature-card">
+          <div class="feature-title">Hooks</div>
+          <div class="feature-oneliner">Shell commands that auto-run at lifecycle events.</div>
+          <div class="feature-why"><strong>Why for you:</strong> Several friction sessions had buggy TypeScript/Vue edits (kebab-case events, undefined MarkerType); an auto typecheck-on-edit hook catches these before you do.</div>
+          
+          <div class="feature-examples">
+            <div class="feature-example">
+              <div class="example-code-row">
+                <code class="example-code">// .claude/settings.json
+{
+  &quot;hooks&quot;: {
+    &quot;PostToolUse&quot;: [
+      { &quot;matcher&quot;: &quot;Edit|Write&quot;, &quot;command&quot;: &quot;npm run typecheck --silent || true&quot; }
+    ]
+  }
+}</code>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      
+        <div class="feature-card">
+          <div class="feature-title">Task Agents</div>
+          <div class="feature-oneliner">Focused subagents for parallel exploration and multi-task implementation.</div>
+          <div class="feature-why"><strong>Why for you:</strong> Your subagent-driven sessions (7-task and 8-task Reports V2 runs) fully achieved goals with all tests passing — lean into agents for the large multi-file integrations you do constantly.</div>
+          
+          <div class="feature-examples">
+            <div class="feature-example">
+              <div class="example-code-row">
+                <code class="example-code">Use a subagent to explore the Reports V2 frontend architecture and report back the file map before we plan.</code>
+                <button class="copy-btn" onclick="copyText(this)">Copy</button>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      
+    </div>
+    
+    
+    <h2 id="section-patterns">New Ways to Use Claude Code</h2>
+    <p style="font-size: 13px; color: #64748b; margin-bottom: 12px;">Just copy this into Claude Code and it'll walk you through it.</p>
+    <div class="patterns-section">
+      
+        <div class="pattern-card">
+          <div class="pattern-title">Context recovery eats session starts</div>
+          <div class="pattern-summary">Many sessions begin with Claude rebuilding state from git logs and vault notes for Reports V2 / Intelligence V2.</div>
+          <div class="pattern-detail">You frequently ask Claude to &apos;recover context&apos;, &apos;find the next step&apos;, or &apos;reconstruct Friday&apos;s work&apos;. This works but consumes tokens and sometimes hits the usage limit before any output (two sessions ended with nothing delivered). A standing CLAUDE.md pointer to your vault and current-phase doc would shortcut this every time.</div>
+          
+          <div class="copyable-prompt-section">
+            <div class="prompt-label">Paste into Claude Code:</div>
+            <div class="copyable-prompt-row">
+              <code class="copyable-prompt">Read CLAUDE.md and the latest vault note for the current feature, then in 5 bullets tell me: completed phase, next phase, relevant files, and pending blockers — before doing anything else.</code>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            </div>
+          </div>
+          
+        </div>
+      
+        <div class="pattern-card">
+          <div class="pattern-title">Cost friction from GateGuard/hook retries</div>
+          <div class="pattern-summary">Repeated fact-declaration and cost-warning hooks drove one session to $62 and forced a fallback from subagents to direct implementation.</div>
+          <div class="pattern-detail">Hooks that retry on every edit compound cost during your large multi-file changes. Review your GateGuard/hook config to batch or debounce checks, and prefer running verification once per task rather than per edit. This directly addresses the repeated cost warnings you saw across subagent sessions.</div>
+          
+          <div class="copyable-prompt-section">
+            <div class="prompt-label">Paste into Claude Code:</div>
+            <div class="copyable-prompt-row">
+              <code class="copyable-prompt">Review my .claude/settings.json hooks and suggest changes so verification runs once per completed task instead of on every edit, to reduce token/cost overhead.</code>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            </div>
+          </div>
+          
+        </div>
+      
+        <div class="pattern-card">
+          <div class="pattern-title">Confirm scope before editing, especially bugs</div>
+          <div class="pattern-summary">Wrong-approach was your top friction (11 instances): editing shared files, wrong components, or stale branches.</div>
+          <div class="pattern-detail">Your strongest sessions started with investigation and root-cause confirmation (channel filter URL sync, null-ref TDD fix). Your friction sessions skipped that and edited the wrong thing. Make &apos;locate the exact owning file and confirm branch is current&apos; a mandatory first step for bug work.</div>
+          
+          <div class="copyable-prompt-section">
+            <div class="prompt-label">Paste into Claude Code:</div>
+            <div class="copyable-prompt-row">
+              <code class="copyable-prompt">Before editing, identify the exact file/component responsible for this behavior, confirm my branch is up to date, and state your plan in 2 lines for my approval.</code>
+              <button class="copy-btn" onclick="copyText(this)">Copy</button>
+            </div>
+          </div>
+          
+        </div>
+      
+    </div>
+    
+    
+
+    
+    <h2 id="section-horizon">On the Horizon</h2>
+    <p class="section-intro">Your workflow is rapidly maturing from single-file edits toward subagent-driven, test-verified feature delivery across the Reports V2 and Intelligence V2 modules.</p>
+    <div class="horizon-section">
+      
+        <div class="horizon-card">
+          <div class="horizon-title">Persistent Context Across Session Limits</div>
+          <div class="horizon-possible">Several of your sessions died at usage limits mid-recovery, forcing manual reconstruction of where Reports V2 work left off. A self-maintaining project memory could let any new session instantly resume the exact phase, pending tasks, and architectural decisions without burning tokens re-reading git logs. Imagine starting every session already knowing F0–F3 status, which tests pass, and what comes next.</div>
+          <div class="horizon-tip"><strong>Getting started:</strong> Use a CLAUDE.md plus a structured vault note auto-updated via a SessionEnd hook or TaskUpdate trigger, and have Claude write a &apos;state snapshot&apos; before any risky long operation.</div>
+          <div class="pattern-prompt"><div class="prompt-label">Paste into Claude Code:</div><code>Create a STATE.md at the repo root that captures the current Reports V2 and Intelligence V2 phase, completed/pending tasks, passing test counts, and key architectural decisions. Then add a session-end routine: before we hit any usage limit or end a session, update STATE.md so a fresh session can resume instantly by reading only that file. Make it the first thing you read on every new session.</code><button class="copy-btn" onclick="copyText(this)">Copy</button></div>
+        </div>
+      
+        <div class="horizon-card">
+          <div class="horizon-title">Convention-Enforcing TDD Agent Pipeline</div>
+          <div class="horizon-possible">Your subagent-driven runs delivered fully-tested features (134 and 83 tests passing) but repeatedly tripped on project conventions—services landing in the wrong folder, kebab-case event mismatches, missing sidebar entries. A guardrail agent could validate every plan and diff against your documented conventions before code is written, eliminating the rework loops. Parallel agents could then implement independent slices while one verifier agent runs the full test suite continuously.</div>
+          <div class="horizon-tip"><strong>Getting started:</strong> Encode conventions (service location src/common/services as XxxService, event naming, sidebar registration checklist) into CLAUDE.md and spawn a dedicated review subagent via the Task tool to gate each implementation phase.</div>
+          <div class="pattern-prompt"><div class="prompt-label">Paste into Claude Code:</div><code>Read our existing code and document a CONVENTIONS.md covering: service file location and naming, Vue event naming (kebab vs camel), required sidebar/menu registration when adding routes, and i18n translation patterns. Then for the next feature, run a two-agent workflow: one agent implements against failing tests, a second &apos;reviewer&apos; agent checks every diff against CONVENTIONS.md and rejects violations before I see them. Verify with full typecheck and tests.</code><button class="copy-btn" onclick="copyText(this)">Copy</button></div>
+        </div>
+      
+        <div class="horizon-card">
+          <div class="horizon-title">Cost-Aware Autonomous Implementation Loops</div>
+          <div class="horizon-possible">Cost friction was severe—repeated GateGuard fact-declaration retries pushed one session to $62 and forced a fallback from subagents to manual work. A budgeted, self-throttling workflow could complete multi-slice features autonomously while batching expensive operations, avoiding redundant hook retries, and reporting spend per phase. This turns large plans into hands-off overnight runs that stop cleanly at a budget ceiling with a resumable checkpoint.</div>
+          <div class="horizon-tip"><strong>Getting started:</strong> Configure hook behavior to declare facts once per session rather than per-edit, set an explicit token/cost budget in your prompt, and have Claude checkpoint progress at each phase boundary.</div>
+          <div class="pattern-prompt"><div class="prompt-label">Paste into Claude Code:</div><code>Execute the next Reports V2 implementation plan as an autonomous multi-phase run with a strict cost budget. Declare any required facts/gates ONCE at the start, not per-edit, to avoid retry waste. After each phase, run tests, write a checkpoint to STATE.md, and report tokens spent. If you approach the budget, stop cleanly at a phase boundary with a resume note rather than mid-edit.</code><button class="copy-btn" onclick="copyText(this)">Copy</button></div>
+        </div>
+      
+    </div>
+    
+
+    
+    <div class="fun-ending">
+      <div class="fun-headline">"Claude confidently planned an entire backend fix for a 404 error—only for the user to realize they&apos;d simply forgotten to pull the latest branch, sending all that work straight to the trash."</div>
+      <div class="fun-detail">During a UTM endpoint 404 investigation, Claude diagnosed missing backend routes and built out a whole implementation plan. The user pivoted to a small frontend fix instead, then discarded the backend work entirely after discovering their local branch was just out of date.</div>
+    </div>
+    
+
+    
+  </div>
+  <script>
+    function toggleCollapsible(header) {
+      header.classList.toggle('open');
+      const content = header.nextElementSibling;
+      content.classList.toggle('open');
+    }
+    function copyText(btn) {
+      const code = btn.previousElementSibling;
+      navigator.clipboard.writeText(code.textContent).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+      });
+    }
+    function copyCmdItem(idx) {
+      const checkbox = document.getElementById('cmd-' + idx);
+      if (checkbox) {
+        const text = checkbox.dataset.text;
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = checkbox.nextElementSibling.querySelector('.copy-btn');
+          if (btn) { btn.textContent = 'Copied!'; setTimeout(() => { btn.textContent = 'Copy'; }, 2000); }
+        });
+      }
+    }
+    function copyAllCheckedClaudeMd() {
+      const checkboxes = document.querySelectorAll('.cmd-checkbox:checked');
+      const texts = [];
+      checkboxes.forEach(cb => {
+        if (cb.dataset.text) { texts.push(cb.dataset.text); }
+      });
+      const combined = texts.join('\n');
+      const btn = document.querySelector('.copy-all-btn');
+      if (btn) {
+        navigator.clipboard.writeText(combined).then(() => {
+          btn.textContent = 'Copied ' + texts.length + ' items!';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = 'Copy All Checked'; btn.classList.remove('copied'); }, 2000);
+        });
+      }
+    }
+    // Timezone selector for time of day chart (data is from our own analytics, not user input)
+    const rawHourCounts = {"6":7,"7":85,"8":93,"9":138,"10":41,"11":14,"12":98,"13":147,"14":153,"15":117,"16":11,"17":25,"18":37,"19":11,"20":27,"21":7,"22":7};
+    function updateHourHistogram(offsetFromPT) {
+      const periods = [
+        { label: "Morning (6-12)", range: [6,7,8,9,10,11] },
+        { label: "Afternoon (12-18)", range: [12,13,14,15,16,17] },
+        { label: "Evening (18-24)", range: [18,19,20,21,22,23] },
+        { label: "Night (0-6)", range: [0,1,2,3,4,5] }
+      ];
+      const adjustedCounts = {};
+      for (const [hour, count] of Object.entries(rawHourCounts)) {
+        const newHour = (parseInt(hour) + offsetFromPT + 24) % 24;
+        adjustedCounts[newHour] = (adjustedCounts[newHour] || 0) + count;
+      }
+      const periodCounts = periods.map(p => ({
+        label: p.label,
+        count: p.range.reduce((sum, h) => sum + (adjustedCounts[h] || 0), 0)
+      }));
+      const maxCount = Math.max(...periodCounts.map(p => p.count)) || 1;
+      const container = document.getElementById('hour-histogram');
+      container.textContent = '';
+      periodCounts.forEach(p => {
+        const row = document.createElement('div');
+        row.className = 'bar-row';
+        const label = document.createElement('div');
+        label.className = 'bar-label';
+        label.textContent = p.label;
+        const track = document.createElement('div');
+        track.className = 'bar-track';
+        const fill = document.createElement('div');
+        fill.className = 'bar-fill';
+        fill.style.width = (p.count / maxCount) * 100 + '%';
+        fill.style.background = '#8b5cf6';
+        track.appendChild(fill);
+        const value = document.createElement('div');
+        value.className = 'bar-value';
+        value.textContent = p.count;
+        row.appendChild(label);
+        row.appendChild(track);
+        row.appendChild(value);
+        container.appendChild(row);
+      });
+    }
+    document.getElementById('timezone-select').addEventListener('change', function() {
+      const customInput = document.getElementById('custom-offset');
+      if (this.value === 'custom') {
+        customInput.style.display = 'inline-block';
+        customInput.focus();
+      } else {
+        customInput.style.display = 'none';
+        updateHourHistogram(parseInt(this.value));
+      }
+    });
+    document.getElementById('custom-offset').addEventListener('change', function() {
+      const parsed = parseInt(this.value, 10);
+      if (isNaN(parsed)) return;
+      updateHourHistogram(parsed + 8);
+    });
+  </script>
+</body>
+</html>
