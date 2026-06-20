@@ -1,0 +1,109 @@
+<h2>Funil de Conversão — estilo Glass / Premium</h2>
+<p class="subtitle">Trapézio nativo (como o que o CEO curtiu), dentro do cartão de vidro, com a paleta teal da brand. Passe o mouse sobre as etapas pra imaginar o tooltip rico.</p>
+
+<style>
+  .glass-wrap { display:flex; justify-content:center; padding:28px;
+    background:linear-gradient(135deg,#CAFFFB 0%,#E7F0FF 55%,#F2F2F2 100%); border-radius:14px; }
+  .glass-card {
+    width:min(640px,100%); border-radius:20px; padding:24px 26px;
+    background:rgba(255,255,255,0.55); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.8); box-shadow:0 20px 50px rgba(47,88,94,0.22);
+    font-family:system-ui,-apple-system,sans-serif; color:#33303E;
+  }
+  .gc-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:18px; }
+  .gc-title { font-size:17px; font-weight:700; color:#33303E; }
+  .gc-sub { font-size:12px; color:#7A7786; margin-top:2px; }
+  .gc-kpi { text-align:right; }
+  .gc-kpi-val { font-size:26px; font-weight:800; line-height:1;
+    background:linear-gradient(90deg,#22C6BA,#00E8DC); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .gc-kpi-lbl { font-size:11px; color:#7A7786; margin-top:3px; }
+  .gc-body { display:flex; gap:22px; align-items:center; }
+  .gc-funnel { flex:1.25; }
+  .gc-stages { flex:1; display:flex; flex-direction:column; gap:10px; }
+  .stage-row { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:10px;
+    background:rgba(255,255,255,0.5); border:1px solid rgba(255,255,255,0.7); transition:transform .15s; }
+  .stage-row:hover { transform:translateX(3px); box-shadow:0 6px 16px rgba(47,88,94,0.12); }
+  .stage-dot { width:11px; height:11px; border-radius:50%; flex-shrink:0; }
+  .stage-info { flex:1; min-width:0; }
+  .stage-name { font-size:12.5px; font-weight:600; color:#4E4B59; }
+  .stage-count { font-size:15px; font-weight:700; color:#33303E; }
+  .stage-conv { font-size:11px; font-weight:700; color:#1E985E; background:#E2FBEF; padding:2px 7px; border-radius:20px; }
+  .stage-conv.muted { color:#7A7786; background:#F2F2F2; }
+</style>
+
+<div class="glass-wrap">
+  <div class="glass-card">
+
+    <div class="gc-head">
+      <div>
+        <div class="gc-title">Funil de Conversão</div>
+        <div class="gc-sub">1 – 30 jun · WhatsApp + Instagram</div>
+      </div>
+      <div class="gc-kpi">
+        <div class="gc-kpi-val">9,5%</div>
+        <div class="gc-kpi-lbl">conversão geral</div>
+      </div>
+    </div>
+
+    <div class="gc-body">
+      <!-- Funil SVG (trapézio nativo) -->
+      <div class="gc-funnel">
+        <svg viewBox="0 0 240 308" width="100%" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <linearGradient id="gA" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00E8DC"/><stop offset="100%" stop-color="#22C6BA"/></linearGradient>
+            <linearGradient id="gB" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22C6BA"/><stop offset="100%" stop-color="#3CA1A1"/></linearGradient>
+            <linearGradient id="gC" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3CA1A1"/><stop offset="100%" stop-color="#3C7C7F"/></linearGradient>
+            <linearGradient id="gD" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3C7C7F"/><stop offset="100%" stop-color="#2F585E"/></linearGradient>
+            <linearGradient id="gE" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2F585E"/><stop offset="100%" stop-color="#234548"/></linearGradient>
+            <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#22C6BA" flood-opacity="0.35"/>
+            </filter>
+          </defs>
+          <g filter="url(#softShadow)">
+            <polygon points="10,10 230,10 195,62 45,62"     fill="url(#gA)"/>
+            <polygon points="45,69 195,69 168,121 72,121"    fill="url(#gB)"/>
+            <polygon points="72,128 168,128 150,180 90,180"  fill="url(#gC)"/>
+            <polygon points="90,187 150,187 140,239 100,239" fill="url(#gD)"/>
+            <polygon points="100,246 140,246 140,298 100,298" fill="url(#gE)"/>
+          </g>
+          <!-- valores dentro das faixas largas -->
+          <text x="120" y="42"  text-anchor="middle" fill="#fff" style="font:700 15px system-ui">1.000</text>
+          <text x="120" y="101" text-anchor="middle" fill="#fff" style="font:700 14px system-ui">620</text>
+          <text x="120" y="159" text-anchor="middle" fill="#fff" style="font:700 13px system-ui">310</text>
+        </svg>
+      </div>
+
+      <!-- Lista de etapas -->
+      <div class="gc-stages">
+        <div class="stage-row">
+          <span class="stage-dot" style="background:linear-gradient(135deg,#00E8DC,#22C6BA)"></span>
+          <div class="stage-info"><div class="stage-name">Visitantes</div><div class="stage-count">1.000</div></div>
+          <span class="stage-conv muted">100%</span>
+        </div>
+        <div class="stage-row">
+          <span class="stage-dot" style="background:linear-gradient(135deg,#22C6BA,#3CA1A1)"></span>
+          <div class="stage-info"><div class="stage-name">Iniciaram conversa</div><div class="stage-count">620</div></div>
+          <span class="stage-conv">62%</span>
+        </div>
+        <div class="stage-row">
+          <span class="stage-dot" style="background:linear-gradient(135deg,#3CA1A1,#3C7C7F)"></span>
+          <div class="stage-info"><div class="stage-name">Lead qualificado</div><div class="stage-count">310</div></div>
+          <span class="stage-conv">50%</span>
+        </div>
+        <div class="stage-row">
+          <span class="stage-dot" style="background:linear-gradient(135deg,#3C7C7F,#2F585E)"></span>
+          <div class="stage-info"><div class="stage-name">Proposta enviada</div><div class="stage-count">180</div></div>
+          <span class="stage-conv">58%</span>
+        </div>
+        <div class="stage-row">
+          <span class="stage-dot" style="background:linear-gradient(135deg,#2F585E,#234548)"></span>
+          <div class="stage-info"><div class="stage-name">Fechado (ganho)</div><div class="stage-count">95</div></div>
+          <span class="stage-conv">53%</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top:18px">As porcentagens verdes são a conversão de uma etapa para a próxima (onde está o vazamento). No ECharts isso vira tooltip + destaque animado da faixa ao passar o mouse.</p>

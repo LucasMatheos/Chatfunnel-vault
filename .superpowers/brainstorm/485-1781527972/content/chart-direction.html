@@ -1,0 +1,126 @@
+<style>
+.cf-demo { font-family: 'Figtree', system-ui, sans-serif; }
+.cf-chart { width: 100%; height: 150px; display: block; }
+.cf-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 6px; }
+.cf-kpi { background: #fff; border: 1px solid #ECECF1; border-radius: 12px; padding: 10px 12px; }
+.cf-kpi-num { font-size: 22px; font-weight: 700; color: #33303E; line-height: 1; font-variant-numeric: tabular-nums; }
+.cf-kpi-label { font-size: 10px; color: #8C8A96; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.cf-delta { display: inline-block; font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 999px; margin-top: 6px; }
+.cf-delta.up { color: #167A4E; background: #DDF5E9; }
+.cf-delta.down { color: #B42318; background: #FEE4E2; }
+.cf-current { filter: grayscale(.15); }
+
+@keyframes cf-draw { from { stroke-dashoffset: 600; } to { stroke-dashoffset: 0; } }
+@keyframes cf-rise { from { opacity:0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+.cf-line-anim { stroke-dasharray: 600; animation: cf-draw 1.6s ease forwards; }
+.cf-area-anim { animation: cf-rise 1s ease forwards; opacity:0; }
+</style>
+
+<h2>Qual direção visual para os gráficos?</h2>
+<p class="subtitle">Hoje os relatórios usam Chart.js "cru" — linha fina, uma cor, animação padrão. Veja três caminhos. Clique no que mais te agrada (e comente no terminal o que curtiu de cada um).</p>
+
+<div class="cards cf-demo">
+
+  <div class="card" style="opacity:.85">
+    <div class="card-image cf-current" style="background:#fff;padding:8px">
+      <svg class="cf-chart" viewBox="0 0 320 150" preserveAspectRatio="none">
+        <polyline fill="rgba(60,161,161,0.10)" stroke="none"
+          points="0,150 0,110 53,95 106,100 160,70 213,80 266,55 320,60 320,150"/>
+        <polyline fill="none" stroke="#3CA1A1" stroke-width="2"
+          points="0,110 53,95 106,100 160,70 213,80 266,55 320,60"/>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>Hoje (referência)</h3>
+      <p>Linha única, fill chapado, sem hierarquia. Funciona, mas é "plano".</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="vibrante" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:linear-gradient(180deg,#0B1F26,#0E2A30);padding:8px">
+      <svg class="cf-chart" viewBox="0 0 320 150" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="gA" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00E8DC" stop-opacity=".55"/>
+            <stop offset="100%" stop-color="#00E8DC" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="glowA"><feGaussianBlur stdDeviation="3" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <polygon class="cf-area-anim" fill="url(#gA)"
+          points="0,150 0,108 53,90 106,98 160,58 213,72 266,40 320,50 320,150"/>
+        <polyline class="cf-line-anim" fill="none" stroke="#00E8DC" stroke-width="3"
+          stroke-linecap="round" stroke-linejoin="round" filter="url(#glowA)"
+          points="0,108 53,90 106,98 160,58 213,72 266,40 320,50"/>
+        <circle cx="266" cy="40" r="4.5" fill="#00E8DC" filter="url(#glowA)"/>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>A · Vibrante & Animado</h3>
+      <p>Gradientes da brand, glow suave, linha que se "desenha" ao carregar. Vibe Stripe / Linear. Mais impacto, fundo escuro opcional.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="bento" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#F6F6F9;padding:0">
+      <div class="cf-mini-grid">
+        <div class="cf-kpi">
+          <div class="cf-kpi-label">Receita</div>
+          <div class="cf-kpi-num">R$ 84,2k</div>
+          <svg width="100%" height="22" viewBox="0 0 120 22" preserveAspectRatio="none">
+            <polyline class="cf-line-anim" fill="none" stroke="#3CA1A1" stroke-width="2"
+              points="0,18 20,14 40,16 60,8 80,11 100,5 120,7"/></svg>
+          <span class="cf-delta up">▲ 23,4%</span>
+        </div>
+        <div class="cf-kpi">
+          <div class="cf-kpi-label">Leads</div>
+          <div class="cf-kpi-num">1.847</div>
+          <svg width="100%" height="22" viewBox="0 0 120 22" preserveAspectRatio="none">
+            <polyline class="cf-line-anim" fill="none" stroke="#7C5CFF" stroke-width="2"
+              points="0,6 20,10 40,7 60,12 80,9 100,15 120,11"/></svg>
+          <span class="cf-delta down">▼ 4,1%</span>
+        </div>
+        <div class="cf-kpi">
+          <div class="cf-kpi-label">Conversão</div>
+          <div class="cf-kpi-num">47,2%</div>
+          <svg width="100%" height="22" viewBox="0 0 120 22" preserveAspectRatio="none">
+            <polyline class="cf-line-anim" fill="none" stroke="#F2A33C" stroke-width="2"
+              points="0,16 20,15 40,12 60,13 80,9 100,8 120,6"/></svg>
+          <span class="cf-delta up">▲ 8,7%</span>
+        </div>
+        <div class="cf-kpi">
+          <div class="cf-kpi-label">Ticket médio</div>
+          <div class="cf-kpi-num">R$ 312</div>
+          <svg width="100%" height="22" viewBox="0 0 120 22" preserveAspectRatio="none">
+            <polyline class="cf-line-anim" fill="none" stroke="#3CA1A1" stroke-width="2"
+              points="0,12 20,11 40,13 60,9 80,10 100,7 120,8"/></svg>
+          <span class="cf-delta up">▲ 2,2%</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B · Bento de KPIs</h3>
+      <p>Números grandes, sparklines coloridas, deltas verde/vermelho com contador animado. Resposta rápida "como estou indo?". Várias cores justificadas por métrica.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="editorial" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#fff;padding:8px">
+      <svg class="cf-chart" viewBox="0 0 320 150" preserveAspectRatio="none">
+        <line x1="0" y1="40" x2="320" y2="40" stroke="#F0F0F4" stroke-width="1"/>
+        <line x1="0" y1="80" x2="320" y2="80" stroke="#F0F0F4" stroke-width="1"/>
+        <line x1="0" y1="120" x2="320" y2="120" stroke="#F0F0F4" stroke-width="1"/>
+        <polyline class="cf-line-anim" fill="none" stroke="#33303E" stroke-width="2"
+          stroke-linecap="round" points="0,112 53,96 106,104 160,70 213,82 266,52 320,62"/>
+        <circle cx="266" cy="52" r="5" fill="#fff" stroke="#00B8AE" stroke-width="3"/>
+        <rect x="232" y="22" width="68" height="22" rx="6" fill="#33303E"/>
+        <text x="266" y="37" text-anchor="middle" fill="#fff" font-size="11" font-family="Figtree">pico · 1.204</text>
+      </svg>
+    </div>
+    <div class="card-body">
+      <h3>C · Editorial sóbrio</h3>
+      <p>Paleta contida, muito respiro, gridlines discretas. A "vida" vem do movimento e da interação (hover, ponto destacado, tooltip), não da cor. Sofisticado, premium.</p>
+    </div>
+  </div>
+
+</div>
