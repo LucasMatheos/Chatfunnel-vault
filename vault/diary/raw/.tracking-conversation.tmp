@@ -1,8 +1,0 @@
-[USER|13:35] Isso foi removido pq deixava o endpoint lento, teria alguma alternativa de melhoria de performance ?
-===
-[ASSISTANT|13:36] Faz sentido — carregar relações completas de automações numa listagem é caro. Há três alternativas, em ordem de custo/benefício:
-===
-[USER|13:37] Eu precisaria que mostrasse a contagem e eu precisaria tambem que separadamente o usuario conseguisse ver depois quais automaçoes ela esta vinculado, talvez um endpoint seperado ?
-===
-[USER|13:42] Antes de implementar escreva o plano
-===
