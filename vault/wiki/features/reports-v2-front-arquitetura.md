@@ -3,7 +3,7 @@ title: Reports v2 — Arquitetura do Front
 description: Arquitetura do front da tela unica de Relatorios V2 no chatfunnel-front. Tela unica com 5 abas fixas (rotas aninhadas), 7 primitivos visuais reutilizaveis, filtros via composable + querystring e Chart.js como unica lib de grafico (Funil e Heatmap custom).
 tags: [features, reports, reportsV2, front, vue, arquitetura, plano]
 related: ["[[reports-v2-arquitetura]]", "[[contacts-utm-fields]]", "[[intelligence-v2-arquitetura]]", "[[crm-kanban]]", "[[automations]]"]
-last_updated: 2026-06-15
+last_updated: 2026-06-23
 status: 45-relatorios-integrados-aguardando-revisao
 ---
 
@@ -262,9 +262,31 @@ Tudo que for componente fixo da tela deve reutilizar shapes que possam ser consu
 ## 13. Referencias
 
 - Backend do modulo: [[reports-v2-arquitetura]]
+- Dashboard que reaproveita primitivos e `InfoPopover`: [[dashboard-v2]]
 - Escopo por aba: `docs/superpowers/specs/2026-06-03-relatorios-v2-escopo-por-aba.md`
 - Plano por fatias: `docs/superpowers/plans/reports-v2/2026-06-03-relatorios-v2-implementacao-por-fatias.md`
 - Mapping tecnico por aba: `docs/superpowers/specs/2026-06-03-relatorios-v2-mapping-tecnico-por-aba.md`
 - Padroes Vue do projeto: skill `vue-standards`
 - Branch ativa: `feature/reports-v2` (front, services, contracts)
 - Legado intacto: `chatfunnel-front/src/views/reports/DashboardReport.vue`
+
+## 14. InfoPopover e semantica temporal (2026-06-23)
+
+`InfoPopover` passou a ser usado tambem fora da tela de Reports v2, no [[dashboard-v2]].
+
+**Fonte de verdade:** `chatfunnel-front/src/views/reportsV2/info/reportInfo.ts`.
+
+**Tipos de dado suportados:**
+
+| Tipo | Significado | Label exibida |
+|---|---|---|
+| `periodo` | Respeita o periodo selecionado nos filtros | Depende do periodo selecionado |
+| `estadoAtual` | Snapshot atual, sem dependencia de periodo | Estado atual, nao reage ao filtro de periodo |
+| `ultimos30dias` | Janela fixa usada pelo Dashboard v2 | Ultimos 30 dias |
+
+**Decisoes:**
+
+- `tempoReal` foi substituido por `estadoAtual` para evitar confusao com atualizacao em tempo real.
+- O badge visual aparece apenas quando `dataType === "estadoAtual"`.
+- Icones do popover usam `@phosphor-icons/vue` (`PhInfo`, `PhClock`, `PhCrosshair`).
+- Textos explicativos devem ser adicionados em `REPORT_INFO`, nao inline nos cards.

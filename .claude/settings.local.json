@@ -28,7 +28,8 @@
       "Bash(rm -f D:/Code/4-Vinicius/Chatfunnel/.code-review-graphignore)",
       "Bash(rm -f D:/Code/4-Vinicius/Chatfunnel/.claude/skills/explore-codebase.md)",
       "Bash(rm -rf C:/Users/lucas/.code-review-graph)",
-      "Skill(claude-md-management:revise-claude-md)"
+      "Skill(claude-md-management:revise-claude-md)",
+      "Bash(rtk ls *)"
     ]
   }
 }

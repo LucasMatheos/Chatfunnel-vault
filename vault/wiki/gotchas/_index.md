@@ -17,3 +17,4 @@ Coisas que nao sao obvias, que custaram tempo pra descobrir, e que alguem vai pi
 | Front, contracts, Zod 3/4, Intelligence V2 | [[front-contracts-zod-loose]] | `@chatfunnel/contracts/tools` puxa schemas com `.loose()`; servidor resolve Zod 3 do front e quebra chunk lazy-loaded |
 | MCP bugs, data leaks, silent-fails, naming, gaps de API | [[mcp-bugs-tracking]] | 32 bugs + 4 gaps rastreados. 5 criticos (leak secrets, silent-fail CRM, template partial-delete). Audit 2026-04-30/05-04 |
 | Stored XSS no livechat, v-html sem DOMPurify, token exfiltration | [[livechat-xss-dompurify]] | 21 componentes vulneraveis, attack chain confirmado. Fix: composable useSanitize.ts (2026-05-12) |
+| z-index, Dialog, Popover, float dentro de modal | [[zindex-map]] | Mapa completo de todos os z-index de components/ui; Popover/Select base z-50 somem dentro de Dialog; padrão correto: z-[999999999999] |

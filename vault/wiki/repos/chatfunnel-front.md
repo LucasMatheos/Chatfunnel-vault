@@ -3,7 +3,7 @@ title: chatfunnel-front
 description: Referencia tecnica do frontend Vue 3 — componentes, Pinia, services, composables, routing, forms, Socket.IO, design tokens.
 tags: [repos, frontend, vue, tailwind, shadcn, pinia]
 related: ["[[chatfunnel-api]]", "[[chatfunnel-services]]", "[[chatfunnel-core]]"]
-last_updated: 2026-04-05
+last_updated: 2026-06-23
 ---
 
 # chatfunnel-front
@@ -78,6 +78,12 @@ Logica reutilizavel em `src/common/composables/` (`.js`). Convencao: `use*()`.
 ## Routing
 
 Vue Router em `src/router/`. 18+ modulos de views. Cada modulo de pagina fica em `src/views/<dominio>/`.
+
+### Dashboard
+
+- `/dashboard` renderiza `src/views/dashboardV2/DashboardV2View.vue`.
+- O Dashboard v2 reutiliza primitivos e explicacoes de [[reports-v2-front-arquitetura]].
+- `FrameScreen` aplica layout sem padding pela rota `DashboardView`.
 
 ## Forms (VeeValidate + Zod)
 
