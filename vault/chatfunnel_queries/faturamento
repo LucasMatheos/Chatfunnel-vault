@@ -1,0 +1,180 @@
+WITH faturamento_detalhado AS (
+  SELECT 
+    a."plan",
+    a."planLeads",
+    a."paymentPeriod",
+    COUNT(DISTINCT a.id) AS quantidade_contas,
+    COUNT(DISTINCT a.id) * 
+    CASE 
+      -- STARTER (LITE) - 5000 leads
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'MONTHLY' THEN 297.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'QUARTERLY' THEN 801.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 1485.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER <= 1000 AND a."paymentPeriod" = 'YEARLY' THEN 970.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER BETWEEN 1001 AND 5000 AND a."paymentPeriod" = 'YEARLY' THEN 2970.00
+      
+      -- STARTER (LITE) - 5001 or more
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER > 5000 AND a."paymentPeriod" = 'MONTHLY' THEN 515.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER > 5000 AND a."paymentPeriod" = 'QUARTERLY' THEN 1390.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER > 5000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 2575.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER > 5000 AND a."paymentPeriod" = 'YEARLY' THEN 5150.00
+      
+      -- PREMIUM (PRO) - 5000 leads
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'MONTHLY' THEN 497.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'QUARTERLY' THEN 1341.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 2485.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'YEARLY' THEN 4970.00
+      
+      -- PREMIUM (PRO) - 5001 to 15000
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 5001 AND 15000 AND a."paymentPeriod" = 'MONTHLY' THEN 860.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 5001 AND 15000 AND a."paymentPeriod" = 'QUARTERLY' THEN 2322.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 5001 AND 15000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 4300.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 5001 AND 15000 AND a."paymentPeriod" = 'YEARLY' THEN 8600.00
+      
+      -- PREMIUM (PRO) - 15001 to 25000
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'MONTHLY' THEN 1110.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'QUARTERLY' THEN 2997.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 5550.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'YEARLY' THEN 11100.00
+      
+      -- PREMIUM (PRO) - 25001 or more
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER > 25000 AND a."paymentPeriod" = 'MONTHLY' THEN 1570.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER > 25000 AND a."paymentPeriod" = 'QUARTERLY' THEN 4239.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER > 25000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 7850.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER > 25000 AND a."paymentPeriod" = 'YEARLY' THEN 15700.00
+      
+      -- ADVANCED - 15000 leads (1 to 15000)
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER <= 15000 AND a."paymentPeriod" = 'MONTHLY' THEN 997.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER <= 15000 AND a."paymentPeriod" = 'QUARTERLY' THEN 2691.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER <= 15000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 4985.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER <= 15000 AND a."paymentPeriod" = 'YEARLY' THEN 9970.00
+      
+      -- ADVANCED - 15001 to 25000
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'MONTHLY' THEN 1287.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'QUARTERLY' THEN 3474.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 6435.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'YEARLY' THEN 12870.00
+      
+      -- ADVANCED - 25001 to 50000
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 25001 AND 50000 AND a."paymentPeriod" = 'MONTHLY' THEN 1820.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 25001 AND 50000 AND a."paymentPeriod" = 'QUARTERLY' THEN 4914.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 25001 AND 50000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 9100.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 25001 AND 50000 AND a."paymentPeriod" = 'YEARLY' THEN 18200.00
+      
+      -- ADVANCED - 50001 to 75000
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 50001 AND 75000 AND a."paymentPeriod" = 'MONTHLY' THEN 2230.00
+      
+      -- ADVANCED - 75001 to 100000
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 75001 AND 100000 AND a."paymentPeriod" = 'MONTHLY' THEN 2575.00
+      
+      -- ADVANCED - 100001 to 125000
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 100001 AND 125000 AND a."paymentPeriod" = 'MONTHLY' THEN 2878.00
+      
+      -- ADVANCED - 125001 to 150000
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 125001 AND 150000 AND a."paymentPeriod" = 'MONTHLY' THEN 3152.00
+      
+      -- ADVANCED - 150001 to 175000
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 150001 AND 175000 AND a."paymentPeriod" = 'MONTHLY' THEN 3405.00
+      
+      -- ADVANCED - 175001 or more
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER > 175000 AND a."paymentPeriod" = 'MONTHLY' THEN 3640.00
+      
+      ELSE 0.00
+    END AS faturamento_estimado
+  FROM "Users" u
+  JOIN "Accounts" a ON u.id = a."userId"
+  JOIN "Payments" p ON a.id=p."accountId"
+  WHERE
+    u."isDeleted" = false
+    AND a."isDeleted" = false
+    AND u."isFree" = false
+    AND u."founderMember" = false
+    AND u."typeClient" <> 'FOUNDER'
+    AND a."nextDatePayment" > NOW()
+    AND a."nextDatePayment" <= DATE_TRUNC('month', NOW()) + INTERVAL '1 month'
+    AND a."isCanceled" = false
+    AND a."inCanceling" = false
+    AND a."subscriptionStatus" = 'ACTIVE'
+    AND a."planLeads" > '500'
+  GROUP BY a."plan", a."planLeads", a."paymentPeriod"
+)
+SELECT 
+  plan,
+  "planLeads",
+  "paymentPeriod",
+  quantidade_contas,
+  faturamento_estimado
+FROM faturamento_detalhado
+ORDER BY plan, "planLeads", "paymentPeriod";
+
+-- Query separada para o total
+SELECT 
+  SUM(quantidade_contas) AS total_contas,
+  SUM(faturamento_estimado) AS faturamento_total_estimado
+FROM (
+  SELECT 
+    COUNT(DISTINCT a.id) AS quantidade_contas,
+    COUNT(DISTINCT a.id) * 
+    CASE 
+      -- [mesmo CASE da query anterior]
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'MONTHLY' THEN 297.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'QUARTERLY' THEN 801.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 1485.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER <= 1000 AND a."paymentPeriod" = 'YEARLY' THEN 970.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER BETWEEN 1001 AND 5000 AND a."paymentPeriod" = 'YEARLY' THEN 2970.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER > 5000 AND a."paymentPeriod" = 'MONTHLY' THEN 515.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER > 5000 AND a."paymentPeriod" = 'QUARTERLY' THEN 1390.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER > 5000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 2575.00
+      WHEN a."plan" = 'STARTER' AND a."planLeads"::INTEGER > 5000 AND a."paymentPeriod" = 'YEARLY' THEN 5150.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'MONTHLY' THEN 497.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'QUARTERLY' THEN 1341.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 2485.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER <= 5000 AND a."paymentPeriod" = 'YEARLY' THEN 4970.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 5001 AND 15000 AND a."paymentPeriod" = 'MONTHLY' THEN 860.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 5001 AND 15000 AND a."paymentPeriod" = 'QUARTERLY' THEN 2322.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 5001 AND 15000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 4300.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 5001 AND 15000 AND a."paymentPeriod" = 'YEARLY' THEN 8600.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'MONTHLY' THEN 1110.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'QUARTERLY' THEN 2997.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 5550.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'YEARLY' THEN 11100.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER > 25000 AND a."paymentPeriod" = 'MONTHLY' THEN 1570.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER > 25000 AND a."paymentPeriod" = 'QUARTERLY' THEN 4239.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER > 25000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 7850.00
+      WHEN a."plan" = 'PREMIUM' AND a."planLeads"::INTEGER > 25000 AND a."paymentPeriod" = 'YEARLY' THEN 15700.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER <= 15000 AND a."paymentPeriod" = 'MONTHLY' THEN 997.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER <= 15000 AND a."paymentPeriod" = 'QUARTERLY' THEN 2691.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER <= 15000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 4985.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER <= 15000 AND a."paymentPeriod" = 'YEARLY' THEN 9970.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'MONTHLY' THEN 1287.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'QUARTERLY' THEN 3474.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 6435.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 15001 AND 25000 AND a."paymentPeriod" = 'YEARLY' THEN 12870.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 25001 AND 50000 AND a."paymentPeriod" = 'MONTHLY' THEN 1820.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 25001 AND 50000 AND a."paymentPeriod" = 'QUARTERLY' THEN 4914.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 25001 AND 50000 AND a."paymentPeriod" = 'SEMIANNUAL' THEN 9100.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 25001 AND 50000 AND a."paymentPeriod" = 'YEARLY' THEN 18200.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 50001 AND 75000 AND a."paymentPeriod" = 'MONTHLY' THEN 2230.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 75001 AND 100000 AND a."paymentPeriod" = 'MONTHLY' THEN 2575.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 100001 AND 125000 AND a."paymentPeriod" = 'MONTHLY' THEN 2878.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 125001 AND 150000 AND a."paymentPeriod" = 'MONTHLY' THEN 3152.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER BETWEEN 150001 AND 175000 AND a."paymentPeriod" = 'MONTHLY' THEN 3405.00
+      WHEN a."plan" = 'ADVANCED' AND a."planLeads"::INTEGER > 175000 AND a."paymentPeriod" = 'MONTHLY' THEN 3640.00
+      ELSE 0.00
+    END AS faturamento_estimado
+  FROM "Users" u
+  JOIN "Accounts" a ON u.id = a."userId"
+  WHERE
+    u."isDeleted" = false
+    AND a."isDeleted" = false
+    AND u."isFree" = false
+    AND u."founderMember" = false
+    AND u."typeClient" <> 'FOUNDER'
+    AND a."nextDatePayment" > NOW()
+    AND a."nextDatePayment" <= DATE_TRUNC('month', NOW()) + INTERVAL '1 month'
+    AND a."isCanceled" = false
+    AND a."inCanceling" = false
+    AND a."subscriptionStatus" = 'ACTIVE'
+    AND a."planLeads" > '500'
+  GROUP BY a."plan", a."planLeads", a."paymentPeriod"
+) AS totais;

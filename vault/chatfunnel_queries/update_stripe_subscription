@@ -1,0 +1,7 @@
+
+-- UPDATE "Accounts"
+--   SET "stripeSubscriptionId"='sub_1TeJlxRuuezkOgh2yrhbSR5k', "planLeads"='15000', "plan"='ADVANCED',
+--     "subscriptionStatus"='ACTIVE', "channelsSubscriptionStatus"='ACTIVE', 
+--     "nextDatePayment"='2027-06-03 18:44:00', "isCanceled"=false
+--   WHERE id='5a14251e-46cc-4bd1-b40b-8757dfe4dc06';
+--

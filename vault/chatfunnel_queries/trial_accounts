@@ -1,0 +1,27 @@
+-- Contas em trial
+COPY (
+-- SELECT COUNT(DISTINCT a.id) AS contas
+SELECT 
+  DISTINCT
+  u.name,
+  u.email,
+  u.idd || u.ddd || u.phone AS phone,
+  a."trialExpireDate" AS "termino do trial",
+  a."createdAt" AS "criado em",
+  CASE 
+    WHEN a."plan" = 'PREMIUM' THEN 'pro'
+    WHEN a."plan" = 'STARTER' THEN 'lite'
+    WHEN a."plan" = 'ADVANCED' THEN 'advanced'
+  END AS "plano"
+FROM "Users" u
+JOIN "Accounts" a ON u.id = a."userId"
+WHERE
+  u."isDeleted" = false
+  AND a."isDeleted" = false
+  AND u."isFree" = false
+  AND u."founderMember" = false
+  AND u."typeClient" <> 'FOUNDER'
+  AND a."trialExpireDate" > NOW()
+  AND a."planLeads" = '500'
+  AND a."isCanceled" = false
+) TO STDOUT CSV HEADER;

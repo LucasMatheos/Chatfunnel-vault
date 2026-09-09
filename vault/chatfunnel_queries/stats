@@ -1,0 +1,73 @@
+-- numero de agendamentos realizados de todos os agentes da conta (com filtro de data)
+SELECT
+  oa.id,
+  oa.name,
+  COUNT(e.id) AS event_count
+FROM "OpenaiAssistants" oa
+LEFT JOIN "GoogleCalendarEvents" e 
+  ON oa.id = e."assistantId"
+  AND e."createdAt" BETWEEN '2026-01-01 00:00:00' AND '2026-02-01 00:00:00'
+JOIN "Accounts" a 
+  ON oa."accountId" = a.id
+WHERE a."id" = '9785e32a-4d87-41a9-acf2-98b491db5b79'
+GROUP BY oa.id, oa.name
+ORDER BY event_count DESC;
+
+-- numero de agendamentos realizados por agente (com filtro de data)
+SELECT
+  oa.id,
+  oa.name,
+  COUNT(e.*)
+FROM "GoogleCalendarEvents" e JOIN "OpenaiAssistants" oa ON e."assistantId"=oa.id
+WHERE oa."id"='0880d4a7-3602-430d-b925-e4276046945f'
+ AND e."createdAt" BETWEEN '2026-01-01 00:00:00' AND '2026-02-01 00:00:00'
+GROUP BY oa.id, oa.name;
+
+-- listagem agentes por conta
+SELECT
+  oa.id,
+  oa.name
+FROM  "OpenaiAssistants" oa
+  JOIN "Accounts" a ON oa."accountId"=a.id
+WHERE a."id"='9785e32a-4d87-41a9-acf2-98b491db5b79'
+
+
+-- taxa de agendamento (conversas / agendamentos)
+WITH stats AS (
+  SELECT
+    (
+      SELECT COUNT(*)::float
+      FROM "Conversations" c
+      WHERE "finishedBy" = 'ASSISTANT'
+        AND "finishedById" = '0880d4a7-3602-430d-b925-e4276046945f'
+        AND "createdAt" BETWEEN '2026-01-01 00:00:00' AND '2026-02-01 00:00:00'
+    ) AS total_conversas,
+    (
+      SELECT COUNT(*)::float
+      FROM "GoogleCalendarEvents"
+      WHERE "assistantId" = '0880d4a7-3602-430d-b925-e4276046945f'
+        AND "createdAt" BETWEEN '2026-01-01 00:00:00' AND '2026-02-01 00:00:00'
+    ) AS total_agendamentos
+)
+SELECT
+  total_conversas,
+  total_agendamentos,
+  CASE
+    WHEN total_conversas = 0 THEN 0
+    ELSE (total_agendamentos / total_conversas) * 100
+  END AS taxa_conversao_percentual
+FROM stats;
+
+
+-- cancelamentos de agendamento
+SELECT
+  oa.id,
+  oa.name,
+  COUNT(e.*)
+FROM "GoogleCalendarEvents" e JOIN "OpenaiAssistants" oa ON e."assistantId"=oa.id
+WHERE oa."id"='0880d4a7-3602-430d-b925-e4276046945f'
+  AND e."createdAt" BETWEEN '2026-01-01 00:00:00' AND '2026-02-01 00:00:00'
+  AND e."isCancelled" = true
+GROUP BY oa.id, oa.name;
+
+-- reagendamento, criar flag no banco

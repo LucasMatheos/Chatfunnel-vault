@@ -1,0 +1,21 @@
+-- Contas normais ativas
+-- SELECT COUNT(DISTINCT a.id) AS contas
+COPY (
+
+SELECT u.name, u.email, u.idd || u.ddd || u.phone AS phone
+FROM "Users" u
+JOIN "Accounts" a ON u.id = a."userId"
+WHERE
+  u."isDeleted" = false
+  AND a."isDeleted" = false
+  AND u."isFree" = false
+  AND u."founderMember" = false
+  AND u."typeClient" <> 'FOUNDER'
+  AND a."nextDatePayment" > NOW()
+  AND a."isCanceled" = false
+  AND a."inCanceling" = false
+  AND a."subscriptionStatus" = 'ACTIVE'
+  AND a."planLeads" > '500'
+  AND a."plan" = 'ADVANCED'
+
+) TO STDOUT WITH CSV HEADER

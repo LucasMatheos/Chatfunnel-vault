@@ -1,0 +1,28 @@
+COPY (
+WITH first_payments AS (
+  SELECT 
+    "accountId",
+    MIN("datePayment") AS "firstPaymentDate"
+  FROM "Payments"
+  GROUP BY "accountId"
+)
+
+SELECT 
+  u.id,
+  u.name,
+  u.email,
+  u.idd || u.ddd || u.phone AS phone,
+  fp."firstPaymentDate" AS "first payment",
+  a.plan,
+  p.name AS partner_name,
+  p.email AS partner_email
+FROM "first_payments" fp 
+JOIN "Accounts" a ON fp."accountId" = a.id
+JOIN "Users" u ON a."userId" = u.id
+LEFT JOIN "Partners" p ON u."partnerId"=p.id
+WHERE fp."firstPaymentDate" >= '2026-01-01 00:00:00' 
+  AND a."isCanceled" = false 
+  AND a."subscriptionStatus"='ACTIVE'
+  AND a."nextDatePayment" > NOW()
+ORDER BY fp."firstPaymentDate"
+) TO STDOUT WITH (FORMAT CSV, HEADER);

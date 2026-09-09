@@ -1,0 +1,4 @@
+interface:
+  display_name: "Implementation Workflow"
+  short_description: "Planeja mudanças e pede aprovação antes de implementar"
+  default_prompt: "Use $implementation-workflow para analisar esta tarefa, apresentar um plano técnico verificável e aguardar minha autorização antes de implementar."

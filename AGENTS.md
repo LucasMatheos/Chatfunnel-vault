@@ -67,12 +67,18 @@ Gateway (Go): `cd chatfunnel-gateway && go run ./cmd/...`
 - NEVER commit na branch `main` ou `release` diretamente
 - ALWAYS crie branch: `feature/nome`, `fix/nome`, `refactor/nome`
 
+### Validacao
+
+- NEVER rode builds automaticamente (`npm run build`, variantes de ambiente ou equivalentes) — o usuario executa o build manualmente
+- Rode build somente quando o usuario solicitar explicitamente
+
 ### Prisma / Banco
 
-- NEVER altere o schema sem migration `--create-only`
-- NEVER rode `prisma db push` ou `prisma migrate deploy`
-- ALWAYS passe `accountId` em toda query (multi-tenancy)
-- ALWAYS use soft delete (`isDeleted: true`)
+- NEVER conecte diretamente ao banco nem execute qualquer operacao contra ele, incluindo leituras (`SELECT`, `find*`, `count`, `aggregate`), escritas (`INSERT`, `UPDATE`, `DELETE`, `upsert`), DDL, SQL raw, seeds, backfills ou manutencao
+- NEVER use credenciais ou arquivos de ambiente do workspace para acessar o banco
+- NEVER gere ou aplique migrations com comandos Prisma; proibido `prisma migrate dev`, `prisma migrate deploy`, `prisma db push`, `prisma db execute` ou equivalentes em qualquer ambiente
+- Pode analisar o schema e propor alteracoes em codigo ou SQL, mas sem executar ou validar contra um banco real
+- Ao implementar codigo de acesso a dados, ALWAYS passe `accountId` em toda query (multi-tenancy) e ALWAYS use soft delete (`isDeleted: true`)
 
 ### Multi-repo
 
@@ -118,8 +124,10 @@ GF="D:/Code/4-Vinicius/Chatfunnel/graphify-test/.venv/Scripts/graphify.exe"
 
 ### Manter atualizado
 
-Apos editar codigo num repo, rodar `graphify update .` dentro dele. Build e
-incremental e gratuito (AST-only, sem API). Tempo: 1-10s por repo.
+NAO rodar `graphify update .` automaticamente apos cada alteracao. Atualizar o
+grafo somente quando o usuario pedir explicitamente ou no fechamento do trabalho
+ao final da tarde. Durante a implementacao, o grafo pode ficar temporariamente
+desatualizado.
 
 ### Multi-repo
 

@@ -1,0 +1,109 @@
+- generic [ref=e2]:
+  - button "🗓 Este mês 01 – 07 jul 2026 ▾" [ref=e3]:
+    - generic [ref=e4]: 🗓
+    - generic [ref=e5]: Este mês
+    - generic [ref=e7]: 01 – 07 jul 2026
+    - generic [ref=e8]: ▾
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - button "Hoje" [ref=e11] [cursor=pointer]
+      - button "Ontem" [ref=e12] [cursor=pointer]
+      - button "Últimos 7 dias" [ref=e13] [cursor=pointer]
+      - button "Este mês" [ref=e14] [cursor=pointer]
+      - button "Último mês" [ref=e15] [cursor=pointer]
+      - button "Últimos 6 meses" [ref=e16] [cursor=pointer]
+      - button "Este ano" [ref=e17] [cursor=pointer]
+      - button "Desde o início" [ref=e18] [cursor=pointer]
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - button "‹" [ref=e23] [cursor=pointer]
+            - generic [ref=e24]: Junho 2026
+          - generic [ref=e25]:
+            - generic [ref=e26]: D
+            - generic [ref=e27]: S
+            - generic [ref=e28]: T
+            - generic [ref=e29]: Q
+            - generic [ref=e30]: Q
+            - generic [ref=e31]: S
+            - generic [ref=e32]: S
+            - generic [ref=e33] [cursor=pointer]: "1"
+            - generic [ref=e34] [cursor=pointer]: "2"
+            - generic [ref=e35] [cursor=pointer]: "3"
+            - generic [ref=e36] [cursor=pointer]: "4"
+            - generic [ref=e37] [cursor=pointer]: "5"
+            - generic [ref=e38] [cursor=pointer]: "6"
+            - generic [ref=e39] [cursor=pointer]: "7"
+            - generic [ref=e40] [cursor=pointer]: "8"
+            - generic [ref=e41] [cursor=pointer]: "9"
+            - generic [ref=e42] [cursor=pointer]: "10"
+            - generic [ref=e43] [cursor=pointer]: "11"
+            - generic [ref=e44] [cursor=pointer]: "12"
+            - generic [ref=e45] [cursor=pointer]: "13"
+            - generic [ref=e46] [cursor=pointer]: "14"
+            - generic [ref=e47] [cursor=pointer]: "15"
+            - generic [ref=e48] [cursor=pointer]: "16"
+            - generic [ref=e49] [cursor=pointer]: "17"
+            - generic [ref=e50] [cursor=pointer]: "18"
+            - generic [ref=e51] [cursor=pointer]: "19"
+            - generic [ref=e52] [cursor=pointer]: "20"
+            - generic [ref=e53] [cursor=pointer]: "21"
+            - generic [ref=e54] [cursor=pointer]: "22"
+            - generic [ref=e55] [cursor=pointer]: "23"
+            - generic [ref=e56] [cursor=pointer]: "24"
+            - generic [ref=e57] [cursor=pointer]: "25"
+            - generic [ref=e58] [cursor=pointer]: "26"
+            - generic [ref=e59] [cursor=pointer]: "27"
+            - generic [ref=e60] [cursor=pointer]: "28"
+            - generic [ref=e61] [cursor=pointer]: "29"
+            - generic [ref=e62] [cursor=pointer]: "30"
+        - generic [ref=e63]:
+          - generic [ref=e64]:
+            - generic [ref=e65]: Julho 2026
+            - button "›" [ref=e66] [cursor=pointer]
+          - generic [ref=e67]:
+            - generic [ref=e68]: D
+            - generic [ref=e69]: S
+            - generic [ref=e70]: T
+            - generic [ref=e71]: Q
+            - generic [ref=e72]: Q
+            - generic [ref=e73]: S
+            - generic [ref=e74]: S
+            - generic [ref=e75] [cursor=pointer]: "1"
+            - generic [ref=e76] [cursor=pointer]: "2"
+            - generic [ref=e77] [cursor=pointer]: "3"
+            - generic [ref=e78] [cursor=pointer]: "4"
+            - generic [ref=e79] [cursor=pointer]: "5"
+            - generic [ref=e80] [cursor=pointer]: "6"
+            - generic [ref=e81] [cursor=pointer]: "7"
+            - generic [ref=e82] [cursor=pointer]: "8"
+            - generic [ref=e83] [cursor=pointer]: "9"
+            - generic [ref=e84] [cursor=pointer]: "10"
+            - generic [ref=e85] [cursor=pointer]: "11"
+            - generic [ref=e86] [cursor=pointer]: "12"
+            - generic [ref=e87] [cursor=pointer]: "13"
+            - generic [ref=e88] [cursor=pointer]: "14"
+            - generic [ref=e89] [cursor=pointer]: "15"
+            - generic [ref=e90] [cursor=pointer]: "16"
+            - generic [ref=e91] [cursor=pointer]: "17"
+            - generic [ref=e92] [cursor=pointer]: "18"
+            - generic [ref=e93] [cursor=pointer]: "19"
+            - generic [ref=e94] [cursor=pointer]: "20"
+            - generic [ref=e95] [cursor=pointer]: "21"
+            - generic [ref=e96] [cursor=pointer]: "22"
+            - generic [ref=e97] [cursor=pointer]: "23"
+            - generic [ref=e98] [cursor=pointer]: "24"
+            - generic [ref=e99] [cursor=pointer]: "25"
+            - generic [ref=e100] [cursor=pointer]: "26"
+            - generic [ref=e101] [cursor=pointer]: "27"
+            - generic [ref=e102] [cursor=pointer]: "28"
+            - generic [ref=e103] [cursor=pointer]: "29"
+            - generic [ref=e104] [cursor=pointer]: "30"
+            - generic [ref=e105] [cursor=pointer]: "31"
+      - generic [ref=e106]:
+        - generic [ref=e107]: 01 jul – 07 jul 2026 · 7 dias
+        - generic [ref=e108]:
+          - button "Cancelar" [ref=e109] [cursor=pointer]
+          - button "Aplicar" [ref=e110] [cursor=pointer]
+  - paragraph [ref=e111]: "Reports V2 · Date range picker · brand #3CA1A1 · sombra-3 · radius 6px · Figtree"

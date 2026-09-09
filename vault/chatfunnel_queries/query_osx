@@ -1,0 +1,36 @@
+-- vericar se os dados do print estao corretos
+-- qnt de agendamentos gerados por template
+-- 5 ultimas mensagens de quem recebeu o template
+-- accountId  = '8ba2923c-5ddd-45f5-b501-a9ae6db558ca'
+--
+
+-- qnt de templates disparados (por template) + engajamento (respondeu o "template") + qnt de eventos agendados
+COPY (
+
+SELECT 
+  m."objMessage"->'template'->>'id'    AS template_meta_id,
+  m."objMessage"->'template'->>'name'  AS template_name,
+  COUNT(DISTINCT m.id)                 AS sent_count,
+  COUNT(DISTINCT m2.id)                AS reply_count,
+  COUNT(DISTINCT gce.id)               AS event_count
+FROM 
+  "Accounts" a
+  JOIN "Contacts" c ON a.id = c."accountId"
+  JOIN "Messages" m ON c.id = m."contactId"
+  LEFT JOIN "Messages" m2
+    ON m2."contactId" = m."contactId"
+    AND m2.from = 'CONTACT'
+    AND m2."createdAt" > m."createdAt"
+  LEFT JOIN "GoogleCalendarEvents" gce 
+    ON gce."contactId" = m."contactId"
+    AND gce."createdAt" > m."createdAt"  -- agendado APÓS o envio do template
+    AND gce."isCancelled"=false
+WHERE
+  a.id = '8ba2923c-5ddd-45f5-b501-a9ae6db558ca'
+  AND m."objMessage"->>'type' = 'template_v2'
+GROUP BY
+  m."objMessage"->'template'->>'id',
+  m."objMessage"->'template'->>'name'
+ORDER BY
+  reply_count DESC
+) TO STDOUT WITH CSV HEADER;

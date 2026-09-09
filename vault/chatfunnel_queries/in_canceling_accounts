@@ -1,0 +1,13 @@
+-- Contas em cancelamento
+SELECT COUNT(DISTINCT a.id) AS contas
+FROM "Users" u
+JOIN "Accounts" a ON u.id = a."userId"
+WHERE
+  u."isDeleted" = false
+  AND a."isDeleted" = false
+  AND u."isFree" = false
+  AND u."founderMember" = false
+  AND u."typeClient" <> 'FOUNDER'
+  AND a."inCanceling" = true
+  AND a."isCanceled" = false
+  AND a."subscriptionStatus" = 'ACTIVE';

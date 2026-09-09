@@ -3,11 +3,38 @@ title: Frontend Gotchas
 description: Armadilhas conhecidas do chatfunnel-front — componentes v2, build, HMR, atributos HTML.
 tags: [gotcha, frontend, vue, vite]
 severity: media
-related: ["[[wiki/repos/chatfunnel-front|chatfunnel-front]]", "[[signup-profile-step]]", "[[credenciais-page]]"]
-last_updated: 2026-06-08
+related: ["[[wiki/repos/chatfunnel-front|chatfunnel-front]]", "[[signup-profile-step]]", "[[credenciais-page]]", "[[livechat]]"]
+last_updated: 2026-08-04
 ---
 
 # Frontend Gotchas
+
+## `PopoverTrigger as-child` perde o anchor se o elemento raiz for substituido
+
+**Arquivo de referencia:** `src/views/livechatv2/components/ChatMessages/components/SideBarDetails/components/ModeratorInput.vue`
+
+### O que acontece
+
+Um Popover aberto pode aparecer no canto superior esquerdo da tela quando o conteudo reativo troca o elemento raiz dentro de `PopoverTrigger as-child` (por exemplo, de `<button v-if>` para `<div v-else>`).
+
+### Por que
+
+O Reka UI usa o unico elemento filho como referencia de posicionamento. Se uma atualizacao de contato substitui esse DOM enquanto o overlay esta aberto, a referencia pode ficar temporariamente sem um elemento mensuravel e o floating content cai em `(0, 0)`.
+
+### Fix
+
+Manter o elemento de trigger estavel e alternar apenas o conteudo interno. Quando nao for necessario controlar a tag renderizada, deixar o proprio `PopoverTrigger` renderizar o botao:
+
+```vue
+<PopoverTrigger type="button">
+  <template v-if="hasValue">...</template>
+  <template v-else>...</template>
+</PopoverTrigger>
+```
+
+Se `as-child` for necessario, ele deve receber um unico elemento raiz estavel. Evitar branches condicionais que retornem tags diferentes diretamente sob primitives `as-child`.
+
+---
 
 ## InputText v2 nao repassa atributos HTML nativos
 

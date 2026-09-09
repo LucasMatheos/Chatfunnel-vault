@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Clippings/How to finally trust Claude's advice (using Karpathy's LLM Council method).md",
+                "file": "wiki/features/livechat-front-render-properties.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "How to finally trust Claude's advice (using Karpathy's LLM Council method)"
+              "title": "livechat-front-render-properties"
             }
           }
         ]
@@ -196,6 +196,11 @@
   },
   "active": "a941460c0a07cdf1",
   "lastOpenFiles": [
+    "wiki/features/livechat-contact-list-performance.md",
+    "wiki/features/livechat-front-render-properties.md",
+    "wiki/features/livechat.md",
+    "wiki/features/reports-v2-catalogo-dados.md",
+    "wiki/guides/cognee-knowledge-engine.md",
     "Clippings/How to finally trust Claude's advice (using Karpathy's LLM Council method).md",
     "wiki/features/intelligence-v2-fluxo-implementacao.md",
     "wiki/features/reports-v2-arquitetura.md",
@@ -218,11 +223,6 @@
     "wiki/features/intelligence-a2a.md",
     "wiki/features/ai-agents.md",
     "wiki/ai-patterns/graphify.md",
-    "Docs/tutorial-construir-vault.md",
-    "wiki/diagrams/chatfunnel-architecture.excalidraw.md",
-    "wiki/diagrams/chatfunnel-architecture-mermaid.md",
-    "wiki/architecture/message-flow.md",
-    "wiki/architecture/queue-architecture.md",
     "Excalidraw",
     "prototipos/intelligence-chat.pen",
     "prototipos/payment-upgrade-modal.pen",

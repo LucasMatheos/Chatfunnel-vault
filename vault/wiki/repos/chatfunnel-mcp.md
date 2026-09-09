@@ -90,3 +90,4 @@ npm run start   # Start producao
 ## Veja tambem
 
 - [[mcp-integration]] — documentacao completa da feature (auth, tools, rate limiting, fluxo do usuario)
+- [[mcp-tools]] — aprofundamento do mecanismo interno das tools (registro, execucao, builder DSL, error handling)

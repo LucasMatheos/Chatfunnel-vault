@@ -1,0 +1,45 @@
+-- export pipe
+COPY (
+
+SELECT
+  c.name, c.email, c.phone,
+  col.name AS "etapa",
+  kc."createdAt" - INTERVAL '3 hours' AS "oportunidade criada em",
+  CASE 
+    WHEN kc."statusOportunity"='OPEN' THEN 'Aberto'
+    WHEN kc."statusOportunity"='LOST' THEN 'Perdido'
+    WHEN kc."statusOportunity"='WON' THEN 'Ganho'
+  END AS "status",
+  u.name AS "moderador",
+  klr.name AS "motivo de perda",
+  kc."lossReasonMessage" AS "mensagem de perda",
+  STRING_AGG(
+    REGEXP_REPLACE(
+      REGEXP_REPLACE(com.message, '<[^>]+>', ' ', 'g'), -- remove tags HTML
+      '&[a-z]+;|&#[0-9]+;', '', 'g'                  -- remove HTML entities (&amp; &nbsp; etc)
+    ),
+    ' | ' ORDER BY com."createdAt" ASC                    -- junta múltiplos comentários com separador
+  ) AS "comentários"
+FROM
+  "Contacts" c
+  JOIN "KanbanCards" kc ON c.id = kc."contactId"
+  JOIN "KanbanColumns" col ON kc."columnId" = col.id
+  JOIN "KanbanCardsModerators" kcm ON kc.id = kcm."kanbanCardId"
+  JOIN "Users" u ON kcm."userId" = u.id
+  LEFT JOIN "KanbanLossesReasons" klr ON kc."lossReasonId" = klr.id
+  LEFT JOIN "KanbanComments" com ON kc.id = com."kanbanCardId"
+WHERE 
+  kc."kanbanId" = '318fbc15-e565-4be0-b9b2-ef9474af0e1d' 
+  AND kc."statusOportunity" = 'LOST'
+  AND kc."createdAt" > '2025-10-01 00:00:00'
+GROUP BY
+  c.name, c.email, c.phone,
+  col.name,
+  kc."createdAt",
+  kc."statusOportunity",
+  u.name,
+  klr.name,
+  kc."lossReasonMessage"
+ORDER BY kc."createdAt" ASC, kc."statusOportunity", c.name
+
+) TO STDOUT WITH CSV HEADER

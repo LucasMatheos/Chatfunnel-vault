@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<title>Reports V2 — Date Range Picker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --brand-100:#CAFFFB; --brand-500:#3CA1A1; --brand-600:#3C8E90;
+    --gray-100:#FFFFFF; --gray-200:#F9FAFC; --gray-300:#F2F2F2; --gray-400:#E7E7E7;
+    --gray-500:#D0D0D2; --gray-600:#8C8A97; --gray-700:#7A7786; --gray-900:#4E4B59; --gray-1000:#33303E;
+    --sombra-3: 4px 16px 35px 0px rgba(55,30,145,0.10);
+    --radius: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Figtree', system-ui, sans-serif;
+    background: #EEF0F5;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px;
+    color: var(--gray-1000);
+  }
+
+  /* ---- Trigger (estado fechado) ---- */
+  .stage { display:flex; flex-direction:column; align-items:center; gap:28px; }
+  .trigger {
+    display:inline-flex; align-items:center; gap:10px;
+    height:45px; padding:0 14px;
+    background:var(--gray-100); border:1px solid var(--gray-400);
+    border-radius:var(--radius); font-size:14px; font-weight:500; color:var(--gray-1000);
+    box-shadow:0 1px 2px rgba(55,30,145,.04);
+  }
+  .trigger .cal-ic { color:var(--brand-500); }
+  .trigger .chev { color:var(--gray-600); margin-left:2px; }
+  .trigger .range-label { color:var(--gray-900); font-weight:400; }
+  .trigger .dot { width:3px;height:3px;border-radius:50%;background:var(--gray-500); }
+
+  /* ---- Popover ---- */
+  .popover {
+    display:flex;
+    background:var(--gray-100);
+    border:1px solid var(--gray-400);
+    border-radius:12px;
+    box-shadow:var(--sombra-3);
+    overflow:hidden;
+    width:640px;
+  }
+
+  /* presets */
+  .presets { width:176px; border-right:1px solid var(--gray-400); padding:10px; display:flex; flex-direction:column; gap:2px; background:var(--gray-200); }
+  .preset {
+    text-align:left; border:none; background:transparent; cursor:pointer;
+    font-family:inherit; font-size:13.5px; font-weight:500; color:var(--gray-900);
+    padding:9px 12px; border-radius:var(--radius);
+  }
+  .preset:hover { background:var(--gray-300); }
+  .preset.active { background:var(--brand-500); color:#fff; }
+
+  /* calendars area */
+  .cal-area { flex:1; display:flex; flex-direction:column; }
+  .cals { display:flex; gap:24px; padding:18px 20px 8px; }
+  .cal { flex:1; }
+  .cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding:0 2px; }
+  .cal-title { font-size:13.5px; font-weight:600; color:var(--gray-1000); }
+  .nav { border:none; background:transparent; color:var(--gray-600); cursor:pointer; font-size:16px; width:24px; height:24px; border-radius:var(--radius); line-height:1; }
+  .nav:hover { background:var(--gray-300); color:var(--gray-1000); }
+  .nav.hidden { visibility:hidden; }
+
+  .grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+  .dow { font-size:11px; font-weight:600; color:var(--gray-600); text-align:center; height:26px; line-height:26px; }
+  .day {
+    height:30px; display:flex; align-items:center; justify-content:center;
+    font-size:13px; color:var(--gray-1000); border-radius:var(--radius);
+    position:relative; cursor:pointer;
+  }
+  .day.empty { visibility:hidden; }
+  .day:hover:not(.in-range):not(.edge) { background:var(--gray-300); }
+  /* range fill */
+  .day.in-range { background:var(--brand-100); border-radius:0; }
+  .day.edge { background:var(--brand-500); color:#fff; font-weight:600; z-index:1; }
+  .day.edge.start { border-radius:var(--radius) 0 0 var(--radius); }
+  .day.edge.end { border-radius:0 var(--radius) var(--radius) 0; }
+
+  /* footer */
+  .footer { display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--gray-400); padding:12px 20px; }
+  .range-txt { font-size:13px; color:var(--gray-700); }
+  .range-txt b { color:var(--gray-1000); font-weight:600; }
+  .actions { display:flex; gap:8px; }
+  .btn { height:38px; padding:0 18px; border-radius:var(--radius); font-family:inherit; font-size:13.5px; font-weight:600; cursor:pointer; border:1px solid transparent; }
+  .btn-ghost { background:transparent; color:var(--gray-700); border-color:var(--gray-400); }
+  .btn-ghost:hover { background:var(--gray-300); }
+  .btn-primary { background:var(--brand-500); color:#fff; }
+  .btn-primary:hover { background:var(--brand-600); }
+
+  .caption { font-size:12px; color:var(--gray-600); }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <!-- Estado fechado (gatilho) -->
+    <button class="trigger">
+      <span class="cal-ic">🗓</span>
+      <span>Este mês</span>
+      <span class="dot"></span>
+      <span class="range-label">01 – 07 jul 2026</span>
+      <span class="chev">▾</span>
+    </button>
+
+    <!-- Popover aberto -->
+    <div class="popover">
+      <!-- Presets -->
+      <div class="presets">
+        <button class="preset">Hoje</button>
+        <button class="preset">Ontem</button>
+        <button class="preset">Últimos 7 dias</button>
+        <button class="preset active">Este mês</button>
+        <button class="preset">Último mês</button>
+        <button class="preset">Últimos 6 meses</button>
+        <button class="preset">Este ano</button>
+        <button class="preset">Desde o início</button>
+      </div>
+
+      <!-- Calendários -->
+      <div class="cal-area">
+        <div class="cals">
+          <!-- Junho 2026 -->
+          <div class="cal">
+            <div class="cal-head">
+              <button class="nav">‹</button>
+              <span class="cal-title">Junho 2026</span>
+              <button class="nav hidden">›</button>
+            </div>
+            <div class="grid" id="cal-jun"></div>
+          </div>
+          <!-- Julho 2026 -->
+          <div class="cal">
+            <div class="cal-head">
+              <button class="nav hidden">‹</button>
+              <span class="cal-title">Julho 2026</span>
+              <button class="nav">›</button>
+            </div>
+            <div class="grid" id="cal-jul"></div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          <span class="range-txt"><b>01 jul</b> – <b>07 jul 2026</b> · 7 dias</span>
+          <div class="actions">
+            <button class="btn btn-ghost">Cancelar</button>
+            <button class="btn btn-primary">Aplicar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="caption">Reports V2 · Date range picker · brand #3CA1A1 · sombra-3 · radius 6px · Figtree</p>
+  </div>
+
+<script>
+  const DOW = ['D','S','T','Q','Q','S','S'];
+  function build(id, firstDow, days, range) {
+    const g = document.getElementById(id);
+    DOW.forEach(d => { const e=document.createElement('div'); e.className='dow'; e.textContent=d; g.appendChild(e); });
+    for (let i=0;i<firstDow;i++){ const e=document.createElement('div'); e.className='day empty'; e.textContent='.'; g.appendChild(e); }
+    for (let d=1; d<=days; d++){
+      const e=document.createElement('div'); e.className='day'; e.textContent=d;
+      if (range) {
+        const [s,en]=range;
+        if (d>=s && d<=en){
+          if (d===s && d===en){ e.classList.add('edge','start','end'); }
+          else if (d===s){ e.classList.add('edge','start'); }
+          else if (d===en){ e.classList.add('edge','end'); }
+          else { e.classList.add('in-range'); }
+        }
+      }
+      g.appendChild(e);
+    }
+  }
+  // Junho 2026: 1 = segunda (col 1), 30 dias — sem range (mês adjacente)
+  build('cal-jun', 1, 30, null);
+  // Julho 2026: 1 = quarta (col 3), 31 dias — range 1..7 (Este mês, até hoje 07)
+  build('cal-jul', 3, 31, [1,7]);
+</script>
+</body>
+</html>

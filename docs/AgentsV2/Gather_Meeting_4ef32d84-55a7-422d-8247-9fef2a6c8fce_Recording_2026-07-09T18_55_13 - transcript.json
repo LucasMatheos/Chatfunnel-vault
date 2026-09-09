@@ -1,0 +1,649 @@
+{
+  "source": "Gather_Meeting_4ef32d84-55a7-422d-8247-9fef2a6c8fce_Recording_2026-07-09T18_55_13.mp4",
+  "language": "pt",
+  "language_probability": 0.9817649126052856,
+  "segments": [
+    {
+      "index": 1,
+      "start": 2.61,
+      "end": 5.34,
+      "text": "Que o started..."
+    },
+    {
+      "index": 2,
+      "start": 5.34,
+      "end": 7.34,
+      "text": "Alguém entrou, hein?"
+    },
+    {
+      "index": 3,
+      "start": 7.34,
+      "end": 9.44,
+      "text": "É o..."
+    },
+    {
+      "index": 4,
+      "start": 9.44,
+      "end": 13.95,
+      "text": "Vamos fechar a sala pra ninguém entrar e..."
+    },
+    {
+      "index": 5,
+      "start": 13.95,
+      "end": 20.38,
+      "text": "Cara, o que a gente precisa pra funcionar aqui?"
+    },
+    {
+      "index": 6,
+      "start": 20.38,
+      "end": 24.82,
+      "text": "Primeiro, é..."
+    },
+    {
+      "index": 7,
+      "start": 24.82,
+      "end": 33.06,
+      "text": "Editar alguma coisa?"
+    },
+    {
+      "index": 8,
+      "start": 33.06,
+      "end": 50.7,
+      "text": "Deixa eu ver aqui."
+    },
+    {
+      "index": 9,
+      "start": 50.7,
+      "end": 56.27,
+      "text": "E eu vou aproveitar, vou resolver essa parada do..."
+    },
+    {
+      "index": 10,
+      "start": 56.27,
+      "end": 58.27,
+      "text": "Não é gosto, né? Do permissionamento."
+    },
+    {
+      "index": 11,
+      "start": 58.27,
+      "end": 66.35,
+      "text": "Ah..."
+    },
+    {
+      "index": 12,
+      "start": 66.35,
+      "end": 86.94,
+      "text": "Primeira coisa que a gente tem que fazer aqui é quando a gente conclui a a criação"
+    },
+    {
+      "index": 13,
+      "start": 86.94,
+      "end": 98.22,
+      "text": "lucas ele já criaram porque hoje ele é que ele não alterou nada mas ele vai de"
+    },
+    {
+      "index": 14,
+      "start": 98.22,
+      "end": 115.15,
+      "text": "por concluir a edição aqui hoje ele tá ele não tá mas não é que a gente não"
+    },
+    {
+      "index": 15,
+      "start": 115.15,
+      "end": 117.15,
+      "text": "foi o que a gente falou naquele dia, lembra?"
+    },
+    {
+      "index": 16,
+      "start": 117.15,
+      "end": 122.22,
+      "text": "O que a gente ficou falando, mas o cara vai recriar toda vez se ajustou a um A ali."
+    },
+    {
+      "index": 17,
+      "start": 122.22,
+      "end": 123.22,
+      "text": "Vai."
+    },
+    {
+      "index": 18,
+      "start": 123.22,
+      "end": 127.63,
+      "text": "Vai, então tá."
+    },
+    {
+      "index": 19,
+      "start": 127.63,
+      "end": 131.63,
+      "text": "Não, então, mas é isso aqui, toda vez que o cara conclui edição,"
+    },
+    {
+      "index": 20,
+      "start": 131.63,
+      "end": 139.3,
+      "text": "ele vai reconstruir, só que ele vai reconstruir em background, entendeu?"
+    },
+    {
+      "index": 21,
+      "start": 139.3,
+      "end": 143.58,
+      "text": "Isso aqui que ele tá fazendo, ele vai ficar em background"
+    },
+    {
+      "index": 22,
+      "start": 143.58,
+      "end": 145.58,
+      "text": "e ele vai confirmar automático."
+    },
+    {
+      "index": 23,
+      "start": 145.58,
+      "end": 152.3,
+      "text": "a construção aqui ele confirma a pessoa nem nem olha ele clicou aqui no o"
+    },
+    {
+      "index": 24,
+      "start": 152.3,
+      "end": 155.74,
+      "text": "concluir de são ele faz igual aqui atualizando a gente a gente pode até"
+    },
+    {
+      "index": 25,
+      "start": 155.74,
+      "end": 163.42,
+      "text": "colocar um um alguma coisa aí né atualizando tipo recriando é reconstruindo o"
+    },
+    {
+      "index": 26,
+      "start": 163.42,
+      "end": 170.5,
+      "text": "prompt sei lá alguma coisa assim sabe mas o cara vai ter a opção de ver ali o"
+    },
+    {
+      "index": 27,
+      "start": 170.5,
+      "end": 176.58,
+      "text": "prompt ou saiu direto não ele confirma direto ele não ele"
+    },
+    {
+      "index": 28,
+      "start": 176.58,
+      "end": 182.08,
+      "text": "E conclui a edição e vai pra cá, até tirar essas duas, essas caixinhas aqui debaixo, que é."
+    },
+    {
+      "index": 29,
+      "start": 182.08,
+      "end": 188.18,
+      "text": "Então pronto, é isso aí, aquele modalão ali com stream, já não, nem precisa não."
+    },
+    {
+      "index": 30,
+      "start": 188.18,
+      "end": 195.76,
+      "text": "Não. Beleza, a segunda parte agora é um pouco mais complicado."
+    },
+    {
+      "index": 31,
+      "start": 195.76,
+      "end": 205.69,
+      "text": "Tá, mas calma. Então o cara não vai ter mais acesso ao prompt."
+    },
+    {
+      "index": 32,
+      "start": 205.69,
+      "end": 219.15,
+      "text": "Não, a segunda etapa, quando o cara for criar um novo agente, hoje está vindo direto, né?"
+    },
+    {
+      "index": 33,
+      "start": 219.15,
+      "end": 229.75,
+      "text": "Eu pensei, é porque quando criar um novo agente, ele vai ter que escolher duas opções, criar."
+    },
+    {
+      "index": 34,
+      "start": 229.75,
+      "end": 233.75,
+      "text": "Só voltar aquela tela lá do machado, né?"
+    },
+    {
+      "index": 35,
+      "start": 233.75,
+      "end": 237.75,
+      "text": "e eu também já vi, é que eu não vou lembrar onde que eu vi"
+    },
+    {
+      "index": 36,
+      "start": 237.75,
+      "end": 247.06,
+      "text": "mas quer ver, eu vi tipo uns lugares que abram"
+    },
+    {
+      "index": 37,
+      "start": 247.06,
+      "end": 251.73,
+      "text": "quando você clica nesse botão ali, ele abre tipo um menino de contexto"
+    },
+    {
+      "index": 38,
+      "start": 251.73,
+      "end": 255.73,
+      "text": "e ele aparece assim, criar como construtor, ou criar"
+    },
+    {
+      "index": 39,
+      "start": 255.73,
+      "end": 260.18,
+      "text": "pelo tipo modo avançado, sabe? E daí tipo"
+    },
+    {
+      "index": 40,
+      "start": 260.18,
+      "end": 267.02,
+      "text": "tipo isso aqui, sabe? Entendeu?"
+    },
+    {
+      "index": 41,
+      "start": 267.02,
+      "end": 270.02,
+      "text": "É cara, é que eu não vou lembrar onde que é, onde que eu vi isso"
+    },
+    {
+      "index": 42,
+      "start": 270.02,
+      "end": 274.04,
+      "text": "Mas eu acho que eu sei de não..."
+    },
+    {
+      "index": 43,
+      "start": 274.04,
+      "end": 277.06,
+      "text": "Cara, enfim, a gente precisa ter as duas formas."
+    },
+    {
+      "index": 44,
+      "start": 277.06,
+      "end": 279.06,
+      "text": "Criar pelo modo normal."
+    },
+    {
+      "index": 45,
+      "start": 283.98,
+      "end": 287.66,
+      "text": "Criar pelo modo normal, que é o que a gente tem aqui."
+    },
+    {
+      "index": 46,
+      "start": 287.66,
+      "end": 291.92,
+      "text": "E criar via prompt, via avançado."
+    },
+    {
+      "index": 47,
+      "start": 291.92,
+      "end": 295.27,
+      "text": "Então tem um modo..."
+    },
+    {
+      "index": 48,
+      "start": 295.27,
+      "end": 298.2,
+      "text": "Não sei como seria o nome."
+    },
+    {
+      "index": 49,
+      "start": 298.2,
+      "end": 305.68,
+      "text": "Um modo facilitado, um modo easy."
+    },
+    {
+      "index": 50,
+      "start": 306.42,
+      "end": 309.61,
+      "text": "É, não dá para colocar modo easy."
+    },
+    {
+      "index": 51,
+      "start": 309.61,
+      "end": 315.44,
+      "text": "É um modo facilitado, ou iniciante."
+    },
+    {
+      "index": 52,
+      "start": 315.44,
+      "end": 318.44,
+      "text": "É, você é iniciante e lançado."
+    },
+    {
+      "index": 53,
+      "start": 318.44,
+      "end": 320.44,
+      "text": "É básico, é iniciante e avançado."
+    },
+    {
+      "index": 54,
+      "start": 320.44,
+      "end": 326.85,
+      "text": "Daí dá pra colocar um texto, um textinho, tipo, não sei como que você vai criar a tela, né?"
+    },
+    {
+      "index": 55,
+      "start": 326.85,
+      "end": 329.85,
+      "text": "Mas dá pra colocar, tipo, o modo iniciante."
+    },
+    {
+      "index": 56,
+      "start": 329.85,
+      "end": 336.39,
+      "text": "Você prende os campos e o próprio construtor de prompt vai gerar teu prompt."
+    },
+    {
+      "index": 57,
+      "start": 336.39,
+      "end": 339.39,
+      "text": "E no modo avançado você digita o prompt."
+    },
+    {
+      "index": 58,
+      "start": 339.39,
+      "end": 346.13,
+      "text": "Agora, agora a gente precisa entrar aqui, cara, quando for pelo modo avançado,"
+    },
+    {
+      "index": 59,
+      "start": 346.13,
+      "end": 349.16,
+      "text": "algumas coisas não vão existir, né?"
+    },
+    {
+      "index": 60,
+      "start": 349.16,
+      "end": 351.32,
+      "text": "Bastante coisa, na verdade."
+    },
+    {
+      "index": 61,
+      "start": 351.32,
+      "end": 354.2,
+      "text": "Por exemplo, a gente está em identidade de papel."
+    },
+    {
+      "index": 62,
+      "start": 354.2,
+      "end": 356.7,
+      "text": "Exatamente esse papel da gente que vai existir."
+    },
+    {
+      "index": 63,
+      "start": 356.7,
+      "end": 361.28,
+      "text": "Vai utilizar a mesma tela para os dois?"
+    },
+    {
+      "index": 64,
+      "start": 361.28,
+      "end": 369.2,
+      "text": "É que, cara, tem coisas que vão continuar funcionando, né?"
+    },
+    {
+      "index": 65,
+      "start": 369.2,
+      "end": 373.22,
+      "text": "É verdade."
+    },
+    {
+      "index": 66,
+      "start": 373.22,
+      "end": 380.22,
+      "text": "Aí isso aí, cara, só vai ter dois steps ali, né? Três steps. Vai ter ali o identidade."
+    },
+    {
+      "index": 67,
+      "start": 380.22,
+      "end": 395.41,
+      "text": "Esse dado de referência, cara. Eu acho que esse dado de referência vai precisar, né?"
+    },
+    {
+      "index": 68,
+      "start": 395.41,
+      "end": 399.59,
+      "text": "É, vai ser isso, as ferramentas."
+    },
+    {
+      "index": 69,
+      "start": 399.59,
+      "end": 404.59,
+      "text": "As instruções principais não vai existir, ferramentas não vai existir, etapa de raciocínio"
+    },
+    {
+      "index": 70,
+      "start": 404.59,
+      "end": 408.59,
+      "text": "não vai não vai existir, formato de saída não vai existir."
+    },
+    {
+      "index": 71,
+      "start": 408.59,
+      "end": 418.94,
+      "text": "E a coragem final ali, que tem algumas configurações ali, não, em encerramento de sessão."
+    },
+    {
+      "index": 72,
+      "start": 418.94,
+      "end": 425.38,
+      "text": "Eu acho que vai existir encerramento de sessão, grupo de imagem."
+    },
+    {
+      "index": 73,
+      "start": 425.38,
+      "end": 431.71,
+      "text": "Qual é a diferença do grupo de imagem para o básico? Ah, entendeu."
+    },
+    {
+      "index": 74,
+      "start": 431.71,
+      "end": 434.71,
+      "text": "Grupo de imagem é grupo de imagem."
+    },
+    {
+      "index": 75,
+      "start": 434.71,
+      "end": 437.71,
+      "text": "As coisas que ele pode enviar dentro da conversa."
+    },
+    {
+      "index": 76,
+      "start": 437.71,
+      "end": 442.71,
+      "text": "São coisas que não vai para o prompt, né? Isso aqui não vai para o prompt, eu acho."
+    },
+    {
+      "index": 77,
+      "start": 442.71,
+      "end": 446.22,
+      "text": "Eu acho."
+    },
+    {
+      "index": 78,
+      "start": 446.22,
+      "end": 451.22,
+      "text": "Isso aí vai para o prompt para ele falando que ele tem esses arquivos, né? Eu não."
+    },
+    {
+      "index": 79,
+      "start": 451.22,
+      "end": 455.49,
+      "text": "Eu não cruzei isso aí."
+    },
+    {
+      "index": 80,
+      "start": 455.49,
+      "end": 457.49,
+      "text": "Mas eu acho que tem alguma instrução para ele."
+    },
+    {
+      "index": 81,
+      "start": 457.49,
+      "end": 460.19,
+      "text": "Mas eu acho que não vai para o gerador."
+    },
+    {
+      "index": 82,
+      "start": 460.19,
+      "end": 463.54,
+      "text": "Não vai para o gerador, eu acho que não."
+    },
+    {
+      "index": 83,
+      "start": 463.54,
+      "end": 469.66,
+      "text": "Eu acho que vai pegar a string que gerou no gerador e ele coloca mais a lista do arrei lá."
+    },
+    {
+      "index": 84,
+      "start": 469.66,
+      "end": 472.17,
+      "text": "e vai na V1."
+    },
+    {
+      "index": 85,
+      "start": 472.17,
+      "end": 483.42,
+      "text": "Tá, é, grupo de imagem, cerramento de sessão, vai ter ferramentas,"
+    },
+    {
+      "index": 86,
+      "start": 483.42,
+      "end": 490.08,
+      "text": "identidade de papel, daí tira o papel da gente no caso."
+    },
+    {
+      "index": 87,
+      "start": 490.08,
+      "end": 500.9,
+      "text": "Daí eu acho que coloca, eu não sei, eu colocaria uma etapa que seria só o prompt, né?"
+    },
+    {
+      "index": 88,
+      "start": 500.9,
+      "end": 501.9,
+      "text": "Ficaria assim."
+    },
+    {
+      "index": 89,
+      "start": 501.9,
+      "end": 504.1,
+      "text": "Achei de ferramenta, né?"
+    },
+    {
+      "index": 90,
+      "start": 504.1,
+      "end": 506.1,
+      "text": "Acabei, só abei."
+    },
+    {
+      "index": 91,
+      "start": 506.1,
+      "end": 508.98,
+      "text": "Eu acho que seria identidade de ferramenta, né?"
+    },
+    {
+      "index": 92,
+      "start": 508.98,
+      "end": 511.5,
+      "text": "Acho que daria para deixar essa identidade,"
+    },
+    {
+      "index": 93,
+      "start": 511.5,
+      "end": 514.5,
+      "text": "tiraria a identidade de papel, deixaria a sua identidade."
+    },
+    {
+      "index": 94,
+      "start": 517.25,
+      "end": 520.25,
+      "text": "Daí embaixo, Prompter."
+    },
+    {
+      "index": 95,
+      "start": 520.25,
+      "end": 526.74,
+      "text": "Daí ferramentas, grupos de mais e encerramento de sessão."
+    },
+    {
+      "index": 96,
+      "start": 526.74,
+      "end": 528.06,
+      "text": "Só."
+    },
+    {
+      "index": 97,
+      "start": 528.06,
+      "end": 530.06,
+      "text": "Daí tira esses dois botões aqui de baixo."
+    },
+    {
+      "index": 98,
+      "start": 530.06,
+      "end": 535.96,
+      "text": "Acho que por hora é isso."
+    },
+    {
+      "index": 99,
+      "start": 535.96,
+      "end": 540.36,
+      "text": "Ok."
+    },
+    {
+      "index": 100,
+      "start": 540.36,
+      "end": 542.39,
+      "text": "Vai ter que colocar na..."
+    },
+    {
+      "index": 101,
+      "start": 542.39,
+      "end": 548.74,
+      "text": "Vou dar o back lá, né?"
+    },
+    {
+      "index": 102,
+      "start": 548.74,
+      "end": 550.74,
+      "text": "Tem que colocar mais um enum, dizendo o que que ele..."
+    },
+    {
+      "index": 103,
+      "start": 550.74,
+      "end": 560.01,
+      "text": "Aquele a gente é um agente avançado e um em um básico, né, um iniciante."
+    },
+    {
+      "index": 104,
+      "start": 560.01,
+      "end": 567.71,
+      "text": "Um beginner e uma debança, né? Um expert, não sei o que dizer."
+    },
+    {
+      "index": 105,
+      "start": 567.71,
+      "end": 575.49,
+      "text": "Acho bem isso, cara. São essas coisas."
+    },
+    {
+      "index": 106,
+      "start": 575.49,
+      "end": 583.53,
+      "text": "Beleza, vou tentar fazer."
+    },
+    {
+      "index": 107,
+      "start": 583.53,
+      "end": 590.89,
+      "text": "Daí mais para, deixa eu dar para separar aqui, acho que é isso, para funcionar isso."
+    }
+  ]
+}

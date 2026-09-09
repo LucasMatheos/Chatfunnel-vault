@@ -42,6 +42,14 @@ Enum `KanbanCardsPriorityEnum`: `LOW` (padrao), `MEDIUM`, `HIGH`.
 5. Abre o card para editar valor, moderadores, tags, comentarios ou campos customizados
 6. Marca oportunidades como ganhas (`WON`) ou perdidas (`LOST` + motivo de perda)
 
+### Drag-and-drop e selecao de texto
+
+O Kanban usa `vuedraggable` com `force-fallback`. Durante o arraste, o Front adiciona temporariamente a classe `kanban-is-dragging` ao `body` para desabilitar `user-select` em toda a arvore, incluindo o clone fallback anexado fora do componente. A classe deve ser removida tanto no fim do drag quanto no `onBeforeUnmount` para nao bloquear a selecao normal de texto depois da interacao.
+
+### Contrato do filtro de tags em `findColumn`
+
+O endpoint recebe `tagIds` no formato `{ id: string }[]`, conforme o DTO do Services e `FindColumnCardsFilters` no Core. O Front normaliza a selecao para esse wire format em `FilterKanban.vue`, e a query de `KanbanColumnsRepository.findColumnCardsRaw()` extrai os IDs com `filters.tagIds.map((tag) => tag.id)`. Nao alterar apenas um dos lados: Front, DTO e Core precisam permanecer alinhados.
+
 ## Acoes em Massa (Mass Actions)
 
 Selecao multipla de cards permite:

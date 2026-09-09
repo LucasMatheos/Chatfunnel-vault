@@ -1,0 +1,4 @@
+interface:
+  display_name: "Notion Cards"
+  short_description: "Cria e atualiza cards/tasks no Notion via MCP."
+  default_prompt: "Crie um card no Notion para a task descrita, confirmando database, status e prioridade quando necessário."

@@ -24,8 +24,13 @@ function Sync-Core($target, $name) {
     if (-not (Test-Path $destDist))   { New-Item -ItemType Directory -Force -Path $destDist   | Out-Null }
     if (-not (Test-Path $destPrisma)) { New-Item -ItemType Directory -Force -Path $destPrisma | Out-Null }
 
-    Copy-Item -Path "$CORE\dist\*"              -Destination $destDist   -Recurse -Force
-    Copy-Item -Path "$CORE\prisma\schema.prisma" -Destination "$destPrisma\schema.prisma" -Force
+    # ponytail: robocopy no lugar de Copy-Item pelo /R:3 — o indexer da IDE trava
+    # arquivos recem-copiados e Copy-Item aborta o sync inteiro no primeiro lock.
+    robocopy "$CORE\dist" $destDist /E /NFL /NDL /NJH /NJS /NP /R:3 /W:1 | Out-Null
+    if ($LASTEXITCODE -ge 8) { throw "robocopy dist -> $name falhou (code $LASTEXITCODE)" }
+
+    robocopy "$CORE\prisma" $destPrisma schema.prisma /NFL /NDL /NJH /NJS /NP /R:3 /W:1 | Out-Null
+    if ($LASTEXITCODE -ge 8) { throw "robocopy schema.prisma -> $name falhou (code $LASTEXITCODE)" }
 }
 
 Sync-Core $SERVICES     "chatfunnel-services"

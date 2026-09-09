@@ -1,0 +1,8 @@
+-- Contas founders ativas
+SELECT COUNT(DISTINCT u.id) AS founders
+FROM "Users" u
+WHERE
+  u."isDeleted"=false
+  AND u."isFree"=false
+  AND (u."founderMember" = true OR u."typeClient" = 'FOUNDER')
+  AND u."nextDatePayment" > NOW()

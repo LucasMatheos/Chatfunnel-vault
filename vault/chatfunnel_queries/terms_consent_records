@@ -1,0 +1,28 @@
+-- Histórico de consentimentos dos termos TERMS_OF_USE e CONTRACT_TERMS por e-mail.
+-- Substitua os e-mails na CTE "clientes" pelos clientes desejados.
+WITH clientes(email) AS (
+  VALUES
+    ('cliente1@exemplo.com'),
+    ('cliente2@exemplo.com')
+)
+SELECT
+  clientes.email,
+  u.id AS "userId",
+  u.name AS "userName",
+  ld.title,
+  ld.url,
+  ld.type,
+  cr.action,
+  cr."createdAt" AS "acceptedAt",
+  cr."ipAddress",
+  cr.metadata
+FROM clientes
+LEFT JOIN "Users" u
+  ON LOWER(u.email) = LOWER(clientes.email)
+LEFT JOIN "ConsentRecords" cr
+  ON cr."userId" = u.id
+LEFT JOIN "LegalDocuments" ld
+  ON ld.id = cr."legalDocumentId"
+  AND ld.type IN ('TERMS_OF_USE', 'CONTRACT_TERMS')
+WHERE ld.id IS NOT NULL OR u.id IS NULL
+ORDER BY clientes.email, cr."createdAt" DESC;

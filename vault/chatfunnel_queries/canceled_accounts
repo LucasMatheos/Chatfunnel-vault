@@ -1,0 +1,12 @@
+-- Contas normais canceladas nos últimos 30 dias
+SELECT COUNT(DISTINCT a.id) AS contas
+FROM "Users" u
+JOIN "Accounts" a ON u.id = a."userId"
+WHERE
+  u."isDeleted" = false
+  AND a."isDeleted" = false
+  AND u."isFree" = false
+  AND u."founderMember" = false
+  AND u."typeClient" <> 'FOUNDER'
+  AND a."isCanceled" = true
+  AND a."canceledAt" > NOW() - INTERVAL '30 days';

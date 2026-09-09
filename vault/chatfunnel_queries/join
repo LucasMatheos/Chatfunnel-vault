@@ -1,0 +1,20 @@
+
+SELECT DISTINCT u.email, u.* --, a.id as account_id, a.*
+FROM "Users" u JOIN "Accounts" a ON u.id=a."userId"
+JOIN "Channels" c ON a."id"=c."accountId"
+WHERE 
+u.email = 'armandourzum@gmail.com'
+  -- u.email='ma.domingues@gmail.com'
+  AND a."isDeleted"=false;
+
+UPDATE "Users"
+  SET  "stripeCustomerId"='cus_SO9VBiHaMIbH3p'
+  WHERE "id"='26138bec-5186-474d-a89c-42906c44552c';
+
+-- sub_1TdsEIRuuezkOgh2pQLkhQAO
+
+-- INSERT INTO "Channels" (
+--   id,"accountId","originalType",  "slotDefault", "createdAt"
+-- ) VALUES ( '6289db75-3255-42fd-bc90-183ae2339277', '793f2984-c4d5-40ed-a60e-e32364945422', 'INSTAGRAM', false, NOW() );
+--
+--

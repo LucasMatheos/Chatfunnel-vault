@@ -3,7 +3,7 @@ title: Reports v2 — Arquitetura do Modulo (Backend)
 description: Arquitetura do modulo ReportsV2Module no chatfunnel-services. Constroi do zero usando engines reusaveis + catalogo declarativo em vez de 1 handler por relatorio. Cobre os 34 relatorios do spec base.
 tags: [features, reports, reportsV2, backend, services, arquitetura, plano]
 related: ["[[reports-v2-front-arquitetura]]", "[[contacts]]", "[[crm-kanban]]", "[[automations]]", "[[broadcast]]", "[[ai-agents]]"]
-last_updated: 2026-06-03
+last_updated: 2026-08-06
 status: f0-em-implementacao
 ---
 
@@ -355,3 +355,20 @@ O plano atual (F1/F2/F3) continua tecnicamente valido, mas a prioridade de produ
 3. garantir filtros por origem/UTM
 4. definir a interface entre reports curados e Intelligence
 5. so depois popular o restante do catalogo de 34 relatorios
+
+### 11.7 Pendencia: contrato de tool para comparecimento
+
+O relatorio `schedules.attendance` ja existe no `chatfunnel-core` e retorna uma
+`SegmentedTimeSeries` com `SHOW`, `NO_SHOW` e `PENDING`, mas ainda nao possui a
+entrada equivalente no `TOOL_REGISTRY` de `chatfunnel-contracts`.
+
+Fazer quando houver necessidade de expor ou consumir esse relatorio como tool:
+
+- adicionar `SchedulesAttendanceOutput = SegmentedTimeSeries.shape` em `chatfunnel-contracts/src/tools/reports.contracts.ts`
+- registrar `report_schedules_attendance` em `chatfunnel-contracts/src/tools/registry.ts`
+- atualizar `package.json` e `package-lock.json` do pacote de contracts
+- publicar a nova versao e propaga-la para os consumidores, incluindo `chatfunnel-mcp`
+- adicionar a tool ao subconjunto curado de reports do MCP somente quando ela for realmente exposta
+
+Essa pendencia nao bloqueia o endpoint atual de Reports v2; serve para manter
+tipagem e validacao Zod consistentes em uma futura integracao via MCP/tool.

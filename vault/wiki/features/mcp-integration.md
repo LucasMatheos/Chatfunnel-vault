@@ -77,6 +77,8 @@ Request com Authorization: Bearer <token>
 | GET | `/mcp` | SSE stream para respostas |
 | DELETE | `/mcp` | Encerrar sessao |
 
+> Para o **mecanismo interno** das tools (como sao registradas/executadas, o closure `getAuth`, o builder DSL, error handling), ver [[mcp-tools]].
+
 ## Tools Registradas (50+)
 
 ### Discovery (consulta de dados)

@@ -1,0 +1,34 @@
+  A chamada é centralizada em chatfunnel-front/src/common/services/AccountsService.js:12:
+
+  listAccountCustomField: (params) => NestApi.get()(`/custom_fields`, params)
+
+  Ele é chamado por vários componentes:
+
+  - chatfunnel-front/src/components/inputs/InputCustomFields.vue:219
+  - chatfunnel-front/src/components/shadcn-custom/input-custom-fields/InputCustomFields.vue:115
+  - chatfunnel-front/src/views/contactsv2/components/CustomFieldSelect.vue:100
+  - chatfunnel-front/src/views/contactsv2/components/ImportCustomFieldSelect.vue:99
+  - chatfunnel-front/src/views/contactsv2/components/segments/FieldSelectControl.vue:145
+  - useConditionFields
+  - MenuVariables
+  - VariableSelect
+  - FastMessagesModal
+  - useCustomFields dos relatórios
+
+  A diferença importante é:
+
+  - GET /custom_fields retorna campos da conta e pode incluir automations, pastas e informações usadas na administração.
+  - GET /contacts/:id/custom_fields é outra consulta, específica dos valores de um contato, e não deve compartilhar o mesmo cache.
+
+  Minha recomendação é criar um useCustomFieldsQuery, com uma chave como:
+
+  ["custom-fields", accountId]
+
+  E separar:
+
+  1. Cache leve para seletores que usam apenas id e name.
+  2. Consulta completa para a tela de gerenciamento, que precisa de automações, pastas e regras de exclusão.
+  3. Invalidação do cache após criar, editar ou excluir um campo.
+
+  Antes de implementar, eu mediria quantas chamadas vêm de cada componente no DevTools. Mas, pelo número de consumidores, o ganho potencial parece até
+  maior que o das tags.

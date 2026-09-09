@@ -1,0 +1,33 @@
+COPY (
+WITH base AS (
+  SELECT 
+    u.name,
+    u.email,
+    u.idd || u.ddd || u.phone AS complete_phone,
+    u."documentType",
+    u.document,
+    u."companySize",
+    u."jobTitle",
+    regexp_replace(u."surveyForm"::text, '\\', '', 'g') AS survey_clean
+  FROM "Users" u
+  WHERE u."surveyForm" IS NOT NULL
+)
+SELECT 
+  name,
+  email,
+  complete_phone,
+  "documentType",
+  document,
+  "companySize",
+  "jobTitle",
+  CASE 
+    WHEN survey_clean ~ 'useCases' THEN (
+      SELECT string_agg(elem, ', ')
+      FROM jsonb_array_elements_text(
+        btrim(survey_clean, '"')::jsonb -> 'useCases'
+      ) AS elem
+    )
+    ELSE survey_clean
+  END AS use_cases
+FROM base
+) TO STDOUT WITH (FORMAT CSV, HEADER);

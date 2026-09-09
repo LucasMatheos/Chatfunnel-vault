@@ -3,7 +3,7 @@ title: Calendar — Sincronização Google Calendar
 description: Documento detalhado do processo completo de sincronização bidirecional entre o Google Calendar e o Chatfunnel — webhook push, cron de renovação, sync de migração, agendamento via IA e frontend em tempo real.
 tags: [calendar, google-calendar, sync, webhook, oauth, socket, cron, ia-agendamento]
 related: ["[[calendar]]", "[[calendar-avaliacao]]", "[[ai-agents]]"]
-last_updated: 2026-06-25
+last_updated: 2026-08-06
 ---
 
 # Calendar — Sincronização Google Calendar
@@ -89,11 +89,12 @@ O Google só envia notificações para agendas que têm um watch ativo. Se o wat
        → se access_token expirado: chama Google para renovar
        → persiste novo token no DB (GoogleConnections)
    ↓
-   [e] Lista eventos alterados do Google:
-       googleCalendarApi.listEvents(calendarId, {
-         timeMin: agora - 24h,
-         timeMax: agora + 30 dias
-       })
+   [e] Lista mudanças via sync incremental:
+       primeira vez (sem syncToken): listEventsPage(timeMin, timeMax) + reconciliação
+         por ausência (cancela locais Google ausentes do retorno, dentro da janela)
+       demais: listEventsPage(syncToken) → Google devolve deletados como status:'cancelled'
+       cursor (syncToken) avança por CAS na coluna GoogleCalendars.syncToken
+       410 GONE → clear condicional do token + novo full sync restrito à agenda
    ↓
    [f] Upsert de cada evento:
        para cada evento retornado:
@@ -360,6 +361,58 @@ chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/tools/c
 
 ---
 
+## Mecanismo 5 — Remoção de Agenda (sem limpeza de eventos)
+
+### O que é
+
+Quando uma agenda (`GoogleCalendars`) é removida da conta (desconexão do Google, remoção de colaborador etc.), os eventos que apontavam pra ela **não são apagados nem cancelados** — o Prisma só zera a FK.
+
+### Trigger
+
+Remoção de uma agenda via `DeleteGoogleCalendarsHandler.handler(accountId, id)`.
+
+### Fluxo
+
+```
+DeleteGoogleCalendarsHandler.handler(accountId, id)
+  ↓
+  [a] Confirma que a agenda existe e pertence à conta
+  ↓
+  [b] googleCalendarsRepository.delete(id)
+      → prisma.googleCalendars.delete({ where: { id } })
+  ↓
+  [c] Prisma/Postgres aplica onDelete: SetNull na FK
+      GoogleCalendarEvents.googleCalendarId → NULL
+      (nenhum evento é apagado, cancelado ou reatribuído)
+```
+
+Nenhuma lógica trata os eventos que dependiam da agenda apagada — eles **ficam na tabela para sempre**, com `googleCalendarId = NULL`.
+
+### Por que isso não quebra a tela de calendário
+
+`ListEventsHandler.execute()` busca `allCalendarIds` das agendas que **ainda existem** (`findByAccountId`) e filtra `GoogleCalendarEventsRepository.findManyByAccountIdAndDateRange(..., allCalendarIds)` com `googleCalendarId: { in: allCalendarIds }`. Eventos órfãos (`googleCalendarId = NULL`) nunca batem nesse `IN`, então **já ficam invisíveis na agenda** — o problema só aparece em código que consulta `GoogleCalendarEvents` direto por `accountId`, sem passar pela lista de agendas vivas.
+
+### Onde isso mordeu (2026-08)
+
+Os relatórios de Reports V2 (`schedules.volume`, `schedules.attendance`) faziam exatamente isso — `SELECT ... WHERE accountId = ...` sem excluir órfãos — e contavam eventos órfãos como agendamentos reais. Um evento recorrente cuja agenda original foi apagada (e recriada depois) ficou com uma cópia órfã travada em `PENDING` pra sempre, inflando a contagem ao lado do evento real (já marcado `SHOW`). Fix: `AND e."googleCalendarId" IS NOT NULL` nas duas queries (`chatfunnel-core/src/repositories/reports/schedules-reports.repository.ts`).
+
+**Qualquer código novo que consulte `GoogleCalendarEvents` direto por `accountId`/`startAt` (sem passar pela lista de agendas vivas) precisa do mesmo filtro.**
+
+### Arquivos principais
+
+```
+chatfunnel-services/src/modules/google_calendars/commands/delete/handler.ts   ← dispara o delete, sem limpar eventos
+chatfunnel-core/src/repositories/google_calendars.repository.ts:115-117       ← delete() puro, sem cascata manual
+chatfunnel-core/prisma/schema.prisma:1922                                     ← onDelete: SetNull na FK
+chatfunnel-core/src/services/calendar/handlers/list-events.handler.ts        ← por que a agenda não mostra órfãos
+```
+
+### Melhoria possível (não feita)
+
+`DeleteGoogleCalendarsHandler` poderia cancelar (`isCancelled = true`) os eventos futuros/pendentes da agenda antes de apagá-la, em vez de deixar a FK zerar silenciosamente. Resolveria a causa raiz (dado morto e não rastreável) em vez de só mitigar nos consumidores. Não implementado — decisão de escopo em 2026-08-06 (mitigar nos relatórios agora, tratar a origem depois).
+
+---
+
 ## Fluxo de OAuth
 
 Toda chamada à Google Calendar API passa por:
@@ -424,6 +477,8 @@ HandleWebhookHandler.execute()
 | `NATIVE` sem `googleConnectionId` | Nunca deve chamar a Google API — checar sempre `provider === 'GOOGLE' && googleConnectionId != null` |
 | Dois stacks paralelos (AgentCalendarToolExecutor + HandlerAssistantGoogleCalendar.js) | Lógica de provider replicada — inconsistência: API path checa `!cal.provider`, IA path checa `!cal.googleConnectionId` |
 | Cancelamento é sempre soft delete | Queries de listagem devem sempre filtrar `isCancelled: false` |
+| Exclusão no Google reflete no banco (implementado, pendente migration/deploy) | Corrigido via syncToken incremental (fix/calendar-google-sync-token): full sync inicial (janela now-24h..+1a) + reconciliação por ausência, depois incremental com status:'cancelled'. Concorrência protegida por CAS no syncToken (não há lock distribuído no projeto). ⚠ Só efetivo após gerar/aplicar a migration da coluna `syncToken` e deploy |
+| Agenda apagada não limpa/cancela eventos (ver Mecanismo 5) | Eventos viram órfãos (`googleCalendarId = NULL`) e ficam na tabela para sempre. Somem da tela de calendário (filtrada por agendas vivas), mas qualquer query nova que não replique esse filtro conta essas linhas como agendamentos reais — foi o caso dos relatórios de comparecimento/volume (2026-08) |
 
 ---
 

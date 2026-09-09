@@ -2,7 +2,7 @@
 title: AI Patterns Index
 description: Patterns e tecnicas de IA aplicaveis ao ChatFunnel, baseados no claude-cookbooks da Anthropic
 tags: [ai, patterns, claude-api, agents]
-last_updated: 2026-04-17
+last_updated: 2026-07-14
 ---
 
 # AI Patterns
@@ -31,4 +31,4 @@ Patterns de IA extraidos do [claude-cookbooks](https://github.com/anthropics/cla
 | Artigo | Aplicacao |
 |--------|-----------|
 | [[llm-wiki-compiler]] | LLM como compilador do vault — raw notes viram wiki automaticamente (Karpathy pattern) |
-| [[graphify]] | Knowledge graph on-device dos 9 repos — substitui code-review-graph (arquivado) |
+| [[graphify]] | Knowledge graphs locais dos 12 repos + grafo global cross-repo |

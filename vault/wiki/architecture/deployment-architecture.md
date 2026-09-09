@@ -3,7 +3,7 @@ title: Deployment Architecture
 description: Docker, Docker Compose, CI/CD, healthchecks e graceful shutdown dos servicos
 tags: [architecture, deployment, docker, jenkins, ci-cd]
 related: ["[[message-flow]]", "[[auth-flow]]"]
-last_updated: 2026-04-05
+last_updated: 2026-08-28
 ---
 
 # Deployment Architecture
@@ -57,7 +57,20 @@ Todos os servicos expoe routers HTTP e HTTPS (entrypoints `web` e `websecure`).
 
 ## Logging
 
-Todos os containers usam driver **GELF** apontando para `udp://172.18.0.1:12201`, com tag unica por servico (ex: `chatfunnel-front-api`, `chatfunnel-nest`).
+O driver de logging do Docker Compose **nao e uniforme** entre servicos — confirmado lendo o `logging:` de cada `docker-compose.yml`:
+
+| Driver | Servicos | Destino |
+|--------|----------|---------|
+| `json-file` | chatfunnel-api, chatfunnel-services (nest), chatfunnel-scheduler, chatfunnel-external-api, chatfunnel-front | Docker grava em disco na VM (`/var/lib/docker/containers/<id>/<id>-json.log`) |
+| `gelf` | chatfunnel-worker-broadcast, chatfunnel-gateway (quando em VM, dev/release) | `udp://172.18.0.1:12201` (Graylog local) |
+
+Os servicos com `json-file` **aparecem no Grafana** (confirmado: container `nest` e os logs do `processor`/agentes-v2 do chatfunnel-api). O mecanismo mais provavel e um Promtail/Fluent Bit rodando direto na VM (fora de qualquer `docker-compose.yml` destes repos) fazendo tail de `/var/lib/docker/containers/*/*.json.log` e enviando pro mesmo Loki usado pelo cluster GKE — **essa parte nao esta em nenhum repo do workspace, entao e inferencia, nao confirmacao por arquivo**. Os servicos com `gelf` vao pro Graylog e nao foram vistos no Grafana.
+
+No Kubernetes/GKE (gateway completo + websocket na `main`, cluster `chatfunnel-cluster`) o pipeline documentado e **Fluent Bit → Loki → Grafana** — ver [[infrastructure-gotchas]] para detalhes de config e a pegadinha do `promtail-values.yaml`.
+
+### Exemplo: logs do processor de agentes (chatfunnel-api)
+
+`chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/HandlerAgent.ts` usa `@logger` (`chatfunnel-api/src/class/LoggerClass.js`), um wrapper Winston com `transports: [Console]` e formato JSON (`defaultMeta: { service: "flow-worker", pageId }`). O app so escreve JSON estruturado no stdout — nao sabe nada de Loki/Grafana. Quem move esse log ate o Grafana e a camada de infra da VM (driver `json-file` + o agente de coleta inferido acima).
 
 ## CI/CD — Jenkins
 

@@ -94,3 +94,10 @@ Centralizar via CSS custom properties em `shadcn-vars.css`:
 ```
 
 E referenciar com `z-[var(--z-float-in-dialog)]` em vez de hardcode.
+
+## Dialogs aninhados
+
+Valores de `z-index` acima de `2147483647` podem ser truncados pelo navegador.
+Quando um dialog aninhado precisar ficar acima de outro que usa valores elevados,
+aplique `2147483647` ao overlay e ao conteúdo. Como o dialog interno é montado por
+último, ele permanece por cima dentro da mesma camada.

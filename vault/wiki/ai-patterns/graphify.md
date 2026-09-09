@@ -1,140 +1,136 @@
 ---
+title: Graphify — tutorial de uso
+description: Operação dos knowledge graphs locais e do grafo global dos repos ChatFunnel.
 tags: [ai-pattern, knowledge-graph, tooling]
 created: 2026-04-20
+last_updated: 2026-07-14
 status: ativo
 replaces: code-review-graph
 ---
 
 # Graphify — tutorial de uso
 
-Knowledge graph on-device para os 9 repos do ChatFunnel. Substitui o `code-review-graph` (arquivado em `_archive/`).
+Knowledge graph on-device dos 12 repos do ChatFunnel. Substitui o `code-review-graph` arquivado.
 
-## Onde está instalado
+## Instalação
 
-```
+```text
 D:/Code/4-Vinicius/Chatfunnel/graphify-test/.venv/Scripts/graphify.exe
 ```
 
-Pacote: `graphifyy 0.4.23` (PyPI, MIT). Python venv isolado em `graphify-test/`.
+- Pacote: `graphifyy 0.9.15` (PyPI, MIT).
+- Extras instalados: `sql`, necessário para as migrations do `chatfunnel-core`.
+- Ambiente isolado: `graphify-test/.venv/`.
 
-## O que cada repo tem
+## Artefatos por repo
 
-Depois do build, cada sub-repo ganha uma pasta `graphify-out/` (está no `.gitignore`):
+Cada sub-repo possui `graphify-out/`, ignorado pelo Git:
 
-| Arquivo | Para quê |
-|---------|----------|
-| `GRAPH_REPORT.md` | Resumo legível: god nodes, communities, surprising connections, knowledge gaps |
-| `graph.json` | Grafo completo (nodes + edges) — consumido pelos comandos CLI |
-| `graph.html` | Visualização interativa D3 (abre no browser) |
-| `cache/` | Cache interno de AST (não mexer) |
+| Arquivo | Finalidade |
+|---------|------------|
+| `GRAPH_REPORT.md` | God nodes, communities, conexões e gaps |
+| `graph.json` | Grafo consultado pelo CLI |
+| `graph.html` | Visualização D3 para grafos com até 5.000 nós |
+| `GRAPH_TREE.html` | Visualização alternativa para grafos grandes; usada no Front |
+| `.graphify_analysis.json` | Metadados da extração e análise |
+
+O `chatfunnel-front` possui mais de 11 mil nós e excede o limite padrão do `graph.html`; usar `GRAPH_TREE.html`, `GRAPH_REPORT.md` ou consultas CLI.
+
+## Rebuild completo
+
+A versão `0.9.0` alterou os IDs para incluir o caminho completo do arquivo. Grafos anteriores precisam de rebuild limpo; `update --force` pode preservar nós legados de extrações antigas.
+
+```powershell
+Remove-Item graphify-out -Recurse -Force
+gf extract . --code-only
+gf cluster-only . --no-label
+```
+
+Para o `chatfunnel-mcp`, a detecção pela raiz não classificou o corpus corretamente. O rebuild validado usa:
+
+```powershell
+gf extract src --code-only --out .
+gf cluster-only . --no-label
+```
 
 ## Workflow diário
 
-### 1. Após editar código num repo
+Depois de editar código em um repo:
 
-```bash
-cd chatfunnel-front   # ou qualquer repo
-"D:/Code/4-Vinicius/Chatfunnel/graphify-test/.venv/Scripts/graphify.exe" update .
+```powershell
+gf update .
 ```
 
-- Build incremental (1-10s dependendo do tamanho)
-- Sem LLM, sem custo de API
-- Atualiza `graph.json`, `graph.html`, `GRAPH_REPORT.md`
+- Incremental e local, sem custo de API.
+- Atualiza `graph.json`, relatório e visualização quando aplicável.
+- Após grandes deleções ou refactors, usar `gf update . --force`.
 
-### 2. Explorar um repo desconhecido
+## Exploração
 
-Abra primeiro o `graphify-out/GRAPH_REPORT.md`. Ele te dá:
-- **God nodes** (os mais conectados — suas abstrações centrais)
-- **Communities** (clusters naturais de código)
-- **Surprising connections** (dependências não-óbvias)
-- **Knowledge gaps** (nodes isolados — suspeita de código morto ou edges faltando)
-
-### 3. Buscar por conceito
-
-```bash
-"$GF" query "send whatsapp message broadcast" --budget 800
+```powershell
+gf query "send whatsapp message broadcast" --budget 800
+gf explain "Gateway()"
+gf path "main()" "processMessage()"
+gf affected "ContactsService" --depth 2
 ```
 
-BFS traversal do grafo. Retorna nodes com `file:line` ordenados por relevância.
+Ordem recomendada:
 
-Opções:
-- `--dfs` — DFS em vez de BFS
-- `--budget N` — cap em tokens (default 2000)
+1. `GRAPH_REPORT.md` para visão arquitetural.
+2. `query` para localizar conceitos.
+3. `explain` para vizinhança de um nó.
+4. `path` para cadeias entre nós.
+5. Grep/Read apenas para conteúdo literal e leitura in loco.
 
-### 4. Entender um node específico
+## Grafo global
 
-```bash
-"$GF" explain "Gateway()"
+Os 12 grafos também estão registrados localmente em:
+
+```text
+C:/Users/lucas/.graphify/global-graph.json
 ```
 
-Mostra o node + todas as edges (calls, called-by, contains). Útil pra entender o "vizinhança" antes de abrir o arquivo.
+Consultar relações cross-repo:
 
-### 5. Caminho entre dois nodes
-
-```bash
-"$GF" path "main()" "processMessage()"
+```powershell
+gf global list
+gf query "front AgentsV2Service services controller" `
+  --graph C:/Users/lucas/.graphify/global-graph.json
 ```
 
-Shortest path — ótimo pra rastrear call chains.
+Os IDs globais recebem namespace, por exemplo `chatfunnel-front::<local_id>`, e cada nó mantém o campo `repo`.
 
-### 6. Visualização interativa
+Para atualizar o registro após rebuild de um repo:
 
-Abra `graphify-out/graph.html` no browser. D3 force-directed, clicável, colorido por community.
+```powershell
+gf global add graphify-out/graph.json --as chatfunnel-front
+```
 
-## Como o Claude Code usa
-
-Cada sub-repo tem seção `## graphify` no seu `CLAUDE.md` que diz:
-1. Antes de responder questões arquiteturais, ler `graphify-out/GRAPH_REPORT.md`
-2. Se `graphify-out/wiki/index.md` existir, navegar por ele em vez dos arquivos crus
-3. Depois de editar código, rodar `graphify update .`
-
-Ou seja: o Claude **já é orientado automaticamente** a consultar o grafo antes do Grep/Read.
+Trocar o valor de `--as` pelo nome do repo atual.
 
 ## Atalho recomendado
 
-Para não digitar o path completo toda vez, adicione ao seu shell:
-
-```bash
-# Git Bash / WSL
-alias gf='/d/Code/4-Vinicius/Chatfunnel/graphify-test/.venv/Scripts/graphify.exe'
-
-# PowerShell (em $PROFILE)
+```powershell
 function gf { & "D:\Code\4-Vinicius\Chatfunnel\graphify-test\.venv\Scripts\graphify.exe" @args }
 ```
 
-Depois é só: `gf update .`, `gf query "..."`, etc.
+## Decisões operacionais
 
-## Comandos completos
+- Manter um grafo isolado por repo e um grafo global local para consultas cross-repo.
+- Não commitar `graphify-out/`; cada dev gera os artefatos localmente.
+- Usar `.gitignore` como filtro do Graphify. Evitar `.graphifyignore` parcial, pois ela substitui o fallback da `.gitignore` e pode deixar de excluir secrets ou builds.
+- Não instalar hooks por padrão. O fluxo continua manual com `gf update .` após alterações.
+- Usar `--code-only` no rebuild determinístico; docs e mídia exigem uma etapa semântica separada.
 
-| Comando | O que faz |
-|---------|-----------|
-| `gf update <path>` | Rebuild incremental do grafo |
-| `gf watch <path>` | Rebuild automático ao detectar mudança de arquivo |
-| `gf query "<q>"` | BFS traversal |
-| `gf explain "<node>"` | Vizinhança de um node |
-| `gf path "A" "B"` | Caminho mais curto |
-| `gf cluster-only <path>` | Re-roda Leiden sem reparse (muda comunidades) |
-| `gf add <url>` | Adiciona URL ao grafo (fetch + parse) |
-| `gf benchmark` | Mede token reduction vs full-corpus |
-| `gf hook install` | Instala git hooks (post-commit/post-checkout rebuildam) |
+## Cobertura validada em 2026-07-14
 
-## Gotchas
-
-- **Cada repo tem seu grafo isolado** — não há registry multi-repo. Para dependências cross-repo, consulte o `GRAPH_REPORT.md` de cada um separadamente.
-- **`chatfunnel-websocket` só tem 10 nodes** — suspeita de que algum layout de pastas está fora do padrão. Se for usar esse repo seriamente, investigar `graphify-out/cache/` pra ver o que foi ignorado.
-- **86% EXTRACTED, 14% INFERRED** — edges inferidas têm confidence 0.8, boas pra navegação mas não confiáveis pra refactor automático.
-- **Não commitar `graphify-out/`** — já está no `.gitignore` dos 9 repos. Cada dev roda `gf update` localmente.
-
-## Quando cair em Grep/Read
-
-O grafo não é substituto completo. Use Grep/Read quando precisar de:
-- Texto literal dentro de strings (ex: mensagens de erro, URLs)
-- Comentários e docstrings
-- Config/JSON/YAML (grafo só cobre código)
-- Leitura completa de um arquivo (o grafo dá nodes + linhas, mas não o conteúdo)
+- 12 repos registrados no grafo global.
+- Aproximadamente 25 mil nós e 40 mil relações globais.
+- Parser SQL ativo para migrations do Core e Services.
+- `chatfunnel-mobile`, `chatfunnel-websocket` e `chatfunnel-mcp` agora possuem cobertura normal do código.
 
 ## Links
 
-- Repo upstream: [safishamsi/graphify](https://github.com/safishamsi/graphify)
-- Site: [graphifylabs.ai](https://graphifylabs.ai)
-- Archive do CRG (predecessor): `_archive/code-review-graph-2026-04-20/`
+- Repo upstream: [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify)
+- Pacote: [graphifyy no PyPI](https://pypi.org/project/graphifyy/)
+- Relacionado: [[llm-wiki-compiler]]

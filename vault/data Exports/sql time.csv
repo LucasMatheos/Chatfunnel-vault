@@ -1,0 +1,446 @@
+"calls","total_ms","mean_ms","max_ms","rows","total_time_pct","query"
+11463,36682970.06,3200.12,51768.47,565613,24.99,"SELECT ""public"".""Tags"".""id"", ""public"".""Tags"".""name"", ""public"".""Tags"".""accountId"", ""public"".""Tags"".""folderId"", COALESCE(""aggr_selection_0_TagsContacts"".""_aggr_count_tagsContacts"", $4) AS ""_aggr_count_tagsContacts"", COALESCE(""aggr_selection_1_IGAutomationsTriggersTags"".""_aggr_count_triggers"", $5) AS ""_aggr_count_triggers"", COALESCE(""aggr_selection_2_IGAutomationsStepActionsTags"".""_aggr_count_actions"", $6) AS ""_aggr_count_actions"" FROM ""public"".""Tags"" LEFT JOIN (SELECT ""public"".""TagsContacts"".""tagId"", COUNT(*) AS ""_aggr_count_tagsContacts"" FROM ""public"".""TagsContacts"" LEFT JOIN ""public"".""Contacts"" AS ""j1"" ON (""j1"".""id"") = (""public"".""TagsContacts"".""contactId"") WHERE (""j1"".""isDeleted"" = $1 AND (""j1"".""id"" IS NOT NULL)) GROUP BY ""public"".""TagsContacts"".""tagId"") AS ""aggr_selection_0_TagsContacts"" ON (""public"".""Tags"".""id"" = ""aggr_selection_0_TagsContacts"".""tagId"") LEFT JOIN (SELECT ""public"".""IGAutomationsTriggersTags"".""tagId"", COUNT(*) AS ""_aggr_count_triggers"" FROM ""public"".""IGAutomationsTriggersTags"" WHERE $7=$8 GROUP BY ""public"".""IGAutomationsTriggersTags"".""tagId"") AS ""aggr_selection_1_IGAutomationsTriggersTags"" ON (""public"".""Tags"".""id"" = ""aggr_selection_1_IGAutomationsTriggersTags"".""tagId"") LEFT JOIN (SELECT ""public"".""IGAutomationsStepActionsTags"".""tagId"", COUNT(*) AS ""_aggr_count_actions"" FROM ""public"".""IGAutomationsStepActionsTags"" WHERE $9=$10 GROUP BY ""public"".""IGAutomationsStepActionsTags"".""tagId"") AS ""aggr_selection_2_IGAutomationsStepActionsTags"" ON (""public"".""Tags"".""id"" = ""aggr_selection_2_IGAutomationsStepActionsTags"".""tagId"") WHERE ""public"".""Tags"".""accountId"" = $2 OFFSET $3"
+71,11804763.04,166264.27,2668456.89,71,8.04,"WITH card_entry AS (
+        SELECT
+          COALESCE(
+            (SELECT MAX(h.""createdAt"") FROM ""KanbanCardsHistory"" h
+              WHERE h.""cardId"" = kc.""id""
+                AND h.""action""::text IN ($5, $6)
+                AND h.""columnId"" = kc.""columnId""),
+            kc.""createdAt""
+          ) AS entered_at
+        FROM ""KanbanCards"" kc
+        JOIN ""Kanbans"" k ON kc.""kanbanId"" = k.""id""
+        WHERE k.""accountId"" = $1::uuid
+          AND k.""isDeleted"" = $7
+          AND kc.""isDeleted"" = $8
+          AND kc.""statusOportunity""::text = $9
+          AND kc.""createdAt"" BETWEEN $2 AND $3
+          AND kc.""kanbanId"" = $4::uuid
+      ),
+      ages AS (SELECT (NOW() - (entered_at AT TIME ZONE $10)) AS age FROM card_entry)
+      SELECT
+        COUNT(*) FILTER (WHERE age <  interval $11)::int AS b0,
+        COUNT(*) FILTER (WHERE age >= interval $12  AND age < interval $13)::int  AS b1,
+        COUNT(*) FILTER (WHERE age >= interval $14  AND age < interval $15)::int AS b2,
+        COUNT(*) FILTER (WHERE age >= interval $16)::int AS b3
+      FROM ages"
+2415,11110280.82,4600.53,92700.91,2415,7.57,"SELECT
+        COUNT(*) FILTER (WHERE m.""createdAt"" BETWEEN $1 AND $2)::int AS current,
+        COUNT(*) FILTER (WHERE m.""createdAt"" BETWEEN $3 AND $4)::int AS previous
+      FROM ""Messages"" m
+      JOIN ""Contacts"" c ON c.""id"" = m.""contactId""
+      WHERE c.""accountId"" = $5::uuid
+        AND m.""isDeleted"" = $8
+        AND m.""contabilableOnMetrics"" = $9
+        AND m.""from""::text IN ($10, $11)
+        AND m.""createdAt"" BETWEEN $6 AND $7"
+52796,8455949.10,160.16,15470.92,52796,5.76,"SELECT
+         COUNT(DISTINCT ""Contacts"".""id"")::integer AS count
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id""
+        AND ""Contacts"".""accountId"" = $1::uuid
+        AND ""Contacts"".""isDeleted"" = $3
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+      WHERE ""ContactsChannels"".""isArchived"" = $4 AND ""ContactsChannels"".""isVisualized"" = $5"
+45735,7141446.13,156.15,15491.00,2184018,4.86,"SELECT
+          ""Contacts"".""id"",
+        ""Contacts"".""name"",
+        ""Contacts"".""photo"",
+        ""ContactsChannels"".""lastUpdate"",
+        ""ContactsChannels"".""isVisualized"",
+        ""ContactsChannels"".""servedByAssistant"",
+        ""ContactsChannels"".""servedByAssistantId"",
+        ""ContactsChannels"".""servedByAssistantName"",
+        EXISTS (
+          SELECT $5
+          FROM ""IGAutomationsBlacklist""
+          WHERE ""IGAutomationsBlacklist"".""contactId"" = ""ContactsChannels"".""contactId""
+            AND (
+              ""IGAutomationsBlacklist"".""channelId"" = ""ContactsChannels"".""channelId""
+              OR ""IGAutomationsBlacklist"".""channelId"" IS NULL
+            )
+        ) AS ""blackListed"",
+        ""ContactsChannels"".""isArchived"",
+        ""ContactsChannels"".""blockedAgent"",
+        ""ContactsChannels"".""needsHumanAttention"",
+        ""Contacts"".""isActive"",
+        ""ContactsChannels"".""transferModerator"",
+        ""ContactsChannels"".""transferModeratorAt"",
+        ""ContactsChannels"".""moderatorId"",
+        ""ContactsChannels"".""callUnanswered"",
+        ""ContactsChannels"".""callUnansweredAt""
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id""
+        AND ""Contacts"".""accountId"" = $1::uuid
+        AND ""Contacts"".""isDeleted"" = $6
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+      WHERE ""ContactsChannels"".""isArchived"" = $7
+    
+      ORDER BY
+        ""ContactsChannels"".""lastUpdate"" DESC NULLS LAST 
+      LIMIT $3
+      OFFSET $4"
+2715,5223278.31,1923.86,64190.81,6905,3.56,"SELECT
+      ""Contacts"".""id"",
+      ""Contacts"".""name"",
+      ""Contacts"".photo,
+      COUNT ( ""Interactions"".""id"" )  as quantity
+    FROM
+      ""Contacts""
+      LEFT JOIN ""Interactions"" ON ""Interactions"".""contactId"" = ""Contacts"".""id""
+    WHERE
+      ""Contacts"".""accountId"" = $1::uuid
+      AND ""Contacts"".""isDeleted"" = $2
+      AND ""Interactions"".""createdAt"" > (NOW() - INTERVAL $3)
+    GROUP BY
+      ""Contacts"".""id"",
+      ""Contacts"".""name"",
+      ""Contacts"".photo,
+      ""Contacts"".""dateCreated""
+    ORDER BY quantity DESC ,""Contacts"".""name""
+    LIMIT $4
+    OFFSET $5"
+44338,4348456.29,98.08,13154.74,1055320,2.96,"WITH base AS (
+        SELECT
+          kc.id, kc.position, kc.""contactId"", kc.""kanbanId"", kc.""columnId"",
+          kc.""statusOportunity"", kc.priority, kc.""createdAt"", kc.""isDeleted"", kc.amount,
+          c.name AS ""contact_name"",
+          c.photo AS ""contact_photo"",
+          c.""isActive"" AS ""contact_active""
+        FROM ""KanbanCards"" kc JOIN ""Contacts"" c ON kc.""contactId"" = c.id AND c.""isDeleted"" = $7 JOIN ""Kanbans"" k ON kc.""kanbanId"" = k.id
+        WHERE k.""accountId"" = $1::uuid AND k.id = $2::uuid AND kc.""isDeleted"" = $8 AND kc.""columnId"" = $3::uuid AND kc.""statusOportunity"" = $4::""KanbanCardsStatusOportunityEnum""
+      ),
+      paginated AS (
+        SELECT
+          b.*,
+          COUNT(*) OVER () AS total_count,
+          COALESCE(SUM(amount) OVER (), $9) AS total_amount
+        FROM base b
+        ORDER BY b.position ASC
+        LIMIT $5 OFFSET $6
+      )
+      SELECT
+        p.*,
+        EXISTS (
+          SELECT $10 FROM ""Messages"" m
+          WHERE m.""contactId"" = p.""contactId""
+          AND m.from = $11
+          AND m.""readAt"" IS NULL
+          AND m.""isObservation"" = $12
+        ) AS ""hasActivity"",
+        (
+          SELECT COALESCE(json_agg(json_build_object($13, json_build_object($14, u.id, $15, u.name))), $16::json)
+          FROM ""KanbanCardsModerators"" kcm JOIN ""Users"" u ON kcm.""userId"" = u.id
+          WHERE kcm.""kanbanCardId"" = p.id
+        ) AS moderators,
+        (
+          SELECT COALESCE(json_agg(json_build_object($17, t.id, $18, t.name)), $19::json)
+          FROM ""TagsContacts"" tc JOIN ""Tags"" t ON tc.""tagId"" = t.id
+          WHERE tc.""contactId"" = p.""contactId""
+        ) AS tags
+      FROM paginated p"
+3299,3436936.82,1041.81,10466.01,24505,2.34,"SELECT ""public"".""IGAutomations"".""id"", ""public"".""IGAutomations"".""name"", ""public"".""IGAutomations"".""type""::text, ""public"".""IGAutomations"".""shared"", ""public"".""IGAutomations"".""isActive"", ""public"".""IGAutomations"".""createdAt"", ""public"".""IGAutomations"".""firstStepId"", ""public"".""IGAutomations"".""folderId"", COALESCE(""aggr_selection_0_IGAutomationsExecutions"".""_aggr_count_executions"", $5) AS ""_aggr_count_executions"" FROM ""public"".""IGAutomations"" LEFT JOIN (SELECT ""public"".""IGAutomationsExecutions"".""automationId"", COUNT(*) AS ""_aggr_count_executions"" FROM ""public"".""IGAutomationsExecutions"" WHERE $6=$7 GROUP BY ""public"".""IGAutomationsExecutions"".""automationId"") AS ""aggr_selection_0_IGAutomationsExecutions"" ON (""public"".""IGAutomations"".""id"" = ""aggr_selection_0_IGAutomationsExecutions"".""automationId"") WHERE (""public"".""IGAutomations"".""accountId"" = $1 AND ""public"".""IGAutomations"".""type"" = CAST($2::text AS ""public"".""IGAutomationsTypeEnum"")) ORDER BY ""public"".""IGAutomations"".""createdAt"" DESC LIMIT $3 OFFSET $4"
+39632,3272689.08,82.58,7103.77,39632,2.23,"SELECT
+         COUNT(DISTINCT ""Contacts"".""id"")::integer AS count
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id""
+        AND ""Contacts"".""accountId"" = $1::uuid
+        AND ""Contacts"".""isDeleted"" = $7
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+      WHERE ""ContactsChannels"".""isArchived"" = $8 AND ""ContactsChannels"".""isVisualized"" = $9 AND (""Contacts"".""name"" ILIKE $3 OR ""Contacts"".""email"" ILIKE $4 OR ""Contacts"".""phone"" LIKE $5 OR ""Contacts"".""phone"" LIKE $6)"
+39238,3241538.90,82.61,7123.71,34387,2.21,"SELECT
+          ""Contacts"".""id"",
+        ""Contacts"".""name"",
+        ""Contacts"".""photo"",
+        ""ContactsChannels"".""lastUpdate"",
+        ""ContactsChannels"".""isVisualized"",
+        ""ContactsChannels"".""servedByAssistant"",
+        ""ContactsChannels"".""servedByAssistantId"",
+        ""ContactsChannels"".""servedByAssistantName"",
+        EXISTS (
+          SELECT $9
+          FROM ""IGAutomationsBlacklist""
+          WHERE ""IGAutomationsBlacklist"".""contactId"" = ""ContactsChannels"".""contactId""
+            AND (
+              ""IGAutomationsBlacklist"".""channelId"" = ""ContactsChannels"".""channelId""
+              OR ""IGAutomationsBlacklist"".""channelId"" IS NULL
+            )
+        ) AS ""blackListed"",
+        ""ContactsChannels"".""isArchived"",
+        ""ContactsChannels"".""blockedAgent"",
+        ""ContactsChannels"".""needsHumanAttention"",
+        ""Contacts"".""isActive"",
+        ""ContactsChannels"".""transferModerator"",
+        ""ContactsChannels"".""transferModeratorAt"",
+        ""ContactsChannels"".""moderatorId"",
+        ""ContactsChannels"".""callUnanswered"",
+        ""ContactsChannels"".""callUnansweredAt""
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id""
+        AND ""Contacts"".""accountId"" = $1::uuid
+        AND ""Contacts"".""isDeleted"" = $10
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+      WHERE ""ContactsChannels"".""isArchived"" = $11 AND (""Contacts"".""name"" ILIKE $3 OR ""Contacts"".""email"" ILIKE $4 OR ""Contacts"".""phone"" LIKE $5 OR ""Contacts"".""phone"" LIKE $6)
+    
+      ORDER BY
+        ""ContactsChannels"".""lastUpdate"" DESC NULLS LAST 
+      LIMIT $7
+      OFFSET $8"
+15976,1826732.31,114.34,14222.47,1766182,1.24,"UPDATE ""KanbanCards""
+          SET ""position"" = ""position"" - $3
+          WHERE ""columnId"" = $1::uuid
+            AND ""position"" > $2"
+1516,1794390.01,1183.63,17461.34,21948951,1.22,"WITH ""OrderedCards"" AS (
+        SELECT
+          id,
+          ""columnId"",
+          position,
+          ROW_NUMBER() OVER (PARTITION BY ""columnId"" ORDER BY position) AS new_position
+        FROM ""KanbanCards""
+        WHERE
+          ""columnId"" = $1::uuid
+          AND ""isDeleted"" = $2
+      )
+      UPDATE ""KanbanCards""
+      SET position = ""OrderedCards"".new_position - $3 FROM ""OrderedCards""
+      WHERE ""KanbanCards"".id = ""OrderedCards"".id
+        AND ""KanbanCards"".""isDeleted"" = $4"
+1897,1709498.39,901.16,11728.74,23725,1.16,"SELECT ""public"".""IGAutomationsTriggers"".""id"", ""public"".""IGAutomationsTriggers"".""typeTrigger""::text, ""public"".""IGAutomationsTriggers"".""commentsPubReelsChoise""::text, ""public"".""IGAutomationsTriggers"".""storyTimer"", ""public"".""IGAutomationsTriggers"".""storyChoise""::text, ""public"".""IGAutomationsTriggers"".""storyReaction"", ""public"".""IGAutomationsTriggers"".""automationId"", COALESCE(""aggr_selection_0_IGAutomationsExecutions"".""_aggr_count_executions"", $12) AS ""_aggr_count_executions"" FROM ""public"".""IGAutomationsTriggers"" LEFT JOIN (SELECT ""public"".""IGAutomationsExecutions"".""triggerId"", COUNT(*) AS ""_aggr_count_executions"" FROM ""public"".""IGAutomationsExecutions"" WHERE $13=$14 GROUP BY ""public"".""IGAutomationsExecutions"".""triggerId"") AS ""aggr_selection_0_IGAutomationsExecutions"" ON (""public"".""IGAutomationsTriggers"".""id"" = ""aggr_selection_0_IGAutomationsExecutions"".""triggerId"") WHERE ""public"".""IGAutomationsTriggers"".""automationId"" IN ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) OFFSET $11"
+763,1457730.39,1910.52,28304.67,1425,0.99,"SELECT ""public"".""Accounts"".""id"", ""public"".""Accounts"".""name"", ""public"".""Accounts"".""description"", ""public"".""Accounts"".""photo"", ""public"".""Accounts"".""plan""::text, ""public"".""Accounts"".""planLeads"", ""public"".""Accounts"".""paymentPeriod""::text, ""public"".""Accounts"".""nextDatePayment"", ""public"".""Accounts"".""isCanceled"", ""public"".""Accounts"".""userId"", COALESCE(""aggr_selection_0_Contacts"".""_aggr_count_contacts"", $11) AS ""_aggr_count_contacts"", COALESCE(""aggr_selection_1_Channels"".""_aggr_count_Channels"", $12) AS ""_aggr_count_Channels"", COALESCE(""aggr_selection_2_Agents"".""_aggr_count_agents"", $13) AS ""_aggr_count_agents"", COALESCE(""aggr_selection_3_OpenaiAssistants"".""_aggr_count_assistants"", $14) AS ""_aggr_count_assistants"", COALESCE(""aggr_selection_4_IGAutomations"".""_aggr_count_igAutomations"", $15) AS ""_aggr_count_igAutomations"" FROM ""public"".""Accounts"" LEFT JOIN (SELECT ""public"".""Contacts"".""accountId"", COUNT(*) AS ""_aggr_count_contacts"" FROM ""public"".""Contacts"" WHERE (""public"".""Contacts"".""isDeleted"" = $1 AND ""public"".""Contacts"".""isActive"" = $2) GROUP BY ""public"".""Contacts"".""accountId"") AS ""aggr_selection_0_Contacts"" ON (""public"".""Accounts"".""id"" = ""aggr_selection_0_Contacts"".""accountId"") LEFT JOIN (SELECT ""public"".""Channels"".""accountId"", COUNT(*) AS ""_aggr_count_Channels"" FROM ""public"".""Channels"" WHERE ""public"".""Channels"".""isDeleted"" = $3 GROUP BY ""public"".""Channels"".""accountId"") AS ""aggr_selection_1_Channels"" ON (""public"".""Accounts"".""id"" = ""aggr_selection_1_Channels"".""accountId"") LEFT JOIN (SELECT ""public"".""Agents"".""accountId"", COUNT(*) AS ""_aggr_count_agents"" FROM ""public"".""Agents"" WHERE ""public"".""Agents"".""isDeleted"" = $4 GROUP BY ""public"".""Agents"".""accountId"") AS ""aggr_selection_2_Agents"" ON (""public"".""Accounts"".""id"" = ""aggr_selection_2_Agents"".""accountId"") LEFT JOIN (SELECT ""public"".""OpenaiAssistants"".""accountId"", COUNT(*) AS ""_aggr_count_assistants"" FROM ""public"".""OpenaiAssistants"" WHERE ""public"".""OpenaiAssistants"".""isDeleted"" = $5 GROUP BY ""public"".""OpenaiAssistants"".""accountId"") AS ""aggr_selection_3_OpenaiAssistants"" ON (""public"".""Accounts"".""id"" = ""aggr_selection_3_OpenaiAssistants"".""accountId"") LEFT JOIN (SELECT ""public"".""IGAutomations"".""accountId"", COUNT(*) AS ""_aggr_count_igAutomations"" FROM ""public"".""IGAutomations"" WHERE $16=$17 GROUP BY ""public"".""IGAutomations"".""accountId"") AS ""aggr_selection_4_IGAutomations"" ON (""public"".""Accounts"".""id"" = ""aggr_selection_4_IGAutomations"".""accountId"") WHERE ((""public"".""Accounts"".""userId"" = $6 OR (""public"".""Accounts"".""id"") IN (SELECT ""t1"".""accountId"" FROM ""public"".""Moderators"" AS ""t1"" WHERE (""t1"".""userId"" = $7 AND ""t1"".""pending"" = $8 AND ""t1"".""accountId"" IS NOT NULL))) AND ""public"".""Accounts"".""isDeleted"" = $9) OFFSET $10"
+15957,1250897.53,78.39,2552.86,312080,0.85,"UPDATE ""KanbanCards""
+          SET ""position"" = ""position"" + $3
+          WHERE ""columnId"" = $1::uuid
+            AND ""position"" >= $2"
+35564,1249868.82,35.14,10633.58,1208792,0.85,"SELECT
+          ""Contacts"".""id"",
+        ""Contacts"".""name"",
+        ""Contacts"".""photo"",
+        ""ContactsChannels"".""lastUpdate"",
+        ""ContactsChannels"".""isVisualized"",
+        ""ContactsChannels"".""servedByAssistant"",
+        ""ContactsChannels"".""servedByAssistantId"",
+        ""ContactsChannels"".""servedByAssistantName"",
+        EXISTS (
+          SELECT $6
+          FROM ""IGAutomationsBlacklist""
+          WHERE ""IGAutomationsBlacklist"".""contactId"" = ""ContactsChannels"".""contactId""
+            AND (
+              ""IGAutomationsBlacklist"".""channelId"" = ""ContactsChannels"".""channelId""
+              OR ""IGAutomationsBlacklist"".""channelId"" IS NULL
+            )
+        ) AS ""blackListed"",
+        ""ContactsChannels"".""isArchived"",
+        ""ContactsChannels"".""blockedAgent"",
+        ""ContactsChannels"".""needsHumanAttention"",
+        ""Contacts"".""isActive"",
+        ""ContactsChannels"".""transferModerator"",
+        ""ContactsChannels"".""transferModeratorAt"",
+        ""ContactsChannels"".""moderatorId"",
+        ""ContactsChannels"".""callUnanswered"",
+        ""ContactsChannels"".""callUnansweredAt""
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id""
+        AND ""Contacts"".""accountId"" = $1::uuid
+        AND ""Contacts"".""isDeleted"" = $7
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+      WHERE ""ContactsChannels"".""moderatorId"" = $3::uuid AND ""ContactsChannels"".""isArchived"" = $8
+    
+      ORDER BY
+        ""ContactsChannels"".""lastUpdate"" DESC NULLS LAST 
+      LIMIT $4
+      OFFSET $5"
+12538,1227275.25,97.88,1456.77,26105,0.84,"SELECT ""public"".""KanbanCardsHistory"".""id"", ""public"".""KanbanCardsHistory"".""kanbanId"", ""public"".""KanbanCardsHistory"".""columnId"", ""public"".""KanbanCardsHistory"".""action""::text, ""public"".""KanbanCardsHistory"".""createdAt"", ""public"".""KanbanCardsHistory"".""userId"", ""public"".""KanbanCardsHistory"".""nameUser"", ""public"".""KanbanCardsHistory"".""cardId"", ""public"".""KanbanCardsHistory"".""oldColumnId"", ""public"".""KanbanCardsHistory"".""newColumnId"", ""public"".""KanbanCardsHistory"".""oldPriority""::text, ""public"".""KanbanCardsHistory"".""newPriority""::text, ""public"".""KanbanCardsHistory"".""oldKanbanId"", ""public"".""KanbanCardsHistory"".""newKanbanId"", ""public"".""KanbanCardsHistory"".""tagId"", ""public"".""KanbanCardsHistory"".""assistantId"", ""public"".""KanbanCardsHistory"".""assistantName"", ""public"".""KanbanCardsHistory"".""automationId"", ""public"".""KanbanCardsHistory"".""automationName"", ""public"".""KanbanCardsHistory"".""statusOportunity""::text FROM ""public"".""KanbanCardsHistory"" WHERE ""public"".""KanbanCardsHistory"".""cardId"" IN ($1) OFFSET $2"
+52671,1082001.60,20.54,282.91,4,0.74,"SELECT ""public"".""KanbanComments"".""id"", ""public"".""KanbanComments"".""message"", ""public"".""KanbanComments"".""createdAt"", ""public"".""KanbanComments"".""kanbanCardId"" FROM ""public"".""KanbanComments"" WHERE ""public"".""KanbanComments"".""kanbanCardId"" IN ($1,$2) OFFSET $3"
+689,1056533.16,1533.43,12265.74,1986,0.72,"SELECT
+        c.id, c.name, c.photo, COUNT(i.id)::int as quantity
+      FROM ""Contacts"" c
+      LEFT JOIN ""Interactions"" i ON i.""contactId"" = c.id
+      WHERE c.""accountId"" = $1::uuid
+        AND c.""isDeleted"" = $4
+        AND ($2 = $5 OR i.""createdAt"" > $3)
+      GROUP BY c.id, c.name, c.photo
+      ORDER BY quantity DESC, c.name ASC
+      LIMIT $6"
+3950,1021831.83,258.69,14539.10,3950,0.70,"SELECT
+         COUNT(DISTINCT ""Contacts"".""id"")::integer AS count
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id"" 
+        AND ""Contacts"".""accountId"" = $1::uuid 
+        AND ""Contacts"".""isDeleted"" = $3 
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+        LEFT JOIN ""ChatModerators"" ON ""Contacts"".""id"" = ""ChatModerators"".""contactId"" 
+      WHERE ""ContactsChannels"".""isArchived"" = $4 AND ""ContactsChannels"".""isVisualized"" = $5"
+52666,1016014.63,19.29,377.48,10,0.69,"SELECT ""public"".""KanbanComments"".""id"", ""public"".""KanbanComments"".""message"", ""public"".""KanbanComments"".""createdAt"", ""public"".""KanbanComments"".""kanbanCardId"" FROM ""public"".""KanbanComments"" WHERE ""public"".""KanbanComments"".""kanbanCardId"" IN ($1) OFFSET $2"
+3629,959851.50,264.49,30437.67,172617,0.65,"SELECT
+          ""Contacts"".""id"",
+        ""Contacts"".""name"",
+        ""Contacts"".""photo"",
+        ""ContactsChannels"".""lastUpdate"",
+        ""ContactsChannels"".""isVisualized"",
+        ""ContactsChannels"".""servedByAssistant"",
+        ""ContactsChannels"".""servedByAssistantId"",
+        ""ContactsChannels"".""servedByAssistantName"",
+        EXISTS (
+          SELECT $5
+          FROM ""IGAutomationsBlacklist""
+          WHERE ""IGAutomationsBlacklist"".""contactId"" = ""ContactsChannels"".""contactId""
+            AND (
+              ""IGAutomationsBlacklist"".""channelId"" = ""ContactsChannels"".""channelId""
+              OR ""IGAutomationsBlacklist"".""channelId"" IS NULL
+            )
+        ) AS ""blackListed"",
+        ""ContactsChannels"".""isArchived"",
+        ""ContactsChannels"".""blockedAgent"",
+        ""Contacts"".""isActive"",
+        ""ChatModerators"".""transferModeratorId"",
+        ""ChatModerators"".""moderatorId""
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id"" 
+        AND ""Contacts"".""accountId"" = $1::uuid 
+        AND ""Contacts"".""isDeleted"" = $6 
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+        LEFT JOIN ""ChatModerators"" ON ""Contacts"".""id"" = ""ChatModerators"".""contactId"" 
+      WHERE ""ContactsChannels"".""isArchived"" = $7
+    
+      ORDER BY
+        ""ContactsChannels"".""lastUpdate"" DESC NULLS LAST 
+      LIMIT $3
+      OFFSET $4"
+7057,944116.89,133.78,12209.38,106607,0.64,"SELECT
+          ""Contacts"".""id"",
+        ""Contacts"".""name"",
+        ""Contacts"".""photo"",
+        ""ContactsChannels"".""lastUpdate"",
+        ""ContactsChannels"".""isVisualized"",
+        ""ContactsChannels"".""servedByAssistant"",
+        ""ContactsChannels"".""servedByAssistantId"",
+        ""ContactsChannels"".""servedByAssistantName"",
+        EXISTS (
+          SELECT $5
+          FROM ""IGAutomationsBlacklist""
+          WHERE ""IGAutomationsBlacklist"".""contactId"" = ""ContactsChannels"".""contactId""
+            AND (
+              ""IGAutomationsBlacklist"".""channelId"" = ""ContactsChannels"".""channelId""
+              OR ""IGAutomationsBlacklist"".""channelId"" IS NULL
+            )
+        ) AS ""blackListed"",
+        ""ContactsChannels"".""isArchived"",
+        ""ContactsChannels"".""blockedAgent"",
+        ""ContactsChannels"".""needsHumanAttention"",
+        ""Contacts"".""isActive"",
+        ""ContactsChannels"".""transferModerator"",
+        ""ContactsChannels"".""transferModeratorAt"",
+        ""ContactsChannels"".""moderatorId"",
+        ""ContactsChannels"".""callUnanswered"",
+        ""ContactsChannels"".""callUnansweredAt""
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id""
+        AND ""Contacts"".""accountId"" = $1::uuid
+        AND ""Contacts"".""isDeleted"" = $6
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+      WHERE ""ContactsChannels"".""isArchived"" = $7 AND ""ContactsChannels"".""isVisualized"" = $8
+    
+      ORDER BY
+        ""ContactsChannels"".""lastUpdate"" DESC NULLS LAST 
+      LIMIT $3
+      OFFSET $4"
+5041,920665.89,182.64,7449.16,312080864,0.63,"SELECT ""public"".""KanbanCards"".""id"", ""public"".""KanbanCards"".""kanbanId"", ""public"".""KanbanCards"".""columnId"", ""public"".""KanbanCards"".""contactId"", ""public"".""KanbanCards"".""description"", ""public"".""KanbanCards"".""priority""::text, ""public"".""KanbanCards"".""createdAt"", ""public"".""KanbanCards"".""isDeleted"", ""public"".""KanbanCards"".""position"", ""public"".""KanbanCards"".""statusOportunity""::text, ""public"".""KanbanCards"".""statusOportunityUpdatedAt"", ""public"".""KanbanCards"".""lossReasonId"", ""public"".""KanbanCards"".""lossReasonMessage"", ""public"".""KanbanCards"".""ownerId"", ""public"".""KanbanCards"".""amount"", ""public"".""KanbanCards"".""closedColumnId"" FROM ""public"".""KanbanCards"" WHERE (""public"".""KanbanCards"".""isDeleted"" = $1 AND ""public"".""KanbanCards"".""columnId"" IN ($2,$3,$4,$5,$6,$7,$8,$9,$10)) ORDER BY ""public"".""KanbanCards"".""position"" DESC OFFSET $11"
+3718,864681.10,232.57,4581.94,88187,0.59,"WITH base AS (
+        SELECT
+          kc.id, kc.position, kc.""contactId"", kc.""kanbanId"", kc.""columnId"",
+          kc.""statusOportunity"", kc.priority, kc.""createdAt"", kc.""isDeleted"", kc.amount,
+          c.name AS ""contact_name"",
+          c.photo AS ""contact_photo"",
+          c.""isActive"" AS ""contact_active""
+        FROM ""KanbanCards"" kc JOIN ""Contacts"" c ON kc.""contactId"" = c.id AND c.""isDeleted"" = $8 JOIN ""Kanbans"" k ON kc.""kanbanId"" = k.id JOIN ""KanbanCardsModerators"" kcm ON kc.""id"" = kcm.""kanbanCardId""
+        WHERE k.""accountId"" = $1::uuid AND k.id = $2::uuid AND kc.""isDeleted"" = $9 AND kc.""columnId"" = $3::uuid AND kc.""statusOportunity"" = $4::""KanbanCardsStatusOportunityEnum"" AND (kcm.""userId"" = $5::uuid )
+      ),
+      paginated AS (
+        SELECT
+          b.*,
+          COUNT(*) OVER () AS total_count,
+          COALESCE(SUM(amount) OVER (), $10) AS total_amount
+        FROM base b
+        ORDER BY b.position ASC
+        LIMIT $6 OFFSET $7
+      )
+      SELECT
+        p.*,
+        EXISTS (
+          SELECT $11 FROM ""Messages"" m
+          WHERE m.""contactId"" = p.""contactId""
+          AND m.from = $12
+          AND m.""readAt"" IS NULL
+          AND m.""isObservation"" = $13
+        ) AS ""hasActivity"",
+        (
+          SELECT COALESCE(json_agg(json_build_object($14, json_build_object($15, u.id, $16, u.name))), $17::json)
+          FROM ""KanbanCardsModerators"" kcm JOIN ""Users"" u ON kcm.""userId"" = u.id
+          WHERE kcm.""kanbanCardId"" = p.id
+        ) AS moderators,
+        (
+          SELECT COALESCE(json_agg(json_build_object($18, t.id, $19, t.name)), $20::json)
+          FROM ""TagsContacts"" tc JOIN ""Tags"" t ON tc.""tagId"" = t.id
+          WHERE tc.""contactId"" = p.""contactId""
+        ) AS tags
+      FROM paginated p"
+9068,858912.02,94.72,10896.05,96405,0.59,"SELECT
+          ""Contacts"".""id"",
+        ""Contacts"".""name"",
+        ""Contacts"".""photo"",
+        ""ContactsChannels"".""lastUpdate"",
+        ""ContactsChannels"".""isVisualized"",
+        ""ContactsChannels"".""servedByAssistant"",
+        ""ContactsChannels"".""servedByAssistantId"",
+        ""ContactsChannels"".""servedByAssistantName"",
+        EXISTS (
+          SELECT $8
+          FROM ""IGAutomationsBlacklist""
+          WHERE ""IGAutomationsBlacklist"".""contactId"" = ""ContactsChannels"".""contactId""
+            AND (
+              ""IGAutomationsBlacklist"".""channelId"" = ""ContactsChannels"".""channelId""
+              OR ""IGAutomationsBlacklist"".""channelId"" IS NULL
+            )
+        ) AS ""blackListed"",
+        ""ContactsChannels"".""isArchived"",
+        ""ContactsChannels"".""blockedAgent"",
+        ""ContactsChannels"".""needsHumanAttention"",
+        ""Contacts"".""isActive"",
+        ""ContactsChannels"".""transferModerator"",
+        ""ContactsChannels"".""transferModeratorAt"",
+        ""ContactsChannels"".""moderatorId"",
+        ""ContactsChannels"".""callUnanswered"",
+        ""ContactsChannels"".""callUnansweredAt""
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id""
+        AND ""Contacts"".""accountId"" = $1::uuid
+        AND ""Contacts"".""isDeleted"" = $9
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+      WHERE ""ContactsChannels"".""isArchived"" = $10 AND (""Contacts"".""name"" ILIKE $3 OR ""Contacts"".""email"" ILIKE $4 OR ""Contacts"".""phone"" LIKE $5)
+    
+      ORDER BY
+        ""ContactsChannels"".""lastUpdate"" DESC NULLS LAST 
+      LIMIT $6
+      OFFSET $7"
+290554,788184.55,2.71,265.19,1506962,0.54,"SELECT ""public"".""IGAutomations"".""id"", ""public"".""IGAutomations"".""accountId"", ""public"".""IGAutomations"".""name"", ""public"".""IGAutomations"".""type""::text, ""public"".""IGAutomations"".""firstStepId"", ""public"".""IGAutomations"".""x"", ""public"".""IGAutomations"".""y"", ""public"".""IGAutomations"".""shared"", ""public"".""IGAutomations"".""isActive"", ""public"".""IGAutomations"".""createdAt"", ""public"".""IGAutomations"".""folderId"" FROM ""public"".""IGAutomations"" WHERE (""public"".""IGAutomations"".""accountId"" = $1 AND ""public"".""IGAutomations"".""isActive"" = $2 AND (""public"".""IGAutomations"".""id"") IN (SELECT ""t1"".""automationId"" FROM ""public"".""IGAutomationsTriggers"" AS ""t1"" WHERE (""t1"".""typeTrigger"" = CAST($3::text AS ""public"".""TriggerTypesEnum"") AND ""t1"".""automationId"" IS NOT NULL))) OFFSET $4"
+970,780524.81,804.66,19306.72,1512,0.53,"SELECT ""public"".""ContactsFolders"".""id"", ""public"".""ContactsFolders"".""name"", COALESCE(""aggr_selection_0_Contacts"".""_aggr_count_contacts"", $4) AS ""_aggr_count_contacts"" FROM ""public"".""ContactsFolders"" LEFT JOIN (SELECT ""public"".""Contacts"".""folderId"", COUNT(*) AS ""_aggr_count_contacts"" FROM ""public"".""Contacts"" WHERE ""public"".""Contacts"".""isDeleted"" = $1 GROUP BY ""public"".""Contacts"".""folderId"") AS ""aggr_selection_0_Contacts"" ON (""public"".""ContactsFolders"".""id"" = ""aggr_selection_0_Contacts"".""folderId"") WHERE ""public"".""ContactsFolders"".""accountId"" = $2 OFFSET $3"
+9161,707690.56,77.25,8453.31,9161,0.48,"SELECT
+         COUNT(DISTINCT ""Contacts"".""id"")::integer AS count
+      FROM
+        ""ContactsChannels""
+        INNER JOIN ""Contacts"" ON ""ContactsChannels"".""contactId"" = ""Contacts"".""id""
+        AND ""Contacts"".""accountId"" = $1::uuid
+        AND ""Contacts"".""isDeleted"" = $6
+        AND ""ContactsChannels"".""channelId"" = $2::uuid
+      WHERE ""ContactsChannels"".""isArchived"" = $7 AND ""ContactsChannels"".""isVisualized"" = $8 AND (""Contacts"".""name"" ILIKE $3 OR ""Contacts"".""email"" ILIKE $4 OR ""Contacts"".""phone"" LIKE $5)"
+2906,674244.87,232.02,4432.38,148534344,0.46,"SELECT ""public"".""KanbanCards"".""id"", ""public"".""KanbanCards"".""kanbanId"", ""public"".""KanbanCards"".""columnId"", ""public"".""KanbanCards"".""contactId"", ""public"".""KanbanCards"".""description"", ""public"".""KanbanCards"".""priority""::text, ""public"".""KanbanCards"".""createdAt"", ""public"".""KanbanCards"".""isDeleted"", ""public"".""KanbanCards"".""position"", ""public"".""KanbanCards"".""statusOportunity""::text, ""public"".""KanbanCards"".""statusOportunityUpdatedAt"", ""public"".""KanbanCards"".""lossReasonId"", ""public"".""KanbanCards"".""lossReasonMessage"", ""public"".""KanbanCards"".""ownerId"", ""public"".""KanbanCards"".""amount"", ""public"".""KanbanCards"".""closedColumnId"" FROM ""public"".""KanbanCards"" WHERE (""public"".""KanbanCards"".""isDeleted"" = $1 AND ""public"".""KanbanCards"".""columnId"" IN ($2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)) ORDER BY ""public"".""KanbanCards"".""position"" DESC OFFSET $14"

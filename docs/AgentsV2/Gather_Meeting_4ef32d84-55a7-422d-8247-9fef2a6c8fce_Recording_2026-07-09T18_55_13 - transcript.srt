@@ -1,0 +1,428 @@
+1
+00:00:02,610 --> 00:00:05,340
+Que o started...
+
+2
+00:00:05,340 --> 00:00:07,340
+Alguém entrou, hein?
+
+3
+00:00:07,340 --> 00:00:09,440
+É o...
+
+4
+00:00:09,440 --> 00:00:13,950
+Vamos fechar a sala pra ninguém entrar e...
+
+5
+00:00:13,950 --> 00:00:20,380
+Cara, o que a gente precisa pra funcionar aqui?
+
+6
+00:00:20,380 --> 00:00:24,820
+Primeiro, é...
+
+7
+00:00:24,820 --> 00:00:33,060
+Editar alguma coisa?
+
+8
+00:00:33,060 --> 00:00:50,700
+Deixa eu ver aqui.
+
+9
+00:00:50,700 --> 00:00:56,270
+E eu vou aproveitar, vou resolver essa parada do...
+
+10
+00:00:56,270 --> 00:00:58,270
+Não é gosto, né? Do permissionamento.
+
+11
+00:00:58,270 --> 00:01:06,350
+Ah...
+
+12
+00:01:06,350 --> 00:01:26,940
+Primeira coisa que a gente tem que fazer aqui é quando a gente conclui a a criação
+
+13
+00:01:26,940 --> 00:01:38,220
+lucas ele já criaram porque hoje ele é que ele não alterou nada mas ele vai de
+
+14
+00:01:38,220 --> 00:01:55,150
+por concluir a edição aqui hoje ele tá ele não tá mas não é que a gente não
+
+15
+00:01:55,150 --> 00:01:57,150
+foi o que a gente falou naquele dia, lembra?
+
+16
+00:01:57,150 --> 00:02:02,220
+O que a gente ficou falando, mas o cara vai recriar toda vez se ajustou a um A ali.
+
+17
+00:02:02,220 --> 00:02:03,220
+Vai.
+
+18
+00:02:03,220 --> 00:02:07,630
+Vai, então tá.
+
+19
+00:02:07,630 --> 00:02:11,630
+Não, então, mas é isso aqui, toda vez que o cara conclui edição,
+
+20
+00:02:11,630 --> 00:02:19,300
+ele vai reconstruir, só que ele vai reconstruir em background, entendeu?
+
+21
+00:02:19,300 --> 00:02:23,580
+Isso aqui que ele tá fazendo, ele vai ficar em background
+
+22
+00:02:23,580 --> 00:02:25,580
+e ele vai confirmar automático.
+
+23
+00:02:25,580 --> 00:02:32,300
+a construção aqui ele confirma a pessoa nem nem olha ele clicou aqui no o
+
+24
+00:02:32,300 --> 00:02:35,740
+concluir de são ele faz igual aqui atualizando a gente a gente pode até
+
+25
+00:02:35,740 --> 00:02:43,420
+colocar um um alguma coisa aí né atualizando tipo recriando é reconstruindo o
+
+26
+00:02:43,420 --> 00:02:50,500
+prompt sei lá alguma coisa assim sabe mas o cara vai ter a opção de ver ali o
+
+27
+00:02:50,500 --> 00:02:56,580
+prompt ou saiu direto não ele confirma direto ele não ele
+
+28
+00:02:56,580 --> 00:03:02,080
+E conclui a edição e vai pra cá, até tirar essas duas, essas caixinhas aqui debaixo, que é.
+
+29
+00:03:02,080 --> 00:03:08,180
+Então pronto, é isso aí, aquele modalão ali com stream, já não, nem precisa não.
+
+30
+00:03:08,180 --> 00:03:15,760
+Não. Beleza, a segunda parte agora é um pouco mais complicado.
+
+31
+00:03:15,760 --> 00:03:25,690
+Tá, mas calma. Então o cara não vai ter mais acesso ao prompt.
+
+32
+00:03:25,690 --> 00:03:39,150
+Não, a segunda etapa, quando o cara for criar um novo agente, hoje está vindo direto, né?
+
+33
+00:03:39,150 --> 00:03:49,750
+Eu pensei, é porque quando criar um novo agente, ele vai ter que escolher duas opções, criar.
+
+34
+00:03:49,750 --> 00:03:53,750
+Só voltar aquela tela lá do machado, né?
+
+35
+00:03:53,750 --> 00:03:57,750
+e eu também já vi, é que eu não vou lembrar onde que eu vi
+
+36
+00:03:57,750 --> 00:04:07,060
+mas quer ver, eu vi tipo uns lugares que abram
+
+37
+00:04:07,060 --> 00:04:11,730
+quando você clica nesse botão ali, ele abre tipo um menino de contexto
+
+38
+00:04:11,730 --> 00:04:15,730
+e ele aparece assim, criar como construtor, ou criar
+
+39
+00:04:15,730 --> 00:04:20,180
+pelo tipo modo avançado, sabe? E daí tipo
+
+40
+00:04:20,180 --> 00:04:27,020
+tipo isso aqui, sabe? Entendeu?
+
+41
+00:04:27,020 --> 00:04:30,020
+É cara, é que eu não vou lembrar onde que é, onde que eu vi isso
+
+42
+00:04:30,020 --> 00:04:34,040
+Mas eu acho que eu sei de não...
+
+43
+00:04:34,040 --> 00:04:37,060
+Cara, enfim, a gente precisa ter as duas formas.
+
+44
+00:04:37,060 --> 00:04:39,060
+Criar pelo modo normal.
+
+45
+00:04:43,980 --> 00:04:47,660
+Criar pelo modo normal, que é o que a gente tem aqui.
+
+46
+00:04:47,660 --> 00:04:51,920
+E criar via prompt, via avançado.
+
+47
+00:04:51,920 --> 00:04:55,270
+Então tem um modo...
+
+48
+00:04:55,270 --> 00:04:58,200
+Não sei como seria o nome.
+
+49
+00:04:58,200 --> 00:05:05,680
+Um modo facilitado, um modo easy.
+
+50
+00:05:06,420 --> 00:05:09,610
+É, não dá para colocar modo easy.
+
+51
+00:05:09,610 --> 00:05:15,440
+É um modo facilitado, ou iniciante.
+
+52
+00:05:15,440 --> 00:05:18,440
+É, você é iniciante e lançado.
+
+53
+00:05:18,440 --> 00:05:20,440
+É básico, é iniciante e avançado.
+
+54
+00:05:20,440 --> 00:05:26,850
+Daí dá pra colocar um texto, um textinho, tipo, não sei como que você vai criar a tela, né?
+
+55
+00:05:26,850 --> 00:05:29,850
+Mas dá pra colocar, tipo, o modo iniciante.
+
+56
+00:05:29,850 --> 00:05:36,390
+Você prende os campos e o próprio construtor de prompt vai gerar teu prompt.
+
+57
+00:05:36,390 --> 00:05:39,390
+E no modo avançado você digita o prompt.
+
+58
+00:05:39,390 --> 00:05:46,130
+Agora, agora a gente precisa entrar aqui, cara, quando for pelo modo avançado,
+
+59
+00:05:46,130 --> 00:05:49,160
+algumas coisas não vão existir, né?
+
+60
+00:05:49,160 --> 00:05:51,320
+Bastante coisa, na verdade.
+
+61
+00:05:51,320 --> 00:05:54,200
+Por exemplo, a gente está em identidade de papel.
+
+62
+00:05:54,200 --> 00:05:56,700
+Exatamente esse papel da gente que vai existir.
+
+63
+00:05:56,700 --> 00:06:01,280
+Vai utilizar a mesma tela para os dois?
+
+64
+00:06:01,280 --> 00:06:09,200
+É que, cara, tem coisas que vão continuar funcionando, né?
+
+65
+00:06:09,200 --> 00:06:13,220
+É verdade.
+
+66
+00:06:13,220 --> 00:06:20,220
+Aí isso aí, cara, só vai ter dois steps ali, né? Três steps. Vai ter ali o identidade.
+
+67
+00:06:20,220 --> 00:06:35,410
+Esse dado de referência, cara. Eu acho que esse dado de referência vai precisar, né?
+
+68
+00:06:35,410 --> 00:06:39,590
+É, vai ser isso, as ferramentas.
+
+69
+00:06:39,590 --> 00:06:44,590
+As instruções principais não vai existir, ferramentas não vai existir, etapa de raciocínio
+
+70
+00:06:44,590 --> 00:06:48,590
+não vai não vai existir, formato de saída não vai existir.
+
+71
+00:06:48,590 --> 00:06:58,940
+E a coragem final ali, que tem algumas configurações ali, não, em encerramento de sessão.
+
+72
+00:06:58,940 --> 00:07:05,380
+Eu acho que vai existir encerramento de sessão, grupo de imagem.
+
+73
+00:07:05,380 --> 00:07:11,710
+Qual é a diferença do grupo de imagem para o básico? Ah, entendeu.
+
+74
+00:07:11,710 --> 00:07:14,710
+Grupo de imagem é grupo de imagem.
+
+75
+00:07:14,710 --> 00:07:17,710
+As coisas que ele pode enviar dentro da conversa.
+
+76
+00:07:17,710 --> 00:07:22,710
+São coisas que não vai para o prompt, né? Isso aqui não vai para o prompt, eu acho.
+
+77
+00:07:22,710 --> 00:07:26,220
+Eu acho.
+
+78
+00:07:26,220 --> 00:07:31,220
+Isso aí vai para o prompt para ele falando que ele tem esses arquivos, né? Eu não.
+
+79
+00:07:31,220 --> 00:07:35,490
+Eu não cruzei isso aí.
+
+80
+00:07:35,490 --> 00:07:37,490
+Mas eu acho que tem alguma instrução para ele.
+
+81
+00:07:37,490 --> 00:07:40,190
+Mas eu acho que não vai para o gerador.
+
+82
+00:07:40,190 --> 00:07:43,540
+Não vai para o gerador, eu acho que não.
+
+83
+00:07:43,540 --> 00:07:49,660
+Eu acho que vai pegar a string que gerou no gerador e ele coloca mais a lista do arrei lá.
+
+84
+00:07:49,660 --> 00:07:52,170
+e vai na V1.
+
+85
+00:07:52,170 --> 00:08:03,420
+Tá, é, grupo de imagem, cerramento de sessão, vai ter ferramentas,
+
+86
+00:08:03,420 --> 00:08:10,080
+identidade de papel, daí tira o papel da gente no caso.
+
+87
+00:08:10,080 --> 00:08:20,900
+Daí eu acho que coloca, eu não sei, eu colocaria uma etapa que seria só o prompt, né?
+
+88
+00:08:20,900 --> 00:08:21,900
+Ficaria assim.
+
+89
+00:08:21,900 --> 00:08:24,100
+Achei de ferramenta, né?
+
+90
+00:08:24,100 --> 00:08:26,100
+Acabei, só abei.
+
+91
+00:08:26,100 --> 00:08:28,980
+Eu acho que seria identidade de ferramenta, né?
+
+92
+00:08:28,980 --> 00:08:31,500
+Acho que daria para deixar essa identidade,
+
+93
+00:08:31,500 --> 00:08:34,500
+tiraria a identidade de papel, deixaria a sua identidade.
+
+94
+00:08:37,250 --> 00:08:40,250
+Daí embaixo, Prompter.
+
+95
+00:08:40,250 --> 00:08:46,740
+Daí ferramentas, grupos de mais e encerramento de sessão.
+
+96
+00:08:46,740 --> 00:08:48,060
+Só.
+
+97
+00:08:48,060 --> 00:08:50,060
+Daí tira esses dois botões aqui de baixo.
+
+98
+00:08:50,060 --> 00:08:55,960
+Acho que por hora é isso.
+
+99
+00:08:55,960 --> 00:09:00,360
+Ok.
+
+100
+00:09:00,360 --> 00:09:02,390
+Vai ter que colocar na...
+
+101
+00:09:02,390 --> 00:09:08,740
+Vou dar o back lá, né?
+
+102
+00:09:08,740 --> 00:09:10,740
+Tem que colocar mais um enum, dizendo o que que ele...
+
+103
+00:09:10,740 --> 00:09:20,010
+Aquele a gente é um agente avançado e um em um básico, né, um iniciante.
+
+104
+00:09:20,010 --> 00:09:27,710
+Um beginner e uma debança, né? Um expert, não sei o que dizer.
+
+105
+00:09:27,710 --> 00:09:35,490
+Acho bem isso, cara. São essas coisas.
+
+106
+00:09:35,490 --> 00:09:43,530
+Beleza, vou tentar fazer.
+
+107
+00:09:43,530 --> 00:09:50,890
+Daí mais para, deixa eu dar para separar aqui, acho que é isso, para funcionar isso.
+

@@ -14,6 +14,12 @@ Carrega apenas quando editando arquivos do frontend.
 
 Vue 3 + Tailwind v4 + shadcn-vue. Cores e tokens estao na skill `brand-guidelines`.
 
+## Icones
+
+- ALWAYS use `@phosphor-icons/vue` — NUNCA Lucide, FontAwesome, MDI ou qualquer outra lib de icones em codigo novo
+- Import: `import { PhArrowRight, PhCheck } from '@phosphor-icons/vue'`
+- Peso padrao: `weight="regular"` — outros: `"bold"`, `"duotone"`, `"fill"`, `"light"`, `"thin"`
+
 ## Spacing e Layout
 
 - Conter layouts com `max-w-7xl mx-auto` ou equivalente

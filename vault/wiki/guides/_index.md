@@ -1,7 +1,7 @@
 ---
 title: Guides Index
 description: Guias tecnicos detalhados — passo a passo de implementacao, arquivos envolvidos, APIs, composables e fluxos internos.
-last_updated: 2026-05-11
+last_updated: 2026-07-01
 ---
 
 # Guides
@@ -10,6 +10,8 @@ Documentacao tecnica detalhada de como cada feature foi implementada. Cada guia 
 
 | Guia | Feature | Descricao |
 |------|---------|-----------|
+| [[database-operational-queries]] | - | Queries SQL reutilizaveis para consultas operacionais no PostgreSQL |
+| [[chatfunnel-queries-catalog]] | - | Catalogo da pasta vault/chatfunnel_queries — o que cada query faz (metricas, faturamento, exports, suporte) |
 | [[onboarding-flow-guide]] | [[onboarding-flow]] | Jornada completa: signup, selecao de org, onboarding V2 chat, conexao de canais, templates |
 | [[skills-workspace-guide]] | — | Guia pratico de skills, rules, vault e ferramentas do workspace |
 | [[calendar-permissions-test-guide]] | [[calendar-permissions]] | Passo a passo para testar manualmente cada permissao do calendario |

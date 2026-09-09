@@ -56,3 +56,9 @@ last_updated: 2026-04-05
 
 ## PWA cache pode causar stale content
 **Repo:** chatfunnel-front. Service worker (vite-plugin-pwa) pode servir conteudo antigo em dev.
+
+## promtail-values.yaml existe mas nao e usado
+**Repo:** chatfunnel-gateway. Ha um `promtail-values.yaml` na raiz do repo, mas o `readme` de infra (comandos `helm upgrade --install`) so instala `fluent-bit` (via `fluent-bit-values.yaml`) no namespace `observability`. O Promtail nunca e de fato instalado — e sobra de uma tentativa anterior. Pipeline de logs para o Grafana no cluster GKE `chatfunnel-cluster`: **Fluent Bit (DaemonSet, tail em `/var/log/containers/*.log`) → Loki (`loki-gateway.observability.svc.cluster.local`, storage S3 via MinIO, retencao 30 dias) → Grafana** (datasource `http://loki.observability.svc.cluster.local:3100`, query `{namespace=~".+"}`). Cobre gateway completo + websocket na `main`.
+
+## Driver de logging do Docker Compose e misto (json-file vs gelf) — e json-file tambem cai no Grafana
+**Repos:** todos os que rodam em VM via Docker Compose. Nem todos usam GELF — `chatfunnel-api`, `chatfunnel-services`, `chatfunnel-scheduler`, `chatfunnel-external-api` e `chatfunnel-front` usam driver `json-file`; so `chatfunnel-worker-broadcast` e `chatfunnel-gateway` (em VM) usam `gelf` (`udp://172.18.0.1:12201`, Graylog). Os logs dos servicos `json-file` aparecem no Grafana (confirmado com `nest` e com o `processor`/agentes-v2 do chatfunnel-api) — o mecanismo provavel e um Promtail/Fluent Bit direto na VM lendo `/var/lib/docker/containers/*/*.json.log`, mas essa peca nao esta em nenhum repo do workspace (inferencia, nao confirmado por arquivo). Ver [[deployment-architecture]].

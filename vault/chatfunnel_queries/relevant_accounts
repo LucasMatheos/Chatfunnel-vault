@@ -1,0 +1,49 @@
+SELECT COUNT(DISTINCT a.id) AS contas
+FROM "Users" u
+JOIN "Accounts" a ON u.id = a."userId"
+WHERE
+  u."isDeleted" = false
+  AND a."isDeleted" = false
+  AND u."isFree" = false
+  AND (
+    -- Contas normais
+    (
+      u."founderMember" = false
+      AND u."typeClient" <> 'FOUNDER'
+      AND (
+        -- Ativas
+        (
+          a."nextDatePayment" > NOW()
+          AND a."isCanceled" = false
+          AND a."inCanceling" = false
+          AND a."subscriptionStatus" = 'ACTIVE'
+          AND a."planLeads" > '500'
+        )
+        OR
+        -- Em trial
+        (
+          a."trialExpireDate" > NOW()
+          AND a."planLeads" = '500'
+          AND a."isCanceled" = false
+        )
+        OR
+        -- Em cancelamento (últimos 7 dias)
+        (
+          a."inCanceling" = true 
+          AND a."requestedCancelationAt" > NOW() - INTERVAL '7 day'
+        )
+        OR
+        -- Canceladas (últimos 7 dias)
+        (
+          a."isCanceled" = true 
+          AND a."canceledAt" > NOW() - INTERVAL '7 day'
+        )
+      )
+    )
+    OR
+    -- Contas Founder
+    (
+      (u."founderMember" = true OR u."typeClient" = 'FOUNDER')
+      AND u."nextDatePayment" > NOW()
+    )
+  )
