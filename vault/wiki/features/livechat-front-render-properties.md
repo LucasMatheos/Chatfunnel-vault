@@ -3,7 +3,7 @@ title: Livechat — Propriedades Necessárias para Renderização
 description: Catálogo tabular dos dados que o frontend precisa para renderizar lista, conversa e detalhes do contato.
 tags: [features, livechat, frontend, contracts, reference]
 related: ["[[livechat]]", "[[livechat-contact-list-performance]]", "[[contacts]]", "[[crm-kanban]]"]
-last_updated: 2026-07-23
+last_updated: 2026-09-11
 status: reference
 ---
 
@@ -78,6 +78,12 @@ status: reference
 | `GET /api/chat/:channelId/:contactId/messages` | `Api` | Seleção e paginação | Retorna a página de mensagens |
 | Evento WebSocket `add-message` | `SignalR` / `eventBus` | Tempo real | Insere uma nova mensagem no array local |
 | `GET /api/chat/messages/:messageId` | `Api` | Sob demanda | Complementa mensagens Instagram quando o payload inicial é insuficiente |
+
+### Eventos WhatsApp que alteram mensagens
+
+- `objMessage.type = "reaction"` e `objMessage.type = "edit"` nao geram bolhas proprias.
+- Para uma edicao, localizar a mensagem por `objMessage.edit.original_message_id` em `messageId` ou `objMessage.id`, substituir o payload por `objMessage.edit.message` e definir `edited: true`.
+- O mesmo processamento precisa ocorrer no historico e no evento WebSocket `add-message`.
 
 ## Mensagem de broadcast com erro
 

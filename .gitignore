@@ -48,3 +48,4 @@ graphify-out/
 
 # MCP corpus (contem secrets/PII de respostas reais)
 scripts/mcp-prompts-playbook.md
+nul

@@ -4,288 +4,201 @@
 
 **Goal:** Executar no Agente V2 a automação configurada em `lifecycleAutomations.inactivityFollowup.onNoReply` após o período configurado sem uma nova mensagem do contato.
 
-**Architecture:** Reutilizar a fila já implantada `automationAssistantFollowUpQueue`, adicionando um payload discriminado `source: "AGENT_V2"` para preservar integralmente o comportamento legado. O V2 terá um coordenador Redis por sessão para rotacionar gerações do timer, um serviço pequeno para persistir/agendar/cancelar follow-ups e um ramo próprio no worker que valida conta, sessão e atendimento antes de despachar a automação pelo `systemActionsQueue`.
+**Architecture:** Reutilizar `automationAssistantFollowUpQueue` com um payload discriminado por `source: "AGENT_V2"`. `ContactsFollowUpScheduled` será a única fonte de verdade da geração: cada job terá ID único, uma nova mensagem cancelará registros `PENDING` anteriores da mesma sessão e o worker só disparará após reivindicar atomicamente seu registro com `PENDING -> UNANSWER`. Não haverá estado adicional em Redis.
 
-**Tech Stack:** TypeScript e JavaScript no `chatfunnel-api`, Redis, Prisma, scheduler HTTP/BullMQ existente, Jest; NestJS/TypeScript/Jest no `chatfunnel-services` apenas para remover o aviso de migração obsoleto.
+**Tech Stack:** TypeScript e JavaScript no `chatfunnel-api`, Prisma, scheduler HTTP/BullMQ existente, Winston e Jest.
 
 **Spec:** `vault/wiki/features/automations.md`, seção “Delays e Follow-Ups”, complementada pelo comportamento legado em `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/fragments/HandlerAssistant.js:3157` e pelo contrato atual da UI em `chatfunnel-front/src/views/agents/AgentsForm/components/modals/AutomationsConfigDialog.vue:70`.
 
 ## Global Constraints
 
-- Não criar outra fila no scheduler: usar `automationAssistantFollowUpQueue` para manter compatibilidade com `CancelFollowUp.js` e evitar rollout coordenado de infraestrutura.
-- Não alterar schema Prisma nem gerar/aplicar migration; `ContactsFollowUpScheduled` já possui os campos necessários.
-- Toda consulta nova deve ser isolada por `accountId`; modelos sem `accountId` direto devem ser filtrados por relações com `Contacts`, `Channels` ou `Agents`.
+- Não criar outra fila: usar `automationAssistantFollowUpQueue` para preservar o scheduler e `CancelFollowUp.js`.
+- Não criar estado Redis, script Lua, schema Prisma ou migration.
+- Toda consulta nova deve ser isolada por `accountId`; modelos sem `accountId` direto devem ser filtrados pelas relações com `Contacts`, `Channels` ou `Agents`.
 - Toda consulta nova a entidades com soft delete deve exigir `isDeleted: false`.
-- O primeiro escopo suporta somente `onNoReply`, que é o comportamento exposto atualmente pela UI do Agente V2.
-- `onReply` legado, alteração do editor Vue e refatoração geral do worker V1 ficam fora do escopo.
+- O primeiro escopo suporta somente `onNoReply`, comportamento atualmente exposto pela UI do Agente V2.
+- `onReply` legado, alteração do editor Vue, migração V1 → V2 e refatoração geral do worker V1 ficam fora do escopo.
 - O timer de follow-up é independente de `agent.duration/unit` e de `expireAgentQueue`; não aplicar o bloqueio por objetivos usado na expiração da sessão.
-- Não executar `npm test` no `chatfunnel-api`, pois o script chama `pretest` e realiza build. O usuário executa `npm run build:processor` manualmente quando quiser atualizar `dist/`; depois os testes focados usam `rtk npx jest`.
-- Não executar build, banco real, migration, commit ou push automaticamente.
-- Não incluir o texto das mensagens ou payloads completos do contato nos novos logs.
+- Não executar `npm test` no `chatfunnel-api`, pois o script executa build no `pretest`.
+- Não executar build, banco real ou migration automaticamente. O usuário executa `npm run build:processor` uma vez após todas as mudanças TypeScript.
+- Não incluir texto de mensagens nem payloads completos do contato nos novos logs.
+- Logs novos devem ser JSON estruturado no nível raiz, com `event`, `component`, `stage`, `status` e IDs de correlação consultáveis individualmente no Grafana.
+- Erros devem expor `errorName`, `errorCode`, `errorMessage` e `errorStack`; nunca serializar o objeto de request, payload do job ou mensagem do contato.
 
 ---
 
 ## Current Behavior and Root Cause
 
-O Assistant V1 chama `_createFollowupJob()` na primeira interação e em cada nova mensagem. O método cancela o job anterior, grava `ContactsFollowUpScheduled` e agenda `AutomationAssistantFollowUpQueue`. Quando o worker vence, ele verifica se o contato ainda está sendo atendido pelo mesmo assistant e despacha `onNoReply.automationId`.
+O Assistant V1 chama `_createFollowupJob()` na primeira interação e em cada nova mensagem. Ele cancela o job anterior, grava `ContactsFollowUpScheduled` e agenda `AutomationAssistantFollowUpQueue`. Quando o worker vence, verifica se o contato continua atendido pelo mesmo assistant e despacha `onNoReply.automationId`.
 
-O Agente V2 declara `inactivityFollowup` no tipo de `LifecycleAutomations`, mas `handleLifecycleAutomations()` aceita apenas eventos imediatos. O fluxo atual agenda somente `expireAgentQueue`, baseado em `agent.duration/unit`, e o comentário em `HandlerAgent.ts:2209` registra explicitamente que a fila atrasada do follow-up não foi implementada.
+O Agente V2 já declara `inactivityFollowup` em `LifecycleAutomations`, mas `handleLifecycleAutomations()` trata somente eventos imediatos. O fluxo atual agenda apenas `expireAgentQueue`, baseado em `agent.duration/unit`; portanto nenhuma fila é criada para o follow-up de inatividade.
 
-Não devemos copiar literalmente o legado porque ele:
+Não copiar o payload legado inteiro. O V2 deve enviar somente os IDs necessários, validar novamente o contexto no worker e usar `agentId` em `ranBy`.
 
-- envia `assistant` e `automationContext` inteiros no job;
-- consulta a última mensagem somente por `contactId`, sem `channelId`, `accountId` ou `isDeleted`;
-- reutiliza um único `jobId`, deixando uma janela em que um job antigo já ativo pode continuar;
-- atribui automações a `assistantId`, enquanto o V2 usa `agentId`;
-- não produz logs estruturados suficientes para depuração do ciclo completo.
+## Concurrency Model
+
+`ContactsFollowUpScheduled.typeAnswer` controla se um job ainda pode executar:
+
+- `PENDING`: job elegível para reivindicação.
+- `CANCELED`: job substituído, encerrado, inválido ou cujo enqueue/dispatch falhou.
+- `UNANSWER`: job reivindicado e enviado para `systemActionsQueue`.
+
+Cada geração usa `agent-v2-inactivity-${sessionId}-${crypto.randomUUID()}`. Para reagendar ou encerrar, buscar somente registros `PENDING` cujo `jobId` começa com `agent-v2-inactivity-${sessionId}-`, sempre com `contactId`, `channelId`, conta e soft delete no filtro. Marcar esses IDs como `CANCELED` antes de chamar `cancelJob()` evita que um job já entregue continue elegível.
+
+No worker, a reivindicação é um único `updateMany` filtrado por `jobId`, `PENDING`, contato, canal e conta. A automação só é despachada quando `count === 1`. Assim, reagendamento e cancelamento manual permanecem visíveis ao worker sem uma segunda fonte de verdade.
+
+A janela entre a reivindicação no banco e o enqueue em `systemActionsQueue` continua best-effort, assim como na infraestrutura atual. Exactly-once distribuído fica fora do escopo.
 
 ## Desired Runtime Sequence
 
 ```text
-Mensagem inbound do contato
+Mensagem inbound válida
   -> HandlerAgent encontra/cria AgentSession
-  -> AgentInactivityFollowupScheduler.schedule(...)
-       -> gera jobId único para esta geração
-       -> Redis troca atomicamente geração atual da sessão
-       -> cancela/marca CANCELED a geração anterior
-       -> cria ContactsFollowUpScheduled PENDING
+  -> scheduleInactivityFollowup(...)
+       -> marca gerações PENDING anteriores da sessão como CANCELED
+       -> tenta cancelar os jobs anteriores na fila
+       -> cria ContactsFollowUpScheduled PENDING com jobId único
        -> agenda automationAssistantFollowUpQueue
   -> processamento normal do agente continua
 
 Job vence
   -> AutomationAssistantFollowUpWorker detecta source=AGENT_V2
-  -> valida geração Redis ainda atual
-  -> valida sessão + agente + contato + canal + servedByAssistantId
-  -> reivindica atomicamente a geração Redis
-  -> despacha onNoReply pelo systemActionsQueue com ranBy.agentId
-  -> marca ContactsFollowUpScheduled como UNANSWER
+  -> valida payload, sessão, conta, contato, canal e ownership
+  -> tenta atualizar seu registro PENDING para UNANSWER
+  -> count=0: encerra sem disparar
+  -> count=1: despacha onNoReply pelo systemActionsQueue com ranBy.agentId
 
 Nova mensagem antes do vencimento
-  -> nova geração substitui a anterior no Redis
-  -> job anterior é cancelado e registro fica CANCELED
+  -> registro anterior passa para CANCELED
+  -> novo registro PENDING e novo job substituem a geração anterior
 
 Sessão encerrada
-  -> geração Redis é removida
-  -> job pendente é cancelado e registro fica CANCELED
+  -> registros PENDING da sessão passam para CANCELED
+  -> respectivos jobs são cancelados na fila
 ```
 
 ## File Structure
 
-- Create `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/redis/AgentInactivityFollowupState.ts`: ponte Redis responsável somente por geração atual, troca atômica e compare-and-delete.
-- Create `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/redis/AgentInactivityFollowupState.test.js`: testes unitários dos scripts Redis.
-- Create `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.ts`: conversão de duração e orquestração de Redis, Prisma e fila.
-- Create `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.test.js`: testes de agendamento, reagendamento, compensação e cancelamento.
-- Modify `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/redis/index.ts`: exportar o novo estado Redis.
+- Modify `chatfunnel-api/src/class/LoggerClass.js`: adicionar emissão de eventos com metadados JSON no nível raiz sem alterar `info()`, `error()`, `gpt()` ou `agent()`.
+- Create `chatfunnel-api/src/class/LoggerClass.test.js`: garantir campos estruturados e serialização segura de `Error`.
+- Modify `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/types/externals.d.ts`: declarar a nova API `Logger.event()` para o processor TypeScript.
+- Create `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.ts`: funções de duração, agendamento, reagendamento e cancelamento usando Prisma e a fila existente.
+- Create `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.test.js`: testes unitários do agendador.
 - Modify `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/HandlerAgent.ts`: integrar schedule/cancel ao ciclo da sessão.
-- Create `chatfunnel-api/src/commands/workers/AutomationAssistantFollowUpWorker.test.js`: preservar V1 e cobrir o ramo V2.
-- Modify `chatfunnel-api/src/commands/workers/AutomationAssistantFollowUpWorker.js`: separar handlers V1/V2 sem mudar a rota/fila.
-- Modify `chatfunnel-services/src/modules/agents-v2/migration/helpers/assistant-to-agent-payload.ts`: parar de emitir o warning de funcionalidade não suportada.
-- Modify `chatfunnel-services/src/modules/agents-v2/migration/helpers/assistant-to-agent-payload.spec.ts`: atualizar a expectativa da migração.
-- Modify `vault/wiki/features/automations.md`: documentar o follow-up do Agente V2 e a proteção por geração.
+- Modify `chatfunnel-api/src/commands/workers/AutomationAssistantFollowUpWorker.js`: preservar o caminho V1 e adicionar o processamento V2.
+- Create `chatfunnel-api/src/commands/workers/AutomationAssistantFollowUpWorker.test.js`: regressão V1 e cenários V2.
+- Modify `vault/wiki/features/automations.md`: documentar o comportamento e a reivindicação pelo banco.
 
 ---
 
-### Task 1: Estado Redis da geração ativa
+### Task 1: Emitir eventos estruturados pelo logger existente
 
 **Files:**
-- Create: `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/redis/AgentInactivityFollowupState.ts`
-- Create: `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/redis/AgentInactivityFollowupState.test.js`
-- Modify: `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/redis/index.ts:1`
+- Modify: `chatfunnel-api/src/class/LoggerClass.js:1`
+- Create: `chatfunnel-api/src/class/LoggerClass.test.js`
+- Modify: `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/types/externals.d.ts:10`
 
 **Interfaces:**
-- Consumes: `redis.client.sendCommand()` de `@redisAPI`.
-- Produces: `replace(sessionId, jobId, ttlSeconds)`, `isCurrent(sessionId, jobId)`, `claim(sessionId, jobId)` e `clear(sessionId)` no singleton `agentInactivityFollowupState`.
+- Consumes: instância Winston já criada por `LoggerClass` com `format.json()`.
+- Produces: `logger.event(level, event, fields, error?)` com metadados no nível raiz do JSON.
 
-- [ ] **Step 1: Escrever os testes falhando para troca e reivindicação da geração**
+- [ ] **Step 1: Escrever o teste do evento estruturado**
 
-Criar o teste usando o mesmo padrão dos outros primitivos Redis do V2:
+Mockar `winston.createLogger()` e verificar que o wrapper envia um único objeto ao Winston:
 
 ```js
-jest.mock("@redisAPI", () => ({
-  client: {
-    sendCommand: jest.fn(),
-  },
-}));
-
-const redis = require("@redisAPI");
-const {
-  agentInactivityFollowupState,
-} = require("@root/dist/processor/agents-v2/redis/AgentInactivityFollowupState");
-
-beforeEach(() => jest.clearAllMocks());
-
-describe("agentInactivityFollowupState", () => {
-  it("atomically replaces the current job and returns the previous job id", async () => {
-    redis.client.sendCommand.mockResolvedValue("old-job");
-
-    await expect(
-      agentInactivityFollowupState.replace("session-1", "new-job", 4200),
-    ).resolves.toBe("old-job");
-
-    expect(redis.client.sendCommand).toHaveBeenCalledWith([
-      "SET",
-      "agent:inactivity-followup:session-1",
-      "new-job",
-      "EX",
-      "4200",
-      "GET",
-    ]);
+it("emits queryable metadata and normalized error fields", () => {
+  const error = Object.assign(new Error("scheduler unavailable"), {
+    code: "ECONNRESET",
   });
 
-  it("reports whether a job is the current generation", async () => {
-    redis.client.sendCommand.mockResolvedValue("job-2");
-    await expect(
-      agentInactivityFollowupState.isCurrent("session-1", "job-2"),
-    ).resolves.toBe(true);
-  });
+  logger.event(
+    "error",
+    "agent_v2_inactivity_followup.failed",
+    {
+      component: "scheduler",
+      stage: "schedule_queue",
+      status: "failed",
+      accountId: "account-1",
+      sessionId: "session-1",
+      jobId: "job-1",
+    },
+    error,
+  );
 
-  it("claims only the matching generation", async () => {
-    redis.client.sendCommand.mockResolvedValue(1);
-    await expect(
-      agentInactivityFollowupState.claim("session-1", "job-2"),
-    ).resolves.toBe(true);
-  });
-
-  it("clears and returns the current generation", async () => {
-    redis.client.sendCommand.mockResolvedValue("job-2");
-    await expect(
-      agentInactivityFollowupState.clear("session-1"),
-    ).resolves.toBe("job-2");
+  expect(winstonLogger.log).toHaveBeenCalledWith({
+    level: "error",
+    message: "agent_v2_inactivity_followup.failed",
+    event: "agent_v2_inactivity_followup.failed",
+    component: "scheduler",
+    stage: "schedule_queue",
+    status: "failed",
+    accountId: "account-1",
+    sessionId: "session-1",
+    jobId: "job-1",
+    errorName: "Error",
+    errorCode: "ECONNRESET",
+    errorMessage: "scheduler unavailable",
+    errorStack: expect.any(String),
   });
 });
 ```
 
-- [ ] **Step 2: Validar a falha depois do build manual do processor**
+- [ ] **Step 2: Implementar `Logger.event()` sem alterar APIs existentes**
 
-Pré-requisito executado pelo usuário em `chatfunnel-api/`:
+Adicionar somente o método necessário:
 
-```powershell
-npm run build:processor
-```
+```js
+event(level, event, fields = {}, error) {
+  const errorFields = error
+    ? error instanceof Error
+      ? {
+          errorName: error.name,
+          errorCode: error.code,
+          errorMessage: error.message,
+          errorStack: error.stack,
+        }
+      : { errorMessage: String(error) }
+    : {};
 
-Comando focado do agente:
-
-```powershell
-rtk npx jest src/commands/instagram/WebHookHandler/processor/agents-v2/redis/AgentInactivityFollowupState.test.js --runInBand
-```
-
-Expected: FAIL porque o módulo `AgentInactivityFollowupState` ainda não existe.
-
-- [ ] **Step 3: Implementar a troca atômica e os scripts compare-and-delete**
-
-Usar uma chave por sessão e TTL informado pelo agendador:
-
-```ts
-import redis = require("@redisAPI");
-
-const PREFIX = "agent:inactivity-followup:";
-
-const CLAIM_SCRIPT = `
-if redis.call("GET", KEYS[1]) == ARGV[1] then
-  redis.call("DEL", KEYS[1])
-  return 1
-end
-return 0
-`;
-
-const CLEAR_SCRIPT = `
-local current = redis.call("GET", KEYS[1])
-if current then
-  redis.call("DEL", KEYS[1])
-end
-return current
-`;
-
-class AgentInactivityFollowupState {
-  private key(sessionId: string): string {
-    return `${PREFIX}${sessionId}`;
-  }
-
-  async replace(
-    sessionId: string,
-    jobId: string,
-    ttlSeconds: number,
-  ): Promise<string | null> {
-    return (await redis.client.sendCommand([
-      "SET",
-      this.key(sessionId),
-      jobId,
-      "EX",
-      String(ttlSeconds),
-      "GET",
-    ])) as string | null;
-  }
-
-  async isCurrent(sessionId: string, jobId: string): Promise<boolean> {
-    const current = await redis.client.sendCommand(["GET", this.key(sessionId)]);
-    return current === jobId;
-  }
-
-  async claim(sessionId: string, jobId: string): Promise<boolean> {
-    const result = await redis.client.sendCommand([
-      "EVAL",
-      CLAIM_SCRIPT,
-      "1",
-      this.key(sessionId),
-      jobId,
-    ]);
-    return result === 1;
-  }
-
-  async clear(sessionId: string): Promise<string | null> {
-    return (await redis.client.sendCommand([
-      "EVAL",
-      CLEAR_SCRIPT,
-      "1",
-      this.key(sessionId),
-    ])) as string | null;
-  }
+  this.logger.log({
+    ...fields,
+    ...errorFields,
+    level,
+    message: event,
+    event,
+  });
 }
-
-export const agentInactivityFollowupState =
-  new AgentInactivityFollowupState();
 ```
 
-Exportar pelo barrel:
+Não modificar o comportamento de `fmt()` ou dos métodos existentes.
+
+- [ ] **Step 3: Declarar a API para TypeScript**
 
 ```ts
-export { agentInactivityFollowupState } from "./AgentInactivityFollowupState";
+event(
+  level: "info" | "error",
+  event: string,
+  fields?: Record<string, unknown>,
+  error?: unknown,
+): void;
 ```
-
-- [ ] **Step 4: Rodar novamente o teste focado**
-
-Após o usuário atualizar `dist/` manualmente:
-
-```powershell
-rtk npx jest src/commands/instagram/WebHookHandler/processor/agents-v2/redis/AgentInactivityFollowupState.test.js --runInBand
-```
-
-Expected: PASS nos quatro cenários.
-
-- [ ] **Step 5: Revisar o checkpoint sem commit**
-
-```powershell
-rtk git diff --check
-rtk git diff -- src/commands/instagram/WebHookHandler/processor/agents-v2/redis
-```
-
-Expected: nenhum erro de whitespace; não criar commit sem pedido explícito.
 
 ---
 
-### Task 2: Agendador V2 isolado e testável
+### Task 2: Agendar e cancelar pelo estado persistido
 
 **Files:**
 - Create: `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.ts`
 - Create: `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.test.js`
 
 **Interfaces:**
-- Consumes: `agentInactivityFollowupState`, `prisma.contactsFollowUpScheduled`, `AutomationAssistantFollowUpQueue` e configuração `onNoReply`.
-- Produces: `computeInactivityDelayMs(config)`, `schedule(input)` e `cancel(input)` no singleton `agentInactivityFollowupScheduler`.
+- Consumes: `prisma.contactsFollowUpScheduled`, `AutomationAssistantFollowUpQueue`, `Logger.event()` e `inactivityFollowup.onNoReply`.
+- Produces: `computeInactivityDelayMs(config)`, `scheduleInactivityFollowup(input)` e `cancelInactivityFollowup(input)`.
 
-- [ ] **Step 1: Escrever testes de conversão de duração**
+- [ ] **Step 1: Escrever os testes do agendador**
 
-Cobrir unidades aceitas e valores inválidos:
+Mockar `@database`, `@queues` e `@logger` no padrão Jest existente. Cobrir:
 
 ```js
 describe("computeInactivityDelayMs", () => {
@@ -308,145 +221,39 @@ describe("computeInactivityDelayMs", () => {
 });
 ```
 
-- [ ] **Step 2: Escrever testes de agendamento e reagendamento**
+Adicionar testes que confirmem:
 
-Injetar dependências no construtor para evitar Redis, scheduler ou banco reais:
+- configuração inválida retorna `false` sem acessar Prisma ou fila;
+- agendamento cria um job V2 com ID único e payload mínimo;
+- reagendamento marca somente gerações `PENDING` da mesma sessão como `CANCELED` e tenta cancelar seus jobs;
+- falha de `addJob()` marca a nova geração como `CANCELED`;
+- encerramento cancela todas as gerações `PENDING` encontradas para a sessão.
+- sucesso e falha emitem eventos estruturados com `stage`, IDs de correlação e erro normalizado.
 
-```js
-const state = {
-  replace: jest.fn(),
-  claim: jest.fn(),
-  clear: jest.fn(),
-};
-const queue = {
-  addJob: jest.fn(),
-  cancelJob: jest.fn(),
-};
-const prisma = {
-  contactsFollowUpScheduled: {
-    create: jest.fn(),
-    updateMany: jest.fn(),
-  },
-};
-const logger = { info: jest.fn(), error: jest.fn() };
+- [ ] **Step 2: Implementar contratos e conversão de duração**
 
-it("creates and queues a V2 job with a unique generation", async () => {
-  state.replace.mockResolvedValue(null);
-  queue.addJob.mockResolvedValue({ id: "queued" });
-
-  await expect(scheduler.schedule(validInput)).resolves.toBe(true);
-
-  expect(queue.addJob).toHaveBeenCalledWith(
-    expect.stringMatching(/^agent-v2-inactivity-session-1-/),
-    expect.objectContaining({
-      source: "AGENT_V2",
-      sessionId: "session-1",
-      agentId: "agent-1",
-      accountId: "account-1",
-      automationId: "automation-1",
-    }),
-    600_000,
-  );
-});
-
-it("cancels and marks the previous generation before scheduling the new one", async () => {
-  state.replace.mockResolvedValue("old-job");
-  queue.addJob.mockResolvedValue({ id: "queued" });
-
-  await scheduler.schedule(validInput);
-
-  expect(queue.cancelJob).toHaveBeenCalledWith("old-job");
-  expect(prisma.contactsFollowUpScheduled.updateMany).toHaveBeenCalledWith({
-    where: expect.objectContaining({
-      jobId: "old-job",
-      typeAnswer: "PENDING",
-      contact: { accountId: "account-1", isDeleted: false },
-      channel: { accountId: "account-1", isDeleted: false },
-    }),
-    data: expect.objectContaining({ typeAnswer: "CANCELED" }),
-  });
-});
-```
-
-- [ ] **Step 3: Escrever testes de compensação e cancelamento**
-
-```js
-it("cancels the persisted record when scheduler enqueue fails", async () => {
-  state.replace.mockResolvedValue(null);
-  state.claim.mockResolvedValue(true);
-  queue.addJob.mockResolvedValue(null);
-
-  await expect(scheduler.schedule(validInput)).resolves.toBe(false);
-
-  expect(state.claim).toHaveBeenCalledWith(
-    "session-1",
-    expect.stringMatching(/^agent-v2-inactivity-session-1-/),
-  );
-  expect(prisma.contactsFollowUpScheduled.updateMany).toHaveBeenLastCalledWith({
-    where: expect.objectContaining({ typeAnswer: "PENDING" }),
-    data: expect.objectContaining({ typeAnswer: "CANCELED" }),
-  });
-});
-
-it("clears, cancels and marks the current job on session termination", async () => {
-  state.clear.mockResolvedValue("current-job");
-
-  await scheduler.cancel({
-    sessionId: "session-1",
-    accountId: "account-1",
-  });
-
-  expect(queue.cancelJob).toHaveBeenCalledWith("current-job");
-  expect(prisma.contactsFollowUpScheduled.updateMany).toHaveBeenCalledWith({
-    where: expect.objectContaining({
-      jobId: "current-job",
-      typeAnswer: "PENDING",
-      contact: { accountId: "account-1", isDeleted: false },
-      channel: { accountId: "account-1", isDeleted: false },
-    }),
-    data: expect.objectContaining({ typeAnswer: "CANCELED" }),
-  });
-});
-```
-
-- [ ] **Step 4: Implementar contratos, conversão e payload mínimo**
-
-Definir contratos explícitos:
+Usar tipos apenas para os dados realmente consumidos:
 
 ```ts
-export interface InactivityFollowupConfig {
+interface InactivityFollowupConfig {
   timeValue: number;
   timeUnit: string;
-  onNoReply: { automationId: string | null };
+  onNoReply?: { automationId?: string | null };
 }
 
-export interface ScheduleAgentInactivityFollowupInput {
+interface FollowupIdentity {
   sessionId: string;
-  agentId: string;
-  agentName: string;
   accountId: string;
   contactId: string;
   channelId: string;
+}
+
+interface ScheduleInput extends FollowupIdentity {
+  agentId: string;
   automationChain: string[];
   config: InactivityFollowupConfig;
 }
-
-export interface AgentV2InactivityFollowupJob {
-  source: "AGENT_V2";
-  jobId: string;
-  scheduledAt: string;
-  sessionId: string;
-  agentId: string;
-  agentName: string;
-  accountId: string;
-  contactId: string;
-  channelId: string;
-  automationId: string;
-  automationChain: string[];
-}
 ```
-
-Implementar a conversão sem `moment`, porque duração relativa não depende de timezone:
 
 ```ts
 export function computeInactivityDelayMs(
@@ -465,87 +272,70 @@ export function computeInactivityDelayMs(
 }
 ```
 
-- [ ] **Step 5: Implementar `schedule()` com compensação best-effort**
+- [ ] **Step 3: Implementar um helper interno de cancelamento**
+
+Criar uma função interna que:
+
+1. busque registros `PENDING` pelo prefixo da sessão, contato, canal, conta e soft delete;
+2. retorne imediatamente quando nenhum registro for encontrado;
+3. atualize somente os IDs encontrados ainda em `PENDING` para `CANCELED`, preenchendo `finishedAt`;
+4. chame `AutomationAssistantFollowUpQueue.cancelJob(jobId)` para cada registro encontrado.
+
+Filtro obrigatório:
+
+```ts
+const wherePending = {
+  jobId: { startsWith: `agent-v2-inactivity-${input.sessionId}-` },
+  contactId: input.contactId,
+  channelId: input.channelId,
+  typeAnswer: FollowUpScheduledTypeAnswer.PENDING,
+  contact: { accountId: input.accountId, isDeleted: false },
+  channel: { accountId: input.accountId, isDeleted: false },
+};
+```
+
+- [ ] **Step 4: Implementar `scheduleInactivityFollowup()`**
 
 O método deve:
 
-1. retornar `false` se `automationId`, contato, canal ou duração forem inválidos;
-2. gerar `jobId` com `crypto.randomUUID()` sem `:`, evitando restrições do BullMQ;
-3. usar TTL Redis de `ceil(delay / 1000) + 3600`;
-4. trocar a geração antes de cancelar a anterior;
-5. atualizar o registro anterior com filtros relacionais de conta e soft delete;
-6. criar o novo `ContactsFollowUpScheduled`;
-7. chamar `AutomationAssistantFollowUpQueue.addJob(jobId, payload, delay)`;
-8. se o enqueue retornar `null`, reivindicar/remover a geração criada, marcar o registro como `CANCELED`, registrar erro e retornar `false`.
+1. validar `automationId`, IDs e duração;
+2. chamar o helper de cancelamento para invalidar gerações anteriores;
+3. gerar `jobId` com `crypto.randomUUID()`;
+4. criar `ContactsFollowUpScheduled` como `PENDING`;
+5. agendar a fila com payload mínimo;
+6. se `addJob()` retornar `null` ou lançar, marcar esse `jobId` como `CANCELED`, logar sem payload e retornar `false`.
 
-Trecho central esperado:
+Payload V2:
 
 ```ts
-const jobId = `agent-v2-inactivity-${input.sessionId}-${crypto.randomUUID()}`;
-const scheduledAt = new Date();
-const ttlSeconds = Math.ceil(delay / 1000) + 3600;
-const previousJobId = await this.state.replace(
-  input.sessionId,
+{
+  source: "AGENT_V2",
   jobId,
-  ttlSeconds,
-);
-
-if (previousJobId) {
-  await this.queue.cancelJob(previousJobId);
-  await this.markCanceled(previousJobId, input.accountId);
+  sessionId: input.sessionId,
+  agentId: input.agentId,
+  accountId: input.accountId,
+  contactId: input.contactId,
+  channelId: input.channelId,
+  automationId,
+  automationChain: input.automationChain,
 }
-
-await this.prisma.contactsFollowUpScheduled.create({
-  data: {
-    contactId: input.contactId,
-    channelId: input.channelId,
-    jobId,
-    scheduleDate: new Date(scheduledAt.getTime() + delay),
-  },
-});
-
-const queued = await this.queue.addJob(
-  jobId,
-  {
-    source: "AGENT_V2",
-    jobId,
-    scheduledAt: scheduledAt.toISOString(),
-    sessionId: input.sessionId,
-    agentId: input.agentId,
-    agentName: input.agentName,
-    accountId: input.accountId,
-    contactId: input.contactId,
-    channelId: input.channelId,
-    automationId,
-    automationChain: input.automationChain,
-  },
-  delay,
-);
 ```
 
-- [ ] **Step 6: Implementar `cancel()` e logs estruturados**
+- [ ] **Step 5: Implementar `cancelInactivityFollowup()`**
 
-Usar `new Logger(accountId)` e mensagens estáveis:
+Reutilizar o helper interno com `sessionId`, `accountId`, `contactId` e `channelId`. Não criar classe, singleton, estado Redis ou abstração adicional.
 
-```text
-[AgentV2InactivityFollowup] scheduled session=... job=... automation=... delayMs=...
-[AgentV2InactivityFollowup] rescheduled session=... previousJob=... newJob=...
-[AgentV2InactivityFollowup] canceled session=... job=...
-[AgentV2InactivityFollowup] schedule failed session=... job=...
-```
+- [ ] **Step 6: Instrumentar o agendador**
 
-Não serializar o payload completo.
+Manter uma variável local `stage` antes de cada chamada externa e emitir:
 
-- [ ] **Step 7: Rodar testes focados e revisar**
+| `event` | Nível | Quando emitir | Campos adicionais |
+|---|---|---|---|
+| `agent_v2_inactivity_followup.scheduled` | `info` | registro persistido e job aceito pela fila | `component: "scheduler"`, `stage: "schedule_queue"`, `status: "succeeded"`, `delayMs` |
+| `agent_v2_inactivity_followup.canceled` | `info` | geração invalidada | `component: "scheduler"`, `stage: "cancel_previous"`, `status: "succeeded"`, `reason`: `RESCHEDULED`, `SESSION_TERMINATED` ou `ENQUEUE_FAILED` |
+| `agent_v2_inactivity_followup.failed` | `error` | exceção ou retorno `null` | `component: "scheduler"`, `status: "failed"`, `stage` exato e campos `error*` quando houver exceção |
 
-Após build manual do processor:
-
-```powershell
-rtk npx jest src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.test.js --runInBand
-rtk git diff --check
-```
-
-Expected: testes PASS; nenhum acesso real a Redis, scheduler ou banco.
+Todos incluem `accountId`, `sessionId`, `jobId`, `agentId`, `automationId`, `contactId` e `channelId` quando disponíveis. Não registrar configuração completa nem payload da fila.
 
 ---
 
@@ -558,46 +348,23 @@ Expected: testes PASS; nenhum acesso real a Redis, scheduler ou banco.
 - Modify: `chatfunnel-api/src/commands/instagram/WebHookHandler/processor/agents-v2/HandlerAgent.ts:2396`
 
 **Interfaces:**
-- Consumes: `agentInactivityFollowupScheduler.schedule()` e `.cancel()` da Task 2.
-- Produces: `scheduleInactivityFollowup()` e `cancelInactivityFollowup()` protegidos no handler.
+- Consumes: `scheduleInactivityFollowup(input)` e `cancelInactivityFollowup(input)` da Task 2.
+- Produces: chamadas protegidas nos pontos de entrada e encerramento da sessão.
 
-- [ ] **Step 1: Adicionar testes de integração do handler ao agendador**
-
-No teste do agendador, adicionar uma seção de contrato para confirmar os argumentos que o handler deverá fornecer. Não instanciar providers nem fazer chamadas de LLM. A integração no handler será revisada por teste indireto existente do fluxo de sessão e por inspeção do diff, evitando um mock frágil da classe abstrata inteira.
-
-Contrato esperado:
+- [ ] **Step 1: Adicionar wrappers protegidos no handler**
 
 ```ts
-await agentInactivityFollowupScheduler.schedule({
-  sessionId: this.session.id,
-  agentId: this.agent.id,
-  agentName: this.agent.name,
-  accountId: this.agent.accountId,
-  contactId: this.session.contactId,
-  channelId: this.session.channelId,
-  automationChain: this.context.automationChain ?? [],
-  config: lifecycle.inactivityFollowup,
-});
-```
-
-- [ ] **Step 2: Implementar `scheduleInactivityFollowup()`**
-
-Adicionar próximo das operações de expiração, mas manter os dois conceitos separados:
-
-```ts
-protected async scheduleInactivityFollowup(): Promise<void> {
+protected async scheduleConfiguredInactivityFollowup(): Promise<void> {
   if (!this.session || !this.agent) return;
   if (!this.session.contactId || !this.session.channelId) return;
 
-  const lifecycle = this.agent
-    .lifecycleAutomations as LifecycleAutomations | null;
+  const lifecycle = this.agent.lifecycleAutomations as LifecycleAutomations | null;
   const config = lifecycle?.inactivityFollowup;
   if (!config?.onNoReply?.automationId) return;
 
-  await agentInactivityFollowupScheduler.schedule({
+  await scheduleInactivityFollowup({
     sessionId: this.session.id,
     agentId: this.agent.id,
-    agentName: this.agent.name,
     accountId: this.agent.accountId,
     contactId: this.session.contactId,
     channelId: this.session.channelId,
@@ -607,9 +374,11 @@ protected async scheduleInactivityFollowup(): Promise<void> {
 }
 ```
 
-- [ ] **Step 3: Rearmar o timer para toda mensagem inbound válida**
+Criar o wrapper de cancelamento com a mesma identidade, sem `agentId`, `automationChain` ou configuração.
 
-Em `execute()`, chamar depois do tratamento de exit word e independentemente de objetivos:
+- [ ] **Step 2: Rearmar depois da validação de exit word**
+
+Em `execute()`, chamar `scheduleConfiguredInactivityFollowup()` depois do retorno de exit word e antes da lógica de expiração:
 
 ```ts
 if (this.isExitWord(payload.text)) {
@@ -617,54 +386,22 @@ if (this.isExitWord(payload.text)) {
   return;
 }
 
-await this.scheduleInactivityFollowup();
+await this.scheduleConfiguredInactivityFollowup();
 
 if (!this.agentHasObjectives() || this.session.objectiveCompletedAt) {
   await this.scheduleExpiration();
 }
 ```
 
-Essa ordem garante que exit words não criem follow-up e que agentes com objetivos também recebam o follow-up configurado antes da conclusão do objetivo.
+- [ ] **Step 3: Cancelar durante toda terminação de sessão**
 
-- [ ] **Step 4: Cancelar o timer em toda terminação de sessão**
+Em `terminateSession()`, chamar o wrapper de cancelamento antes dos retornos especiais de rating e junto de `cancelExpiration()`.
 
-Adicionar antes de qualquer retorno especial de rating:
+- [ ] **Step 4: Atualizar o comentário interno**
 
-```ts
-await this.cancelInactivityFollowup();
-await this.cancelExpiration();
-```
+Remover a observação de que o follow-up não está implementado e registrar que ele é agendado separadamente e processado por `AutomationAssistantFollowUpWorker`.
 
-Implementar:
-
-```ts
-protected async cancelInactivityFollowup(): Promise<void> {
-  if (!this.session || !this.agent) return;
-  await agentInactivityFollowupScheduler.cancel({
-    sessionId: this.session.id,
-    accountId: this.agent.accountId,
-  });
-}
-```
-
-- [ ] **Step 5: Corrigir a documentação interna do handler**
-
-Substituir o comentário “not yet implemented” por:
-
-```ts
-* inactivityFollowup is scheduled separately by scheduleInactivityFollowup()
-* and dispatched by AutomationAssistantFollowUpWorker after the configured delay.
-```
-
-- [ ] **Step 6: Rodar os testes V2 não relacionados a provider**
-
-Após build manual do processor:
-
-```powershell
-rtk npx jest src/commands/instagram/WebHookHandler/processor/agents-v2/redis/AgentInactivityFollowupState.test.js src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.test.js --runInBand
-```
-
-Expected: PASS e nenhum teste chama LLM, Meta ou banco.
+Não adicionar teste que apenas replique os argumentos esperados. A integração será coberta pela regressão focada do fluxo V2 na Task 5.
 
 ---
 
@@ -675,296 +412,182 @@ Expected: PASS e nenhum teste chama LLM, Meta ou banco.
 - Create: `chatfunnel-api/src/commands/workers/AutomationAssistantFollowUpWorker.test.js`
 
 **Interfaces:**
-- Consumes: `AgentV2InactivityFollowupJob`, `agentInactivityFollowupState.claim()`, Prisma e `systemActionsQueue`.
-- Produces: `processLegacyFollowup(body)` e `processAgentV2Followup(body)` selecionados por `body.source`.
+- Consumes: payload V2 da Task 2, Prisma, `systemActionsQueue` e `Logger.event()` da Task 1.
+- Produces: `processLegacyFollowup(body)` e `processAgentV2Followup(body)`, selecionados por `body.source`.
 
-- [ ] **Step 1: Escrever o teste que preserva o ramo legado**
+- [ ] **Step 1: Escrever os testes do worker**
 
-```js
-it("keeps legacy payloads on the existing assistant path", async () => {
-  prisma.contactsChannels.findFirst.mockResolvedValue({ id: "cc-1" });
-  prisma.messages.findFirst.mockResolvedValue(null);
+Cobrir os seguintes comportamentos:
 
-  await worker(
-    makeReq({ automationContext, inactivityFollowup, assistant }),
-    makeRes(),
-  );
+- payload sem `source` continua executando o fluxo V1 e usa `ranBy.assistantId`;
+- payload V2 inválido não consulta nem despacha;
+- sessão inexistente, conta divergente, entidade deletada ou ownership alterado marca o registro como `CANCELED` e não despacha;
+- claim com `count: 0` trata o job como obsoleto e não despacha;
+- claim com `count: 1` envia `onNoReply` com `ranBy.agentId` e nome carregado da relação `agent`;
+- falha ou retorno `null` de `systemActionsQueue.addJob()` muda `UNANSWER` para `CANCELED`.
 
-  expect(prisma.messages.findFirst).toHaveBeenCalled();
-  expect(systemActionsQueue.addJob).toHaveBeenCalledWith(
-    expect.objectContaining({
-      data: expect.objectContaining({
-        ranBy: expect.objectContaining({ assistantId: assistant.id }),
-      }),
-    }),
-  );
-});
-```
-
-- [ ] **Step 2: Escrever testes V2 para job obsoleto e sessão inválida**
+O teste do claim deve exigir o filtro completo:
 
 ```js
-it("cancels a stale V2 generation without dispatching", async () => {
-  state.claim.mockResolvedValue(false);
-
-  await worker(makeReq(agentV2Body), makeRes());
-
-  expect(systemActionsQueue.addJob).not.toHaveBeenCalled();
-  expect(prisma.contactsFollowUpScheduled.updateMany).toHaveBeenCalledWith({
-    where: expect.objectContaining({
-      jobId: agentV2Body.jobId,
-      typeAnswer: "PENDING",
-    }),
-    data: expect.objectContaining({ typeAnswer: "CANCELED" }),
-  });
-});
-
-it("cancels when the scoped active session no longer exists", async () => {
-  prisma.agentSessions.findFirst.mockResolvedValue(null);
-
-  await worker(makeReq(agentV2Body), makeRes());
-
-  expect(state.claim).not.toHaveBeenCalled();
-  expect(systemActionsQueue.addJob).not.toHaveBeenCalled();
-});
-```
-
-- [ ] **Step 3: Escrever o teste de isolamento por conta e soft delete**
-
-```js
-expect(prisma.agentSessions.findFirst).toHaveBeenCalledWith({
+expect(prisma.contactsFollowUpScheduled.updateMany).toHaveBeenCalledWith({
   where: {
-    id: "session-1",
-    agentId: "agent-1",
-    contactId: "contact-1",
-    channelId: "channel-1",
-    agent: { accountId: "account-1", isDeleted: false },
-    contact: { accountId: "account-1", isDeleted: false },
-    channel: { accountId: "account-1", isDeleted: false },
+    jobId: agentV2Body.jobId,
+    contactId: agentV2Body.contactId,
+    channelId: agentV2Body.channelId,
+    typeAnswer: "PENDING",
+    contact: { accountId: agentV2Body.accountId, isDeleted: false },
+    channel: { accountId: agentV2Body.accountId, isDeleted: false },
   },
-});
-
-expect(prisma.contactsChannels.findFirst).toHaveBeenCalledWith({
-  where: {
-    contactId: "contact-1",
-    channelId: "channel-1",
-    servedByAssistant: true,
-    servedByAssistantId: "agent-1",
-    contact: { accountId: "account-1", isDeleted: false },
-    channel: { accountId: "account-1", isDeleted: false },
+  data: {
+    typeAnswer: "UNANSWER",
+    finishedAt: expect.any(Date),
   },
 });
 ```
 
-- [ ] **Step 4: Escrever o teste de disparo único com atribuição ao agente**
+- [ ] **Step 2: Preservar o fluxo legado em uma função própria**
+
+Mover o corpo atual para `processLegacyFollowup(body)` sem alterar consultas, payload ou semântica. O export responde HTTP 200 e escolhe o ramo:
 
 ```js
-it("claims the current generation and dispatches onNoReply as Agent V2", async () => {
-  prisma.agentSessions.findFirst.mockResolvedValue({ id: "session-1" });
-  prisma.contactsChannels.findFirst.mockResolvedValue({ id: "cc-1" });
-  state.claim.mockResolvedValue(true);
-  systemActionsQueue.addJob.mockResolvedValue({ id: "system-job" });
+if (req.body?.source === "AGENT_V2") {
+  return await processAgentV2Followup(req.body);
+}
+return await processLegacyFollowup(req.body);
+```
 
-  await worker(makeReq(agentV2Body), makeRes());
+- [ ] **Step 3: Implementar validação V2**
 
-  expect(systemActionsQueue.addJob).toHaveBeenCalledWith({
-    object: "system",
-    automationChain: agentV2Body.automationChain,
-    data: {
-      automationId: agentV2Body.automationId,
-      contactId: agentV2Body.contactId,
-      channelId: agentV2Body.channelId,
-      accountId: agentV2Body.accountId,
-      ranBy: {
-        agentId: agentV2Body.agentId,
-        agentName: agentV2Body.agentName,
-        automationId: null,
-        automationName: null,
-      },
+Validar strings não vazias para `jobId`, `sessionId`, `agentId`, `accountId`, `contactId`, `channelId` e `automationId`.
+
+Buscar a sessão com agente, contato e canal limitados à conta e não deletados. Selecionar também `agent.name`, evitando transportar `agentName` no job. Em seguida validar `ContactsChannels.servedByAssistant === true` e `servedByAssistantId === agentId` com os mesmos filtros de conta e soft delete.
+
+Se qualquer validação falhar, marcar somente o `jobId` ainda `PENDING` como `CANCELED` e retornar.
+
+- [ ] **Step 4: Reivindicar e despachar uma vez**
+
+Depois de todas as validações, executar o `updateMany` atômico `PENDING -> UNANSWER`. Continuar somente quando `count === 1`.
+
+Despachar:
+
+```js
+await systemActionsQueue.addJob({
+  object: "system",
+  automationChain: body.automationChain ?? [],
+  data: {
+    automationId: body.automationId,
+    contactId: body.contactId,
+    channelId: body.channelId,
+    accountId: body.accountId,
+    ranBy: {
+      agentId: body.agentId,
+      agentName: session.agent.name,
+      automationId: null,
+      automationName: null,
     },
-  });
-  expect(prisma.contactsFollowUpScheduled.updateMany).toHaveBeenCalledWith({
-    where: expect.objectContaining({
-      jobId: agentV2Body.jobId,
-      typeAnswer: "PENDING",
-    }),
-    data: expect.objectContaining({ typeAnswer: "UNANSWER" }),
-  });
+  },
 });
 ```
 
-- [ ] **Step 5: Separar o worker legado sem alterar sua lógica**
+Se o enqueue retornar `null` ou lançar, atualizar esse registro de `UNANSWER` para `CANCELED` e registrar erro.
 
-Refatorar o export para selecionar o ramo:
+- [ ] **Step 5: Instrumentar o worker com eventos estruturados**
+
+Usar `Logger.event()` no worker. Todo evento deve incluir, quando disponível:
 
 ```js
-module.exports = async function (req, res) {
-  res.status(200).json({ status: true });
-
-  try {
-    if (req.body?.source === "AGENT_V2") {
-      return await processAgentV2Followup(req.body);
-    }
-    return await processLegacyFollowup(req.body);
-  } catch (error) {
-    const accountId = req.body?.accountId;
-    const logger = new Logger(accountId || "unknown");
-    logger.error("[AutomationAssistantFollowUpWorker] failed", error);
-  }
-};
+{
+  component: "worker",
+  stage: "validate" | "load_session" | "validate_ownership" | "claim" |
+    "dispatch",
+  status: "started" | "succeeded" | "skipped" | "failed",
+  accountId,
+  sessionId,
+  jobId,
+  agentId,
+  automationId,
+  contactId,
+  channelId,
+}
 ```
 
-Mover o corpo atual para `processLegacyFollowup()` sem modificar consultas ou semântica nesta entrega.
+Eventos obrigatórios:
 
-- [ ] **Step 6: Implementar validação e claim do ramo V2**
+| `event` | Nível | Quando emitir | Campos adicionais |
+|---|---|---|---|
+| `agent_v2_inactivity_followup.worker_received` | `info` | início do ramo V2 | nenhum |
+| `agent_v2_inactivity_followup.skipped` | `info` | execução encerrada sem dispatch | `reason`: `INVALID_PAYLOAD`, `INVALID_SESSION`, `OWNERSHIP_CHANGED` ou `STALE_JOB` |
+| `agent_v2_inactivity_followup.claimed` | `info` | transição `PENDING -> UNANSWER` efetuada | nenhum |
+| `agent_v2_inactivity_followup.dispatched` | `info` | `systemActionsQueue` aceitou o job | nenhum |
+| `agent_v2_inactivity_followup.failed` | `error` | exceção ou retorno `null` | `stage` exato e campos `error*` quando houver exceção |
 
-Executar nesta ordem:
+Manter uma variável local `stage` antes de cada operação externa. O `catch` emite `failed` com a última etapa atribuída, permitindo identificar se o erro ocorreu na validação, consulta da sessão, ownership, claim ou dispatch.
 
-1. validar que todos os IDs obrigatórios são strings não vazias;
-2. carregar sessão com agente/contato/canal limitados à conta e não deletados;
-3. validar `ContactsChannels.servedByAssistant` e `servedByAssistantId`;
-4. chamar `state.claim(sessionId, jobId)` imediatamente antes do dispatch;
-5. se o claim falhar, marcar somente aquele `jobId` como `CANCELED`;
-6. despachar o `ProcessorData` com `ranBy.agentId`;
-7. se `addJob()` retornar job, marcar `UNANSWER`; se retornar `null`, marcar `CANCELED` e logar erro.
-
-Não consultar `Messages`: uma nova mensagem válida já troca a geração Redis durante `HandlerAgent.execute()`. A geração atual é a fonte de verdade para inatividade no V2.
-
-- [ ] **Step 7: Adicionar logs operacionais estáveis**
-
-```text
-[AgentV2InactivityFollowupWorker] stale session=... job=...
-[AgentV2InactivityFollowupWorker] inactive session session=... job=...
-[AgentV2InactivityFollowupWorker] assistant ownership changed session=... job=...
-[AgentV2InactivityFollowupWorker] dispatched session=... job=... automation=...
-[AgentV2InactivityFollowupWorker] dispatch failed session=... job=... automation=...
-```
-
-- [ ] **Step 8: Rodar o teste focado do worker**
-
-```powershell
-rtk npx jest src/commands/workers/AutomationAssistantFollowUpWorker.test.js --runInBand
-```
-
-Expected: PASS para compatibilidade V1, geração obsoleta, sessão inexistente, ownership alterado, isolamento por conta e dispatch V2.
+Adicionar expectativas nos testes do agendador e worker para pelo menos um evento de sucesso, um `skipped` e um `failed`, verificando campos de correlação e `stage`.
 
 ---
 
-### Task 5: Remover o warning obsoleto da migração V1 → V2
-
-**Files:**
-- Modify: `chatfunnel-services/src/modules/agents-v2/migration/helpers/assistant-to-agent-payload.ts:455`
-- Modify: `chatfunnel-services/src/modules/agents-v2/migration/helpers/assistant-to-agent-payload.spec.ts:711`
-- Keep: `chatfunnel-services/src/modules/agents-v2/migration/types/migration-report.ts:57`
-
-**Interfaces:**
-- Consumes: suporte runtime entregue nas Tasks 1–4.
-- Produces: relatórios novos de migração sem `INACTIVITY_FOLLOWUP_UNSUPPORTED`.
-
-- [ ] **Step 1: Alterar primeiro o teste para expressar o novo comportamento**
-
-```ts
-it('copies lifecycleAutomations without warning about inactivity follow-up', () => {
-  const lifecycle = {
-    endSession: { automationId: AUTOMATION },
-    inactivityFollowup: {
-      timeUnit: 'MINUTES',
-      timeValue: 10,
-      onReply: { automationId: null },
-      onNoReply: { automationId: AUTOMATION },
-    },
-  }
-
-  const { dto, issues } = mapAssistantToAgentPayload(
-    buildAssistant({ lifecycleAutomations: lifecycle as never }),
-    buildContext(),
-  )
-
-  expect(dto.lifecycleAutomations).toEqual(lifecycle)
-  expect(codes(issues)).not.toContain(
-    MigrationIssueCode.INACTIVITY_FOLLOWUP_UNSUPPORTED,
-  )
-})
-```
-
-- [ ] **Step 2: Rodar o teste e confirmar a falha**
-
-```powershell
-rtk npx jest src/modules/agents-v2/migration/helpers/assistant-to-agent-payload.spec.ts --runInBand
-```
-
-Expected: FAIL porque o mapper ainda adiciona o warning.
-
-- [ ] **Step 3: Remover somente a emissão do warning e helper morto**
-
-Remover o bloco `if (hasInactivityFollowup(...))` e remover `hasInactivityFollowup()` caso não reste outro uso. Manter o enum `INACTIVITY_FOLLOWUP_UNSUPPORTED` nesta entrega para não quebrar consumidores que ainda desserializem relatórios históricos.
-
-- [ ] **Step 4: Rodar novamente o teste focado**
-
-```powershell
-rtk npx jest src/modules/agents-v2/migration/helpers/assistant-to-agent-payload.spec.ts --runInBand
-```
-
-Expected: PASS.
-
----
-
-### Task 6: Documentação, observabilidade e validação integrada
+### Task 5: Documentar e validar o fluxo completo
 
 **Files:**
 - Modify: `vault/wiki/features/automations.md:67`
-- Review: todos os arquivos das Tasks 1–5
+- Review: todos os arquivos das Tasks 1–4.
 
 **Interfaces:**
-- Consumes: comportamento final implementado.
-- Produces: documentação operacional e roteiro de verificação em Grafana.
+- Consumes: comportamento implementado nas Tasks 1–4.
+- Produces: documentação operacional e evidência dos testes focados.
 
 - [ ] **Step 1: Atualizar a knowledge base**
 
-Adicionar à seção de filas:
+Documentar:
 
 ```markdown
 ### Follow-up de inatividade do Agente V2
 
-O Agente V2 reutiliza `AutomationAssistantFollowUpQueue`, mas envia jobs com
-`source: AGENT_V2`. Cada mensagem inbound cria uma geração única por sessão;
-uma chave Redis invalida gerações anteriores e evita que um job atrasado
-dispare depois de uma nova resposta. O worker valida sessão, conta, contato,
-canal e `servedByAssistantId` antes de iniciar `onNoReply.automationId`.
+O Agente V2 reutiliza `AutomationAssistantFollowUpQueue` com jobs identificados
+por `source: AGENT_V2`. Cada mensagem inbound cancela registros `PENDING`
+anteriores da mesma sessão e cria uma geração com `jobId` único. O worker
+valida sessão, conta, contato, canal e ownership, e só dispara a automação ao
+alterar atomicamente o registro de `PENDING` para `UNANSWER`.
 
-O timer de follow-up é independente da expiração da sessão (`expireAgentQueue`).
-Encerrar a sessão cancela ambos os timers.
+O timer é independente de `expireAgentQueue`. Encerrar a sessão cancela os
+dois timers.
+
+Os eventos são enviados como JSON estruturado pelo `Logger.event()`. O campo
+`jobId` correlaciona agendamento, cancelamento, claim e dispatch; `stage`,
+`status`, `reason` e os campos `error*` identificam falhas sem expor mensagens
+ou payloads do contato.
 ```
 
-- [ ] **Step 2: Rodar toda a suíte focada da API**
+- [ ] **Step 2: Atualizar o processor uma única vez**
 
-Depois que o usuário executar manualmente `npm run build:processor`:
+Pré-requisito executado manualmente pelo usuário em `chatfunnel-api/`:
 
 ```powershell
-rtk npx jest src/commands/instagram/WebHookHandler/processor/agents-v2/redis/AgentInactivityFollowupState.test.js src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.test.js src/commands/workers/AutomationAssistantFollowUpWorker.test.js --runInBand
+npm run build:processor
 ```
 
-Expected: todos PASS.
+Nenhum build deve ser executado pelo agente sem pedido explícito.
 
-- [ ] **Step 3: Rodar a regressão focada de encerramento e roteamento V2**
+- [ ] **Step 3: Rodar a suíte focada da API**
+
+Depois do build manual:
+
+```powershell
+rtk npx jest src/class/LoggerClass.test.js src/commands/instagram/WebHookHandler/processor/agents-v2/inactivity/AgentInactivityFollowupScheduler.test.js src/commands/workers/AutomationAssistantFollowUpWorker.test.js --runInBand
+```
+
+Expected: PASS para metadados estruturados, serialização de erro, conversão, agendamento, reagendamento, cancelamento, falhas de enqueue, compatibilidade V1, validação V2 e claim atômico.
+
+- [ ] **Step 4: Rodar regressões de encerramento e roteamento V2**
 
 ```powershell
 rtk npx jest src/commands/assistant/StopAssistant.test.js src/commands/instagram/WebHookHandler/processor/__tests__/handleServedByAgentV2.test.js --runInBand
 ```
 
-Expected: todos PASS; encerramento continua limpando atendimento e mensagens continuam sendo roteadas ao V2.
+Expected: PASS; encerramento continua limpando atendimento e mensagens continuam roteadas ao V2.
 
-- [ ] **Step 4: Rodar o teste focado do Services**
-
-```powershell
-rtk npx jest src/modules/agents-v2/migration/helpers/assistant-to-agent-payload.spec.ts --runInBand
-```
-
-Expected: PASS.
-
-- [ ] **Step 5: Revisar o diff final sem build ou commit automático**
-
-Em cada repositório afetado:
+- [ ] **Step 5: Revisar o diff final**
 
 ```powershell
 rtk git status --short
@@ -972,52 +595,54 @@ rtk git diff --check
 rtk git diff
 ```
 
-Expected: somente arquivos listados neste plano; nenhuma migration, lockfile, artefato `dist/` ou mudança do front.
+Expected: somente os arquivos listados; nenhuma migration, lockfile, artefato `dist/`, estado Redis, mudança no front ou no `chatfunnel-services`.
 
-- [ ] **Step 6: Verificar manualmente em ambiente com scheduler/Grafana**
+- [ ] **Step 6: Fazer smoke test manual**
 
-Usar um agente V2 de teste com `timeValue: 1`, `timeUnit: MINUTES` e uma automação segura. Enviar uma mensagem e confirmar:
+Em ambiente com scheduler, configurar um Agente V2 com delay de um minuto:
 
-```text
-[AgentV2InactivityFollowup] scheduled
-[AgentV2InactivityFollowupWorker] dispatched
+1. enviar uma mensagem e confirmar `scheduled` seguido de `dispatched` após o prazo;
+2. enviar uma segunda mensagem antes do prazo e confirmar que o primeiro `jobId` fica `CANCELED` e não dispara;
+3. encerrar a sessão antes do prazo e confirmar que nenhum follow-up dispara;
+4. cancelar pelo Livechat e confirmar que o worker encontra `count: 0` no claim.
+
+No Grafana/Loki, após o seletor de ambiente, usar os campos JSON diretamente:
+
+```logql
+| json | jobId="agent-v2-inactivity-session-1-..."
+| json | event="agent_v2_inactivity_followup.failed"
+| json | component="worker" | stage="dispatch" | status="failed"
 ```
 
-Enviar uma segunda mensagem antes do minuto e confirmar:
-
-```text
-[AgentV2InactivityFollowup] rescheduled
-```
-
-O primeiro `jobId` não pode produzir `dispatched`; somente a geração mais recente pode iniciar a automação.
+Para um `jobId`, deve ser possível reconstruir cronologicamente `scheduled`, eventual `canceled`, `worker_received`, `claimed` e `dispatched` ou `failed`.
 
 ## Acceptance Criteria
 
-- Um agente V2 com `onNoReply.automationId` agenda exatamente um follow-up corrente por sessão.
-- Cada mensagem inbound válida substitui a geração anterior.
-- O job corrente dispara a automação configurada com `ranBy.agentId/agentName`.
-- Jobs obsoletos, sessões encerradas, contatos/canais deletados ou ownership alterado não disparam automações.
-- Encerrar a sessão cancela o follow-up pendente e a expiração da sessão.
-- `ContactsFollowUpScheduled` reflete `PENDING`, `CANCELED` ou `UNANSWER` e continua compatível com o cancelamento do Livechat.
+- Um Agente V2 com `onNoReply.automationId` mantém exatamente um registro `PENDING` por sessão.
+- Cada mensagem inbound válida cancela a geração anterior e agenda uma nova com `jobId` único.
+- O worker dispara somente quando consegue alterar seu registro de `PENDING` para `UNANSWER`.
+- Cancelamento manual, sessão encerrada, conta divergente, contato/canal deletado ou ownership alterado impedem o disparo.
+- O job corrente usa `ranBy.agentId` e o nome atual do agente carregado pelo worker.
+- `ContactsFollowUpScheduled` permanece a única fonte de verdade do estado do follow-up.
 - O Assistant V1 continua passando pelo ramo legado sem alteração comportamental.
-- A migração V1 → V2 deixa de informar incorretamente que o follow-up é unsupported.
-- Logs permitem correlacionar `sessionId`, `jobId`, `agentId` e `automationId` no Grafana.
-- Nenhuma nova fila, migration, dependência, alteração no front ou acesso a banco real é necessário.
+- Logs são JSON estruturado, pesquisáveis por `event`, `component`, `stage`, `status`, `jobId`, IDs de negócio, `reason` e campos normalizados de erro.
+- Um único `jobId` permite reconstruir no Grafana o ciclo desde o agendamento até cancelamento, descarte, dispatch ou falha.
+- Nenhuma nova fila, chave Redis, migration, dependência, mudança no front ou alteração no `chatfunnel-services` é necessária.
 
 ## Rollout Order
 
-1. Implantar `chatfunnel-api` com o ramo V2 do worker e o novo agendador no mesmo release.
-2. Confirmar que o scheduler já possui `automationAssistantFollowUpQueue` e que a rota atual continua registrada.
-3. Executar smoke test com uma conta interna e delay de um minuto.
-4. Monitorar `schedule failed`, `stale` e `dispatch failed` no Grafana.
-5. Implantar `chatfunnel-services` removendo o warning de migração somente depois que o runtime da API estiver ativo.
+1. Implantar `chatfunnel-api` com agendador e ramo V2 do worker no mesmo release.
+2. Confirmar que o scheduler já possui `automationAssistantFollowUpQueue` e a rota atual registrada.
+3. Executar smoke test com conta interna e delay de um minuto.
+4. Monitorar logs `skipped`, `dispatched` e `failed`.
 
 ## Explicitly Out of Scope
 
 - Implementar `inactivityFollowup.onReply` no Agente V2.
-- Alterar o comportamento ou corrigir débitos técnicos do Assistant V1.
-- Criar uma fila `automationAgentFollowUpQueue` nova.
-- Adicionar colunas como `agentId`, `sessionId` ou `sourceType` a `ContactsFollowUpScheduled`.
-- Alterar o editor ou contratos MCP de agentes.
-- Garantir entrega exactly-once entre Redis, PostgreSQL e scheduler; a entrega usa geração Redis e compensação best-effort, coerentes com a infraestrutura atual.
-- Executar build, migration, banco real, commit ou push.
+- Alterar ou corrigir débitos técnicos do Assistant V1.
+- Criar uma fila `automationAgentFollowUpQueue`.
+- Criar estado Redis para geração ou locks adicionais.
+- Adicionar `agentId`, `sessionId` ou `sourceType` a `ContactsFollowUpScheduled`.
+- Alterar editor, contratos MCP ou migração de agentes.
+- Garantir entrega exactly-once entre PostgreSQL e scheduler.
+- Executar build, migration ou banco real.

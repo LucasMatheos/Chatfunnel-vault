@@ -1,0 +1,66 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'D:\\Code\\4-Vinicius\\Chatfunnel\\.codex\\hooks\\pre-edit-main-guard.sh'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "'D:\\Code\\4-Vinicius\\Chatfunnel\\.codex\\hooks\\pre-bash-firewall.sh'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'D:\\Code\\4-Vinicius\\Chatfunnel\\.codex\\hooks\\track-edit.js'"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'D:\\Code\\4-Vinicius\\Chatfunnel\\.codex\\hooks\\track-bash.js'"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'D:\\Code\\4-Vinicius\\Chatfunnel\\.codex\\hooks\\track-prompt.js'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node 'D:\\Code\\4-Vinicius\\Chatfunnel\\.codex\\hooks\\diary-stop.js'"
+          }
+        ]
+      }
+    ]
+  }
+}

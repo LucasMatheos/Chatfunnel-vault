@@ -65,6 +65,12 @@ Cada conversa agente+contato+canal cria uma **sessao** (`AgentSessions`). Ciclo 
 
 Sessoes expiradas sao hard-deleted. Na expiracao, lifecycle automations configuradas sao disparadas.
 
+### Follow-up de inatividade
+
+O Agent V2 mantem no maximo um `ContactsFollowUpScheduled` por sessao, identificado por `sessionId`. A primeira mensagem elegivel cria o registro; mensagens seguintes atualizam a mesma linha com um novo `jobId`, `createdAt`, `scheduleDate`, estado `PENDING` e `finishedAt` nulo. `createdAt` acompanha o reagendamento porque o livechat usa esse campo para posicionar o marcador entre mensagens. O `jobId` muda a cada reagendamento para que entregas atrasadas de jobs anteriores sejam descartadas pelo worker.
+
+Ao executar, encerrar a sessao ou desabilitar a configuracao, o registro permanece como historico final (`UNANSWER` ou `CANCELED`). Registros legados e follow-ups de steps continuam com `sessionId` nulo.
+
 ## Intelligence (A2A)
 
 > Documentacao detalhada em [[intelligence-a2a]] (endpoints SSE, modelo de dados, protocolo de eventos, telas previstas no front).
